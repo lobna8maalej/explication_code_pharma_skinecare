@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Explication Interface Administration Pharma</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #222;
+            line-height: 1.7;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #222;
+        }
+
+        h2 {
+            margin-top: 35px;
+            padding: 12px 15px;
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            color: #222;
+        }
+
+        p {
+            margin: 15px 0;
+        }
+
+        .code {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: Consolas, monospace;
+            white-space: pre-wrap;
+        }
+
+        .important {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 5px solid #ffc107;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-left: 5px solid #2e7d32;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Explication de l'Interface Administration Pharma</h1>
+
+
+<h2>1. Présentation générale</h2>
+
+<p>
+Cette partie du projet correspond à l'interface d'administration de la plateforme
+Pharma. Elle est développée avec React et permet à l'administrateur de gérer
+les produits, les commandes, les paiements, les ventes, les paramètres et les clients.
+</p>
+
+<p>
+L'interface communique avec le backend grâce à Axios. Le backend fournit des
+API REST développées avec Node.js et Express.
+</p>
+
+<p>
+Le fonctionnement général est donc :
+</p>
+
+<p class="code">
+React
+    ↓
+Axios
+    ↓
+API Express
+    ↓
+Controllers
+    ↓
+MongoDB
+</p>
+
+
+<h2>2. Composant AdminCustomers</h2>
+
+<p>
+Le composant <strong>AdminCustomers</strong> représente la page permettant à
+l'administrateur de consulter et de supprimer les clients enregistrés sur
+la plateforme.
+</p>
+
+<p>
+Il utilise les hooks React <strong>useState</strong> et
+<strong>useEffect</strong>.
+</p>
+
+
+<h2>3. Importation de useEffect et useState</h2>
+
+<p>
+Le code commence par importer <strong>useEffect</strong> et
+<strong>useState</strong> depuis React.
+</p>
+
+<p>
+<strong>useState</strong> permet de créer et modifier les données internes
+du composant.
+</p>
+
+<p>
+<strong>useEffect</strong> permet d'exécuter automatiquement une fonction
+lorsque le composant est chargé.
+</p>
+
+
+<h2>4. Importation de Axios</h2>
+
+<p>
+Axios est utilisé pour envoyer des requêtes HTTP au backend.
+</p>
+
+<p>
+Dans ce composant, Axios permet notamment de récupérer la liste des clients
+et de supprimer un client.
+</p>
+
+
+<h2>5. URL de l'API</h2>
+
+<p>
+La constante <strong>API</strong> contient l'adresse principale du backend :
+</p>
+
+<p class="code">
+http://localhost:3000/api
+</p>
+
+<p>
+Toutes les requêtes de ce composant utilisent cette adresse comme base.
+</p>
+
+
+<h2>6. State customers</h2>
+
+<p>
+Le state <strong>customers</strong> contient la liste des clients récupérés
+depuis MongoDB.
+</p>
+
+<p>
+Il est initialisé avec un tableau vide :
+</p>
+
+<p class="code">
+const [customers, setCustomers] = useState([]);
+</p>
+
+<p>
+<strong>setCustomers</strong> permet de modifier cette liste.
+</p>
+
+
+<h2>7. State loading</h2>
+
+<p>
+Le state <strong>loading</strong> permet de savoir si les données sont encore
+en cours de chargement.
+</p>
+
+<p>
+Il commence à <strong>true</strong>.
+Pendant cette période, l'utilisateur voit le message
+<strong>Chargement des clients...</strong>.
+</p>
+
+
+<h2>8. State error</h2>
+
+<p>
+Le state <strong>error</strong> permet de stocker un éventuel message d'erreur.
+</p>
+
+<p>
+S'il existe une erreur lors de la communication avec le backend, le message
+est affiché à l'administrateur.
+</p>
+
+
+<h2>9. Fonction fetchCustomers</h2>
+
+<p>
+La fonction <strong>fetchCustomers</strong> permet de récupérer la liste
+des clients depuis le backend.
+</p>
+
+<p>
+Elle commence par activer le chargement avec :
+</p>
+
+<p class="code">
+setLoading(true);
+</p>
+
+<p>
+Puis elle réinitialise l'ancien message d'erreur avec :
+</p>
+
+<p class="code">
+setError("");
+</p>
+
+
+<h2>10. Requête GET des clients</h2>
+
+<p>
+Axios envoie ensuite une requête GET vers :
+</p>
+
+<p class="code">
+GET /api/users/customers
+</p>
+
+<p>
+Le backend retourne les clients enregistrés.
+</p>
+
+<p>
+Si la réponse contient <strong>success: true</strong>, la liste
+<strong>response.data.customers</strong> est enregistrée dans le state
+<strong>customers</strong>.
+</p>
+
+
+<h2>11. Gestion d'une réponse sans clients</h2>
+
+<p>
+Si le backend retourne une réponse négative, le tableau des clients est
+réinitialisé et un message d'erreur est affiché.
+</p>
+
+<p>
+Cela permet d'éviter d'afficher d'anciennes données lorsque la requête échoue.
+</p>
+
+
+<h2>12. Gestion des erreurs Axios</h2>
+
+<p>
+Le bloc <strong>catch</strong> récupère les erreurs provenant de la requête HTTP.
+</p>
+
+<p>
+Le code essaie d'abord de récupérer le message envoyé par le backend avec :
+<strong>error.response?.data?.message</strong>.
+</p>
+
+<p>
+Si aucun message n'est disponible, un message général est affiché.
+</p>
+
+
+<h2>13. Bloc finally</h2>
+
+<p>
+Le bloc <strong>finally</strong> est exécuté que la requête réussisse ou échoue.
+</p>
+
+<p>
+Il permet de désactiver le chargement avec :
+</p>
+
+<p class="code">
+setLoading(false);
+</p>
+
+
+<h2>14. useEffect pour charger les clients</h2>
+
+<p>
+Le hook <strong>useEffect</strong> appelle automatiquement
+<strong>fetchCustomers()</strong> lorsque la page est chargée.
+</p>
+
+<p>
+Le tableau vide <strong>[]</strong> signifie que cette fonction est exécutée
+une seule fois au montage du composant.
+</p>
+
+
+<h2>15. Suppression d'un client</h2>
+
+<p>
+La fonction <strong>handleDelete</strong> permet de supprimer un client.
+Elle reçoit l'identifiant MongoDB du client.
+</p>
+
+
+<h2>16. Confirmation avant suppression</h2>
+
+<p>
+Avant de supprimer le client, le code utilise :
+</p>
+
+<p class="code">
+window.confirm(...)
+</p>
+
+<p>
+Une fenêtre de confirmation demande à l'administrateur s'il souhaite réellement
+supprimer le client.
+</p>
+
+<p>
+Si l'administrateur choisit d'annuler, la fonction s'arrête immédiatement.
+</p>
+
+
+<h2>17. Requête DELETE</h2>
+
+<p>
+Si l'administrateur confirme, Axios envoie une requête DELETE vers :
+</p>
+
+<p class="code">
+DELETE /api/users/customers/:id
+</p>
+
+<p>
+L'identifiant du client est placé dans l'URL.
+</p>
+
+
+<h2>18. Suppression immédiate dans React</h2>
+
+<p>
+Lorsque le backend confirme la suppression, le client est également supprimé
+du tableau React.
+</p>
+
+<p>
+Le code utilise la fonction <strong>filter()</strong> pour conserver tous les
+clients sauf celui qui vient d'être supprimé.
+</p>
+
+<p>
+Cela permet de mettre à jour immédiatement l'interface sans devoir recharger
+toute la page.
+</p>
+
+
+<h2>19. État Loading dans AdminCustomers</h2>
+
+<p>
+Lorsque <strong>loading</strong> est égal à true, le composant affiche une
+page simple contenant le titre Customers et le message
+<strong>Chargement des clients...</strong>.
+</p>
+
+
+<h2>20. État Error dans AdminCustomers</h2>
+
+<p>
+Lorsque le state <strong>error</strong> contient un message, la page affiche
+une zone d'erreur.
+</p>
+
+<p>
+Un bouton <strong>Réessayer</strong> permet de rappeler
+<strong>fetchCustomers()</strong> afin de refaire la requête.
+</p>
+
+
+<h2>21. Affichage du nombre de clients</h2>
+
+<p>
+Lorsque les données sont chargées, le composant affiche le nombre total de
+clients avec :
+</p>
+
+<p class="code">
+customers.length
+</p>
+
+<p>
+Cela permet à l'administrateur de connaître immédiatement le nombre de clients
+présents dans la base de données.
+</p>
+
+
+<h2>22. Affichage lorsqu'il n'y a aucun client</h2>
+
+<p>
+Si le tableau <strong>customers</strong> est vide, le composant affiche
+<strong>Aucun client</strong>.
+</p>
+
+<p>
+Il précise également que les utilisateurs ayant le rôle
+<strong>user</strong> n'ont pas été trouvés.
+</p>
+
+
+<h2>23. Tableau des clients</h2>
+
+<p>
+Lorsque des clients existent, ils sont affichés dans un tableau HTML.
+</p>
+
+<p>
+Le tableau contient les colonnes ID, Username, Email, Role, Inscription
+et Actions.
+</p>
+
+
+<h2>24. Fonction map</h2>
+
+<p>
+La fonction <strong>map()</strong> permet de parcourir tous les clients
+et de créer une ligne HTML pour chaque client.
+</p>
+
+<p>
+Chaque ligne possède comme clé l'identifiant unique MongoDB du client.
+</p>
+
+
+<h2>25. Affichage de l'ID</h2>
+
+<p>
+Le code utilise :
+</p>
+
+<p class="code">
+customer._id.slice(-8)
+</p>
+
+<p>
+Cela permet d'afficher uniquement les huit derniers caractères de l'identifiant
+MongoDB afin de rendre le tableau plus lisible.
+</p>
+
+
+<h2>26. Affichage du username</h2>
+
+<p>
+Le nom d'utilisateur est affiché avec :
+</p>
+
+<p class="code">
+customer.username
+</p>
+
+<p>
+Il est placé dans une balise <strong>strong</strong> afin de le mettre
+en évidence.
+</p>
+
+
+<h2>27. Affichage de l'email</h2>
+
+<p>
+L'adresse email du client est affichée avec :
+</p>
+
+<p class="code">
+customer.email
+</p>
+
+
+<h2>28. Affichage du rôle</h2>
+
+<p>
+Le rôle est affiché dans un badge grâce à :
+</p>
+
+<p class="code">
+customer.role
+</p>
+
+<p>
+Dans cette page, les clients récupérés sont normalement ceux qui possèdent
+le rôle <strong>user</strong>.
+</p>
+
+
+<h2>29. Affichage de la date d'inscription</h2>
+
+<p>
+Le code vérifie si <strong>createdAt</strong> existe.
+Si cette valeur existe, elle est convertie en objet Date JavaScript.
+</p>
+
+<p>
+La méthode <strong>toLocaleDateString("fr-FR")</strong> permet d'afficher
+la date selon le format français.
+</p>
+
+
+<h2>30. Bouton Supprimer</h2>
+
+<p>
+Chaque ligne contient un bouton permettant de supprimer le client.
+</p>
+
+<p>
+Lorsque l'administrateur clique sur ce bouton, la fonction
+<strong>handleDelete(customer._id)</strong> est exécutée.
+</p>
+
+
+<h2>31. Composant AdminDashboard</h2>
+
+<p>
+Le composant <strong>AdminDashboard</strong> représente la page principale
+du tableau de bord administrateur.
+</p>
+
+<p>
+Il rassemble plusieurs informations importantes de la boutique :
+produits, commandes, paiements, ventes et paramètres.
+</p>
+
+
+<h2>32. Importation d'AdminNavbar</h2>
+
+<p>
+Le composant importe <strong>AdminNavbar</strong>.
+Cette barre de navigation permet à l'administrateur de se déplacer entre
+les différentes pages de l'administration.
+</p>
+
+
+<h2>33. State products</h2>
+
+<p>
+Le state <strong>products</strong> contient la liste des produits récupérés
+depuis l'API.
+</p>
+
+<p>
+Le nombre de produits est ensuite calculé avec :
+</p>
+
+<p class="code">
+products.length
+</p>
+
+
+<h2>34. State orders</h2>
+
+<p>
+Le state <strong>orders</strong> contient la liste des commandes.
+</p>
+
+<p>
+Le nombre total de commandes est affiché dans la carte
+<strong>Commandes</strong>.
+</p>
+
+
+<h2>35. State payments</h2>
+
+<p>
+Le state <strong>payments</strong> contient la liste des paiements.
+</p>
+
+<p>
+Cette liste est également utilisée pour calculer le nombre de paiements
+payés et en attente.
+</p>
+
+
+<h2>36. State sales</h2>
+
+<p>
+Le state <strong>sales</strong> contient trois statistiques :
+le chiffre d'affaires total, le nombre de commandes et le panier moyen.
+</p>
+
+<p>
+Les valeurs initiales sont toutes égales à zéro.
+</p>
+
+
+<h2>37. State settings</h2>
+
+<p>
+Le state <strong>settings</strong> contient les paramètres de la boutique
+récupérés depuis le backend.
+</p>
+
+<p>
+Il est initialisé avec <strong>null</strong> car les paramètres ne sont
+pas encore chargés au démarrage.
+</p>
+
+
+<h2>38. Récupération du token JWT</h2>
+
+<p>
+Lors du chargement du dashboard, le token est récupéré depuis
+<strong>localStorage</strong>.
+</p>
+
+<p class="code">
+localStorage.getItem("token")
+</p>
+
+<p>
+Ce token permet au frontend de prouver au backend que l'utilisateur est
+authentifié.
+</p>
+
+
+<h2>39. Création du header Authorization</h2>
+
+<p>
+Le token est ensuite placé dans l'en-tête HTTP Authorization.
+</p>
+
+<p class="code">
+Authorization: Bearer TOKEN
+</p>
+
+<p>
+Ce format correspond au fonctionnement du middleware JWT du backend.
+</p>
+
+
+<h2>40. Récupération des produits dans le Dashboard</h2>
+
+<p>
+Le dashboard envoie une requête GET vers :
+</p>
+
+<p class="code">
+GET /api/products
+</p>
+
+<p>
+Cette route est publique dans ton backend.
+Il n'est donc pas obligatoire d'envoyer le token pour cette requête.
+</p>
+
+<p>
+La réponse est ensuite vérifiée afin de déterminer si elle contient directement
+un tableau ou si les produits se trouvent dans une propriété
+<strong>products</strong> ou <strong>data</strong>.
+</p>
+
+
+<h2>41. Récupération des commandes</h2>
+
+<p>
+Le dashboard appelle :
+</p>
+
+<p class="code">
+GET /api/orders
+</p>
+
+<p>
+Cette route est protégée par <strong>auth</strong> et
+<strong>isAdmin</strong>.
+</p>
+
+<p>
+Le token JWT est donc envoyé dans les headers.
+</p>
+
+
+<h2>42. Récupération des paiements</h2>
+
+<p>
+Le dashboard appelle :
+</p>
+
+<p class="code">
+GET /api/payments/admin
+</p>
+
+<p>
+Cette route est réservée aux administrateurs.
+Le token JWT est envoyé avec la requête.
+</p>
+
+
+<h2>43. Récupération des statistiques de ventes</h2>
+
+<p>
+Le dashboard appelle :
+</p>
+
+<p class="code">
+GET /api/sales/overview
+</p>
+
+<p>
+Le backend calcule le chiffre d'affaires, le nombre de commandes et le
+panier moyen.
+</p>
+
+<p>
+Ces valeurs sont ensuite enregistrées dans le state <strong>sales</strong>.
+</p>
+
+
+<h2>44. Récupération des paramètres</h2>
+
+<p>
+Le dashboard appelle :
+</p>
+
+<p class="code">
+GET /api/settings
+</p>
+
+<p>
+Cette route est protégée par <strong>auth</strong> et
+<strong>isAdmin</strong>.
+</p>
+
+<p>
+Les paramètres récupérés sont stockés dans le state
+<strong>settings</strong>.
+</p>
+
+
+<h2>45. Fonction formatMoney</h2>
+
+<p>
+La fonction <strong>formatMoney</strong> permet de formater les montants
+financiers.
+</p>
+
+<p>
+Elle utilise <strong>toLocaleString("fr-FR")</strong> afin d'obtenir un
+format adapté à la langue française.
+</p>
+
+<p>
+Le nombre possède toujours deux chiffres après la virgule.
+</p>
+
+
+<h2>46. Statistiques des paiements payés</h2>
+
+<p>
+La constante <strong>paidPayments</strong> utilise la fonction
+<strong>filter()</strong> pour compter les paiements dont le statut est
+<strong>paid</strong>.
+</p>
+
+<p>
+Elle permet donc d'afficher le nombre de paiements réussis.
+</p>
+
+
+<h2>47. Statistiques des paiements en attente</h2>
+
+<p>
+La constante <strong>pendingPayments</strong> fait la même chose pour les
+paiements ayant le statut <strong>pending</strong>.
+</p>
+
+
+<h2>48. Admin Dashboard : carte Produits</h2>
+
+<p>
+La première carte du dashboard affiche le nombre total de produits.
+</p>
+
+<p>
+La valeur affichée correspond à :
+</p>
+
+<p class="code">
+products.length
+</p>
+
+<p>
+L'icône utilisée est l'icône de boîte représentant les produits.
+</p>
+
+
+<h2>49. Admin Dashboard : carte Commandes</h2>
+
+<p>
+La deuxième carte affiche le nombre total de commandes.
+</p>
+
+<p>
+La valeur correspond à :
+</p>
+
+<p class="code">
+orders.length
+</p>
+
+
+<h2>50. Admin Dashboard : carte Paiements</h2>
+
+<p>
+La troisième carte affiche le nombre total de paiements.
+</p>
+
+<p>
+Elle affiche également le nombre de paiements ayant le statut
+<strong>paid</strong>.
+</p>
+
+
+<h2>51. Admin Dashboard : carte Ventes</h2>
+
+<p>
+La carte Ventes affiche le chiffre d'affaires total.
+</p>
+
+<p>
+Le montant provient du backend grâce à l'API
+<strong>/api/sales/overview</strong>.
+</p>
+
+<p>
+Le montant est formaté avec <strong>formatMoney()</strong> puis affiché en TND.
+</p>
+
+
+<h2>52. Admin Dashboard : carte Settings</h2>
+
+<p>
+La carte Settings indique si la boutique est actuellement active ou en
+mode maintenance.
+</p>
+
+<p>
+Si <strong>maintenanceMode</strong> est vrai, le dashboard affiche
+<strong>Maintenance</strong>.
+</p>
+
+<p>
+Sinon, il affiche <strong>Actif</strong>.
+</p>
+
+<p>
+La carte affiche également si Stripe est activé ou désactivé grâce à
+<strong>settings.stripeEnabled</strong>.
+</p>
+
+
+<h2>53. Résumé des ventes</h2>
+
+<p>
+La section <strong>Résumé des ventes</strong> présente trois informations
+principales.
+</p>
+
+<p>
+La première est le chiffre d'affaires total.
+La deuxième est le nombre de commandes payées.
+La troisième est le panier moyen.
+</p>
+
+
+<h2>54. Chiffre d'affaires</h2>
+
+<p>
+Le chiffre d'affaires est récupéré depuis :
+</p>
+
+<p class="code">
+sales.totalSales
+</p>
+
+<p>
+Il est ensuite formaté et affiché avec la devise TND.
+</p>
+
+
+<h2>55. Commandes payées</h2>
+
+<p>
+Le nombre de commandes payées correspond à :
+</p>
+
+<p class="code">
+sales.totalOrders
+</p>
+
+<p>
+Cette valeur provient directement du contrôleur des statistiques de ventes.
+</p>
+
+
+<h2>56. Panier moyen</h2>
+
+<p>
+Le panier moyen correspond à la valeur :
+</p>
+
+<p class="code">
+sales.averageOrder
+</p>
+
+<p>
+Il représente le montant moyen d'une commande.
+</p>
+
+
+<h2>57. Résumé des paiements</h2>
+
+<p>
+La section Résumé des paiements présente trois informations :
+le nombre total de paiements, les paiements réussis et les paiements en attente.
+</p>
+
+<p>
+Cela permet à l'administrateur d'avoir rapidement une vision de la situation
+des paiements.
+</p>
+
+
+<h2>58. Styles du Dashboard</h2>
+
+<p>
+Le composant utilise un objet JavaScript appelé <strong>styles</strong>
+pour définir directement plusieurs styles CSS.
+</p>
+
+<p>
+Par exemple, <strong>styles.page</strong> définit l'espace intérieur,
+la couleur de fond et la hauteur minimale de la page.
+</p>
+
+<p>
+<strong>styles.cards</strong> utilise CSS Grid afin d'organiser les cartes
+du dashboard en plusieurs colonnes.
+</p>
+
+
+<h2>59. Composant AdminNavbar</h2>
+
+<p>
+Le composant <strong>AdminNavbar</strong> représente la barre de navigation
+de l'administration.
+</p>
+
+<p>
+Il permet d'accéder rapidement aux différentes fonctionnalités du dashboard.
+</p>
+
+
+<h2>60. useNavigate</h2>
+
+<p>
+Le hook <strong>useNavigate</strong> de React Router permet de modifier
+programmatiquement la page actuelle.
+</p>
+
+<p>
+Il est principalement utilisé ici lors de la déconnexion.
+</p>
+
+
+<h2>61. Fonction handleLogout</h2>
+
+<p>
+La fonction <strong>handleLogout</strong> permet de déconnecter l'utilisateur.
+</p>
+
+<p>
+Elle supprime le token JWT du navigateur avec :
+</p>
+
+<p class="code">
+localStorage.removeItem("token");
+</p>
+
+<p>
+Elle supprime également les informations utilisateur stockées localement.
+</p>
+
+<p class="code">
+localStorage.removeItem("user");
+</p>
+
+<p>
+Enfin, l'utilisateur est redirigé vers :
+</p>
+
+<p class="code">
+/auth
+</p>
+
+
+<h2>62. Logo Admin Panel</h2>
+
+<p>
+La barre de navigation affiche le titre <strong>Admin Panel</strong>.
+Il représente l'espace réservé à l'administration de la boutique.
+</p>
+
+
+<h2>63. Lien Dashboard</h2>
+
+<p>
+Le premier lien permet d'accéder à :
+</p>
+
+<p class="code">
+/admin
+</p>
+
+<p>
+Cette route correspond au dashboard principal.
+</p>
+
+
+<h2>64. Lien Products</h2>
+
+<p>
+Le lien Products redirige vers :
+</p>
+
+<p class="code">
+/admin/products
+</p>
+
+<p>
+Cette page permet à l'administrateur de gérer les produits.
+</p>
+
+
+<h2>65. Lien Orders</h2>
+
+<p>
+Le lien Orders redirige vers :
+</p>
+
+<p class="code">
+/admin/orders
+</p>
+
+<p>
+Cette page permet de consulter et gérer les commandes.
+</p>
+
+
+<h2>66. Lien Payments</h2>
+
+<p>
+Le lien Payments redirige vers :
+</p>
+
+<p class="code">
+/admin/payments
+</p>
+
+<p>
+Cette page permet de consulter les paiements enregistrés.
+</p>
+
+
+<h2>67. Lien Sales</h2>
+
+<p>
+Le lien Sales redirige vers :
+</p>
+
+<p class="code">
+/admin/sales
+</p>
+
+<p>
+Cette page est destinée aux statistiques commerciales.
+</p>
+
+
+<h2>68. Lien Settings</h2>
+
+<p>
+Le lien Settings redirige vers :
+</p>
+
+<p class="code">
+/admin/settings
+</p>
+
+<p>
+Cette page permet de modifier les paramètres de la boutique.
+</p>
+
+
+<h2>69. Lien Customers</h2>
+
+<p>
+Le lien Customers redirige vers :
+</p>
+
+<p class="code">
+/admin/customers
+</p>
+
+<p>
+Cette page correspond au composant <strong>AdminCustomers</strong>.
+Elle permet à l'administrateur de consulter les clients.
+</p>
+
+
+<h2>70. Bouton Logout</h2>
+
+<p>
+Le bouton Logout appelle la fonction <strong>handleLogout</strong>.
+</p>
+
+<p>
+La fonction supprime les données d'authentification et redirige l'utilisateur
+vers la page d'authentification.
+</p>
+
+
+<h2>71. Organisation de la navigation</h2>
+
+<p>
+La navigation permet donc de passer entre les principales fonctionnalités
+du panneau administrateur.
+</p>
+
+<p class="code">
+Dashboard
+Products
+Orders
+Payments
+Sales
+Settings
+Customers
+Logout
+</p>
+
+
+<h2>72. Communication entre AdminDashboard et le backend</h2>
+
+<p>
+Le dashboard récupère plusieurs catégories de données auprès du backend.
+Chaque catégorie correspond à une API différente.
+</p>
+
+<p class="code">
+Products  → GET /api/products
+
+Orders    → GET /api/orders
+
+Payments  → GET /api/payments/admin
+
+Sales     → GET /api/sales/overview
+
+Settings  → GET /api/settings
+</p>
+
+
+<h2>73. Communication entre AdminCustomers et le backend</h2>
+
+<p>
+La page Customers utilise principalement deux opérations.
+</p>
+
+<p class="code">
+GET
+/api/users/customers
+
+DELETE
+/api/users/customers/:id
+</p>
+
+<p>
+La première récupère les clients et la deuxième supprime un client.
+</p>
+
+
+<h2>74. Correspondance avec le backend</h2>
+
+<p>
+Les routes React correspondent directement aux routes Express définies dans
+le backend.
+</p>
+
+<p>
+Par exemple, la route frontend Axios
+<strong>GET /api/orders</strong> correspond à la route Express
+protégée par <strong>auth</strong> et <strong>isAdmin</strong>.
+</p>
+
+<p>
+Cela signifie que le backend vérifie le token JWT avant d'autoriser
+l'accès aux commandes administratives.
+</p>
+
+
+<h2>75. Sécurité avec JWT</h2>
+
+<p>
+Le token JWT est essentiel pour les fonctionnalités administratives.
+Il est récupéré depuis le localStorage et envoyé dans le header Authorization.
+</p>
+
+<p>
+Le middleware backend <strong>auth</strong> vérifie le token.
+Ensuite, <strong>isAdmin</strong> vérifie que le rôle de l'utilisateur
+est bien <strong>admin</strong>.
+</p>
+
+<p class="success">
+Le principe de sécurité est donc : utilisateur connecté → token valide →
+vérification du rôle admin → accès au dashboard.
+</p>
+
+
+<h2>76. Point important concernant AdminCustomers</h2>
+
+<p>
+Dans ton frontend, la page Customers appelle directement :
+</p>
+
+<p class="code">
+GET /api/users/customers
+</p>
+
+<p>
+et :
+</p>
+
+<p class="code">
+DELETE /api/users/customers/:id
+</p>
+
+<p>
+Dans les routes backend que tu as montrées précédemment, ces deux routes
+n'utilisent actuellement ni <strong>auth</strong> ni <strong>isAdmin</strong>.
+</p>
+
+<p class="important">
+Pour une application réelle, il est préférable de protéger ces routes afin
+qu'un utilisateur normal ne puisse pas consulter ou supprimer les comptes
+des autres clients.
+</p>
+
+
+<h2>77. Protection recommandée des routes Customers</h2>
+
+<p>
+Les routes administratives des clients devraient idéalement fonctionner avec
+le même principe que les autres routes du dashboard :
+</p>
+
+<p class="code">
+router.get(
+    "/customers",
+    auth,
+    isAdmin,
+    getCustomers
+);
+
+router.get(
+    "/customers/:id",
+    auth,
+    isAdmin,
+    getCustomerById
+);
+
+router.delete(
+    "/customers/:id",
+    auth,
+    isAdmin,
+    deleteCustomer
+);
+</p>
+
+<p>
+De cette manière, seul un administrateur authentifié pourra consulter et
+supprimer les clients.
+</p>
+
+
+<h2>78. Flux complet de l'administration</h2>
+
+<p>
+Lorsque l'administrateur ouvre le dashboard, React charge le composant
+<strong>AdminDashboard</strong>.
+</p>
+
+<p>
+Le composant récupère le token JWT dans localStorage.
+</p>
+
+<p>
+Ensuite, plusieurs requêtes Axios sont envoyées au backend afin de récupérer
+les produits, commandes, paiements, statistiques et paramètres.
+</p>
+
+<p>
+Le backend vérifie les droits lorsque cela est nécessaire et récupère les
+données dans MongoDB.
+</p>
+
+<p>
+Les résultats sont retournés à React.
+React stocke les résultats dans ses states puis les affiche sous forme de
+cartes et de statistiques.
+</p>
+
+
+<h2>79. Flux complet pour les clients</h2>
+
+<p>
+Lorsque l'administrateur ouvre la page Customers, le composant
+<strong>AdminCustomers</strong> est chargé.
+</p>
+
+<p>
+Le hook <strong>useEffect</strong> appelle automatiquement
+<strong>fetchCustomers()</strong>.
+</p>
+
+<p>
+Axios envoie une requête GET au backend.
+Le backend récupère les utilisateurs ayant le rôle <strong>user</strong>.
+</p>
+
+<p>
+React reçoit la liste et l'affiche dans un tableau.
+</p>
+
+<p>
+Lorsque l'administrateur clique sur Supprimer, Axios envoie une requête DELETE.
+Après confirmation du backend, le client est retiré immédiatement de l'interface.
+</p>
+
+
+<h2>80. Architecture générale</h2>
+
+<p>
+L'architecture de cette partie de l'application peut être résumée ainsi :
+</p>
+
+<p class="code">
+                    ADMIN
+                      ↓
+              React Admin Panel
+                      ↓
+              React Router
+                      ↓
+                 Axios
+                      ↓
+              Express API
+                      ↓
+              JWT Middleware
+                      ↓
+              Admin Middleware
+                      ↓
+                Controllers
+                      ↓
+                 Mongoose
+                      ↓
+                  MongoDB
+</p>
+
+
+<h2>81. Conclusion</h2>
+
+<p>
+Cette partie du projet constitue le panneau d'administration de la plateforme
+Pharma.
+</p>
+
+<p>
+<strong>AdminNavbar</strong> permet de naviguer entre les différentes pages.
+</p>
+
+<p>
+<strong>AdminDashboard</strong> fournit une vue globale de la boutique avec
+les produits, commandes, paiements, ventes et paramètres.
+</p>
+
+<p>
+<strong>AdminCustomers</strong> permet de consulter et supprimer les clients.
+</p>
+
+<p>
+<strong>Axios</strong> assure la communication entre React et l'API backend.
+</p>
+
+<p>
+<strong>JWT</strong> assure l'authentification et permet au backend de vérifier
+l'identité de l'utilisateur.
+</p>
+
+<p>
+<strong>isAdmin</strong> permet de réserver les opérations sensibles aux
+administrateurs.
+</p>
+
+<p>
+L'ensemble permet donc de construire une interface d'administration complète
+pour gérer une boutique pharmaceutique en ligne.
+</p>
+
+</div>
+
+</body>
+</html>

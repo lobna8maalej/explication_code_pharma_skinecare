@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Explication AdminProducts, AdminSales et AdminSettings
+    </title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.7;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 25px;
+            color: #222;
+            background-color: #f5f5f5;
+        }
+
+        main {
+            background-color: white;
+            padding: 35px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            color: #17365d;
+            border-bottom: 3px solid #17365d;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #245a8d;
+            margin-top: 35px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        code {
+            background-color: #eeeeee;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+        }
+
+        .section {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        .important {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 5px solid #ffc107;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<main>
+
+    <h1>
+        Explication des composants AdminProducts,
+        AdminSales et AdminSettings
+    </h1>
+
+
+    <!-- ADMIN PRODUCTS -->
+
+    <div class="section">
+
+        <h2>1. Présentation de AdminProducts</h2>
+
+        <p>
+            Le composant <code>AdminProducts</code> permet à
+            l'administrateur de gérer les produits de la boutique.
+        </p>
+
+        <p>
+            Il permet d'afficher la liste des produits, modifier
+            leurs informations, modifier rapidement leur stock
+            et supprimer un produit.
+        </p>
+
+
+        <h2>2. Les imports de AdminProducts</h2>
+
+        <p>
+            <code>useState</code> est un Hook React qui permet
+            de créer et gérer les variables d'état du composant.
+        </p>
+
+        <p>
+            <code>useEffect</code> permet d'exécuter une fonction
+            automatiquement lorsqu'une condition particulière
+            est respectée. Ici, il est utilisé pour récupérer
+            les produits lorsque la page est chargée.
+        </p>
+
+        <p>
+            <code>axios</code> permet au frontend React de communiquer
+            avec le backend Node.js/Express grâce aux requêtes HTTP.
+        </p>
+
+        <p>
+            <code>AdminNavbar</code> représente la barre de navigation
+            utilisée dans l'espace administrateur.
+        </p>
+
+
+        <h2>3. Les variables useState</h2>
+
+        <p>
+            La variable <code>products</code> contient la liste
+            des produits récupérés depuis le backend.
+        </p>
+
+        <p>
+            La variable <code>loading</code> permet de savoir si
+            les produits sont encore en cours de chargement.
+        </p>
+
+        <p>
+            <code>editingProduct</code> contient le produit actuellement
+            sélectionné pour être modifié.
+        </p>
+
+        <p>
+            Les variables <code>name</code>, <code>price</code>,
+            <code>stock</code> et <code>category</code> correspondent
+            aux champs du formulaire de modification.
+        </p>
+
+        <p>
+            <code>updatingStock</code> permet de savoir quel produit
+            est actuellement en train de subir une modification
+            de stock.
+        </p>
+
+
+        <h2>4. Récupération des produits</h2>
+
+        <p>
+            La fonction <code>fetchProducts()</code> permet de récupérer
+            les produits depuis le backend.
+        </p>
+
+        <p>
+            Elle utilise une requête HTTP GET vers :
+            <code>/api/products</code>.
+        </p>
+
+        <p>
+            Lorsque le backend répond, les produits sont enregistrés
+            dans l'état <code>products</code>.
+        </p>
+
+        <p>
+            Le code vérifie plusieurs formats possibles de réponse,
+            par exemple un tableau directement ou un tableau contenu
+            dans <code>response.data.products</code>.
+        </p>
+
+
+        <h2>5. useEffect dans AdminProducts</h2>
+
+        <p>
+            Le code utilise <code>useEffect</code> avec un tableau
+            vide comme dépendance.
+        </p>
+
+        <p>
+            Cela signifie que <code>fetchProducts()</code> est exécutée
+            lorsque le composant est chargé.
+        </p>
+
+        <p>
+            L'objectif est de récupérer automatiquement les produits
+            lorsque l'administrateur ouvre la page.
+        </p>
+
+
+        <h2>6. Modification du stock</h2>
+
+        <p>
+            La fonction <code>updateStock()</code> permet de modifier
+            la quantité disponible d'un produit.
+        </p>
+
+        <p>
+            Avant d'effectuer la modification, le code vérifie
+            que le stock n'est pas négatif.
+        </p>
+
+        <p>
+            Le token JWT est récupéré depuis
+            <code>localStorage</code>.
+        </p>
+
+        <p>
+            Le token est envoyé au backend dans l'en-tête :
+            <code>Authorization: Bearer TOKEN</code>.
+        </p>
+
+        <p>
+            Une requête PUT est ensuite envoyée vers :
+            <code>/products/:id</code>.
+        </p>
+
+
+        <h2>7. Augmenter le stock</h2>
+
+        <p>
+            La fonction <code>increaseStock()</code> récupère
+            le stock actuel du produit et ajoute une unité.
+        </p>
+
+        <p>
+            Par exemple, si le stock est égal à 10,
+            le nouveau stock devient 11.
+        </p>
+
+
+        <h2>8. Diminuer le stock</h2>
+
+        <p>
+            La fonction <code>decreaseStock()</code> retire une unité
+            du stock.
+        </p>
+
+        <p>
+            Le code vérifie que le stock actuel est supérieur à zéro.
+            Cela évite d'avoir une quantité négative.
+        </p>
+
+
+        <h2>9. Modifier un produit</h2>
+
+        <p>
+            La fonction <code>handleEdit()</code> permet de sélectionner
+            un produit.
+        </p>
+
+        <p>
+            Les informations du produit sélectionné sont ensuite
+            placées dans les champs du formulaire.
+        </p>
+
+        <p>
+            L'administrateur peut alors modifier le nom,
+            le prix, le stock et la catégorie.
+        </p>
+
+
+        <h2>10. Enregistrer les modifications</h2>
+
+        <p>
+            La fonction <code>handleUpdate()</code> est exécutée
+            lorsque l'administrateur valide le formulaire.
+        </p>
+
+        <p>
+            Elle vérifie les données saisies puis envoie une requête
+            PUT vers le backend.
+        </p>
+
+        <p>
+            Le prix et le stock sont convertis en nombres grâce
+            à <code>Number()</code>.
+        </p>
+
+
+        <h2>11. Supprimer un produit</h2>
+
+        <p>
+            La fonction <code>handleDelete()</code> permet de supprimer
+            un produit.
+        </p>
+
+        <p>
+            Avant la suppression, <code>window.confirm()</code>
+            demande une confirmation à l'administrateur.
+        </p>
+
+        <p>
+            Si l'administrateur confirme, une requête DELETE est
+            envoyée au backend.
+        </p>
+
+        <p>
+            Après la suppression, <code>filter()</code> permet
+            de retirer le produit de la liste affichée.
+        </p>
+
+
+        <h2>12. Statut du stock</h2>
+
+        <p>
+            Le composant affiche différents messages selon
+            la quantité disponible.
+        </p>
+
+        <p>
+            Si le stock est égal à zéro, le produit affiche
+            « Rupture ».
+        </p>
+
+        <p>
+            Si le stock est compris entre 1 et 5,
+            le produit affiche « Stock faible ».
+        </p>
+
+        <p>
+            Si le stock est supérieur à 5,
+            le produit affiche « En stock ».
+        </p>
+
+    </div>
+
+
+    <!-- ADMIN SALES -->
+
+    <div class="section">
+
+        <h2>13. Présentation de AdminSales</h2>
+
+        <p>
+            Le composant <code>AdminSales</code> permet à
+            l'administrateur de consulter les statistiques
+            commerciales de la boutique.
+        </p>
+
+        <p>
+            Il affiche le chiffre d'affaires, le nombre de commandes,
+            le panier moyen et l'évolution des ventes par jour.
+        </p>
+
+
+        <h2>14. Les états de AdminSales</h2>
+
+        <p>
+            L'objet <code>sales</code> contient les statistiques
+            générales des ventes.
+        </p>
+
+        <p>
+            <code>totalSales</code> représente le chiffre d'affaires.
+        </p>
+
+        <p>
+            <code>totalOrders</code> représente le nombre de commandes.
+        </p>
+
+        <p>
+            <code>averageOrder</code> représente le panier moyen.
+        </p>
+
+        <p>
+            <code>dailySales</code> contient les ventes regroupées
+            par journée.
+        </p>
+
+
+        <h2>15. Récupération des statistiques</h2>
+
+        <p>
+            La fonction <code>fetchSales()</code> récupère d'abord
+            le token administrateur.
+        </p>
+
+        <p>
+            Elle envoie ensuite une requête vers :
+            <code>/sales/overview</code>.
+        </p>
+
+        <p>
+            Cette route retourne les statistiques générales
+            de la boutique.
+        </p>
+
+        <p>
+            Une deuxième requête est envoyée vers :
+            <code>/sales/by-day</code>.
+        </p>
+
+        <p>
+            Cette route permet d'obtenir les ventes quotidiennes.
+        </p>
+
+
+        <h2>16. Gestion des erreurs</h2>
+
+        <p>
+            Le composant utilise <code>try</code>, <code>catch</code>
+            et <code>finally</code> pour gérer les requêtes
+            asynchrones.
+        </p>
+
+        <p>
+            Une erreur 401 signifie généralement que le token
+            n'est plus valide ou que la session a expiré.
+        </p>
+
+        <p>
+            Une erreur 403 signifie que l'utilisateur n'a pas
+            les autorisations nécessaires.
+        </p>
+
+
+        <h2>17. Formatage des montants</h2>
+
+        <p>
+            La fonction <code>formatMoney()</code> utilise
+            <code>toLocaleString("fr-FR")</code>.
+        </p>
+
+        <p>
+            Cela permet d'afficher les nombres selon le format
+            français avec deux chiffres après la virgule.
+        </p>
+
+
+        <h2>18. Formatage des dates</h2>
+
+        <p>
+            La fonction <code>formatDate()</code> transforme
+            une date comme <code>2026-09-07</code> en :
+            <strong>07/09/2026</strong>.
+        </p>
+
+
+        <h2>19. Graphique des ventes</h2>
+
+        <p>
+            Le graphique est créé directement avec HTML et CSS.
+            Aucune bibliothèque graphique externe n'est nécessaire.
+        </p>
+
+        <p>
+            La largeur de chaque barre dépend du montant des ventes
+            de la journée par rapport au montant maximum.
+        </p>
+
+        <p>
+            Plus le montant est important, plus la barre affichée
+            est grande.
+        </p>
+
+
+        <h2>20. Tableau des ventes</h2>
+
+        <p>
+            Le tableau affiche pour chaque journée la date,
+            le nombre de commandes, le chiffre d'affaires
+            et le panier moyen.
+        </p>
+
+        <p>
+            Le panier moyen est calculé en divisant le chiffre
+            d'affaires par le nombre de commandes.
+        </p>
+
+    </div>
+
+
+    <!-- ADMIN SETTINGS -->
+
+    <div class="section">
+
+        <h2>21. Présentation de AdminSettings</h2>
+
+        <p>
+            Le composant <code>AdminSettings</code> permet
+            à l'administrateur de configurer les paramètres
+            généraux de la boutique.
+        </p>
+
+        <p>
+            Il permet notamment de modifier les informations
+            de la boutique, la devise, la livraison, Stripe
+            et le mode maintenance.
+        </p>
+
+
+        <h2>22. Informations de la boutique</h2>
+
+        <p>
+            <code>storeName</code> contient le nom de la boutique.
+        </p>
+
+        <p>
+            <code>email</code> contient l'adresse email de la boutique.
+        </p>
+
+        <p>
+            <code>phone</code> contient le numéro de téléphone.
+        </p>
+
+        <p>
+            <code>address</code> contient l'adresse de la boutique.
+        </p>
+
+
+        <h2>23. Paramètres commerciaux</h2>
+
+        <p>
+            <code>currency</code> définit la devise principale
+            utilisée par la boutique.
+        </p>
+
+        <p>
+            <code>allowOrders</code> permet d'autoriser ou
+            de désactiver les commandes.
+        </p>
+
+
+        <h2>24. Paramètres de livraison</h2>
+
+        <p>
+            <code>deliveryEnabled</code> permet d'activer ou
+            de désactiver la livraison.
+        </p>
+
+        <p>
+            <code>deliveryFee</code> correspond aux frais
+            de livraison.
+        </p>
+
+
+        <h2>25. Paramètres Stripe</h2>
+
+        <p>
+            <code>stripeEnabled</code> permet d'activer
+            ou de désactiver Stripe.
+        </p>
+
+        <p>
+            <code>stripeCurrency</code> définit la devise
+            utilisée pour Stripe.
+        </p>
+
+        <p>
+            <code>stripeExchangeRate</code> représente le taux
+            de conversion utilisé par l'application.
+        </p>
+
+        <p>
+            Par exemple, avec un taux de 0,32,
+            une valeur de 100 TND peut être convertie
+            en 32 unités de la devise Stripe sélectionnée.
+        </p>
+
+
+        <h2>26. handleChange</h2>
+
+        <p>
+            La fonction <code>handleChange()</code> permet de gérer
+            les changements de tous les champs du formulaire.
+        </p>
+
+        <p>
+            Pour une checkbox, le code utilise <code>checked</code>.
+            Pour les autres champs, il utilise <code>value</code>.
+        </p>
+
+        <p>
+            La notation <code>[name]</code> permet de modifier
+            automatiquement la propriété correspondant au champ.
+        </p>
+
+
+        <h2>27. Enregistrer les paramètres</h2>
+
+        <p>
+            La fonction <code>handleSubmit()</code> est exécutée
+            lorsque l'administrateur clique sur le bouton
+            d'enregistrement.
+        </p>
+
+        <p>
+            Les données sont préparées puis envoyées au backend
+            avec une requête PUT vers <code>/settings</code>.
+        </p>
+
+        <p>
+            Après une réponse positive du serveur, les nouveaux
+            paramètres sont enregistrés dans le state React.
+        </p>
+
+    </div>
+
+
+    <!-- CONCEPTS -->
+
+    <div class="section">
+
+        <h2>28. useState</h2>
+
+        <p>
+            <code>useState</code> permet de stocker des données
+            qui peuvent changer pendant l'utilisation de la page.
+        </p>
+
+        <p>
+            Lorsque la fonction de modification du state est appelée,
+            React met à jour l'interface automatiquement.
+        </p>
+
+
+        <h2>29. useEffect</h2>
+
+        <p>
+            <code>useEffect</code> est principalement utilisé ici
+            pour effectuer les appels API lorsque les composants
+            sont chargés.
+        </p>
+
+
+        <h2>30. Axios</h2>
+
+        <p>
+            Axios est une bibliothèque JavaScript qui permet
+            d'envoyer des requêtes HTTP.
+        </p>
+
+        <p>
+            Dans le projet, Axios permet à React de communiquer
+            avec le serveur Node.js/Express.
+        </p>
+
+
+        <h2>31. localStorage et JWT</h2>
+
+        <p>
+            Le token JWT est récupéré depuis
+            <code>localStorage</code>.
+        </p>
+
+        <p>
+            Il est ensuite envoyé au backend avec :
+            <code>Authorization: Bearer TOKEN</code>.
+        </p>
+
+        <p>
+            Le backend peut ainsi vérifier l'identité et
+            les autorisations de l'administrateur.
+        </p>
+
+
+        <h2>32. map()</h2>
+
+        <p>
+            La méthode <code>map()</code> permet de parcourir
+            un tableau et de créer un nouvel élément pour chaque
+            élément du tableau.
+        </p>
+
+        <p>
+            Elle est utilisée notamment pour afficher les produits
+            et les ventes dans les tableaux HTML.
+        </p>
+
+
+        <h2>33. filter()</h2>
+
+        <p>
+            La méthode <code>filter()</code> permet de conserver
+            uniquement les éléments qui respectent une condition.
+        </p>
+
+        <p>
+            Dans <code>AdminProducts</code>, elle permet par exemple
+            de retirer un produit après sa suppression.
+        </p>
+
+
+        <h2>34. async et await</h2>
+
+        <p>
+            Les mots-clés <code>async</code> et <code>await</code>
+            permettent de travailler plus facilement avec les
+            opérations asynchrones comme les appels API.
+        </p>
+
+        <p>
+            Le programme attend la réponse du serveur avant
+            de continuer l'exécution de certaines instructions.
+        </p>
+
+
+        <h2>35. try, catch et finally</h2>
+
+        <p>
+            <code>try</code> contient le code qui peut provoquer
+            une erreur.
+        </p>
+
+        <p>
+            <code>catch</code> récupère l'erreur afin de pouvoir
+            afficher un message approprié.
+        </p>
+
+        <p>
+            <code>finally</code> permet d'exécuter une action
+            dans tous les cas, par exemple arrêter l'affichage
+            du chargement.
+        </p>
+
+    </div>
+
+
+    <!-- ARCHITECTURE -->
+
+    <div class="section">
+
+        <h2>36. Architecture générale du projet</h2>
+
+        <p>
+            Le fonctionnement général est :
+        </p>
+
+        <p>
+            <strong>
+                React → Axios → API Express → Middleware JWT
+                → Contrôleur → MongoDB → Réponse JSON → React
+            </strong>
+        </p>
+
+        <p>
+            React représente le frontend. Axios envoie les requêtes.
+            Express reçoit les requêtes. Le middleware vérifie
+            l'authentification. Le contrôleur traite les données.
+            MongoDB stocke les informations.
+        </p>
+
+        <p>
+            Enfin, le backend renvoie une réponse JSON et React
+            actualise l'interface.
+        </p>
+
+
+        <h2>37. Points importants à vérifier</h2>
+
+        <div class="important">
+
+            <p>
+                <strong>Port API :</strong>
+                les composants utilisent actuellement
+                <code>http://localhost:3000/api</code>.
+                Il faut vérifier que le backend utilise bien
+                le port 3000.
+            </p>
+
+            <p>
+                <strong>Catégorie :</strong>
+                la valeur <code>skinecare</code> semble être
+                une faute d'orthographe. Si le backend utilise
+                <code>skincare</code>, les deux doivent être
+                identiques.
+            </p>
+
+            <p>
+                <strong>Sécurité :</strong>
+                les validations présentes dans React ne remplacent
+                pas les validations du backend.
+            </p>
+
+            <p>
+                <strong>Routes :</strong>
+                les routes GET, PUT et DELETE utilisées par React
+                doivent exister dans le backend Express.
+            </p>
+
+        </div>
+
+
+        <h2>38. Conclusion</h2>
+
+        <p>
+            <strong>AdminProducts</strong> permet de gérer
+            les produits et les stocks.
+        </p>
+
+        <p>
+            <strong>AdminSales</strong> permet de consulter
+            les performances commerciales et les ventes.
+        </p>
+
+        <p>
+            <strong>AdminSettings</strong> permet de configurer
+            les paramètres généraux de la boutique, la livraison
+            et les paiements.
+        </p>
+
+        <p>
+            Ces trois composants utilisent React, Axios,
+            une API Node.js/Express, MongoDB et l'authentification
+            JWT pour construire un espace d'administration complet.
+        </p>
+
+    </div>
+
+</main>
+
+</body>
+</html>

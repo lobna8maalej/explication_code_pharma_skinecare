@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explication du Backend Pharma</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.7;
+            margin: 40px;
+            background-color: #f5f5f5;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            margin-top: 35px;
+            padding: 12px;
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+        }
+
+        p {
+            margin: 15px 0;
+        }
+
+        .important {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 5px solid #ffc107;
+            margin: 20px 0;
+        }
+
+        .code {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: Consolas, monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Explication du Backend de la plateforme Pharma</h1>
+
+
+<h2>1. Middleware d'authentification JWT</h2>
+
+<p>
+Le middleware d'authentification permet de protéger les routes de l'application.
+Il vérifie que l'utilisateur possède un token JWT valide avant de pouvoir accéder
+à certaines fonctionnalités.
+</p>
+
+<p>
+Le module <strong>jsonwebtoken</strong> est importé avec
+<strong>require("jsonwebtoken")</strong>. Il permet de vérifier les tokens JWT
+envoyés par le frontend.
+</p>
+
+
+<h2>2. Fonction auth</h2>
+
+<p>
+La fonction <strong>auth</strong> est un middleware exécuté avant certains contrôleurs.
+Son rôle est de vérifier l'identité de l'utilisateur.
+</p>
+
+<p>
+Le middleware récupère l'en-tête HTTP Authorization grâce à
+<strong>req.headers.authorization</strong>.
+</p>
+
+<p>
+Le frontend doit normalement envoyer une information de ce type :
+</p>
+
+<p class="code">
+Authorization: Bearer TOKEN_JWT
+</p>
+
+<p>
+Si aucun header Authorization n'est envoyé, le serveur retourne une erreur HTTP
+<strong>401</strong> avec le message "No token provided".
+</p>
+
+<p>
+Ensuite, le serveur vérifie que le header commence bien par
+<strong>Bearer </strong>. Cela permet de s'assurer que le format du token est correct.
+</p>
+
+<p>
+Le token est ensuite récupéré avec :
+<strong>authHeader.split(" ")[1]</strong>.
+</p>
+
+<p>
+La fonction <strong>jwt.verify()</strong> vérifie ensuite le token avec la clé secrète
+contenue dans la variable d'environnement <strong>JWT_SECRET</strong>.
+</p>
+
+<p>
+Si le token est valide, les informations contenues dans le token sont placées dans
+<strong>req.user</strong>.
+</p>
+
+<p>
+Cela permet aux contrôleurs suivants de connaître l'utilisateur connecté.
+</p>
+
+<p>
+Enfin, <strong>next()</strong> permet de continuer vers le middleware ou le contrôleur
+suivant.
+</p>
+
+
+<h2>3. Gestion des erreurs JWT</h2>
+
+<p>
+Si le token est incorrect, expiré ou invalide, une exception est générée.
+Le bloc <strong>catch</strong> récupère cette erreur.
+</p>
+
+<p>
+Le serveur retourne alors une réponse HTTP <strong>401</strong> avec le message
+<strong>Invalid token</strong>.
+</p>
+
+
+<h2>4. Middleware isAdmin</h2>
+
+<p>
+Le middleware <strong>isAdmin</strong> permet de vérifier que l'utilisateur connecté
+possède le rôle <strong>admin</strong>.
+</p>
+
+<p>
+La condition vérifie :
+</p>
+
+<p class="code">
+req.user && req.user.role === "admin"
+</p>
+
+<p>
+Si l'utilisateur est bien administrateur, <strong>next()</strong> permet d'accéder
+au contrôleur.
+</p>
+
+<p>
+Sinon, le serveur retourne une erreur HTTP <strong>403</strong>.
+Cela signifie que l'utilisateur est authentifié mais qu'il n'a pas les droits
+nécessaires.
+</p>
+
+
+<h2>5. Deuxième version de isAdmin</h2>
+
+<p>
+Dans ton code, il existe également une deuxième fonction appelée
+<strong>isAdmin</strong>.
+Elle vérifie directement :
+</p>
+
+<p class="code">
+req.user.role !== "admin"
+</p>
+
+<p>
+Si le rôle n'est pas admin, elle retourne une erreur 403.
+Sinon, elle appelle <strong>next()</strong>.
+</p>
+
+<p>
+Il est préférable de garder une seule version de <strong>isAdmin</strong> pour
+éviter les doublons et les conflits d'importation.
+</p>
+
+
+<h2>6. Middleware Multer</h2>
+
+<p>
+Le middleware Multer permet de gérer l'envoi de fichiers depuis le frontend vers
+le serveur, notamment les images des produits.
+</p>
+
+<p>
+<strong>multer.diskStorage()</strong> définit la manière dont les fichiers seront
+stockés sur le serveur.
+</p>
+
+<p>
+La propriété <strong>destination</strong> indique que les fichiers seront enregistrés
+dans le dossier :
+</p>
+
+<p class="code">
+uploads/
+</p>
+
+<p>
+La propriété <strong>filename</strong> permet de générer un nom unique pour chaque
+image.
+</p>
+
+<p>
+Le nom contient la date actuelle grâce à <strong>Date.now()</strong>, suivie du nom
+original du fichier.
+</p>
+
+<p>
+Par exemple, une image appelée <strong>vitamine.jpg</strong> peut devenir :
+</p>
+
+<p class="code">
+1725647890000-vitamine.jpg
+</p>
+
+<p>
+La fonction <strong>multer({ storage })</strong> crée ensuite le middleware
+d'upload.
+</p>
+
+
+<h2>7. Routes des commandes</h2>
+
+<p>
+Le fichier de routes des commandes utilise Express pour définir les différentes
+URL liées aux commandes.
+</p>
+
+<p>
+Le router est créé avec :
+</p>
+
+<p class="code">
+const router = express.Router();
+</p>
+
+<p>
+Les fonctions du contrôleur <strong>orderController</strong> sont ensuite importées.
+</p>
+
+
+<h2>8. Création d'une commande</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+POST /api/orders
+</p>
+
+<p>
+permet de créer une nouvelle commande.
+</p>
+
+<p>
+Elle utilise le middleware <strong>auth</strong>.
+Cela signifie que seul un utilisateur connecté peut créer une commande.
+</p>
+
+<p>
+Le contrôleur appelé est <strong>createOrder</strong>.
+</p>
+
+
+<h2>9. Récupération de toutes les commandes</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/orders
+</p>
+
+<p>
+permet de récupérer toutes les commandes.
+</p>
+
+<p>
+Elle est protégée par deux middlewares :
+<strong>auth</strong> puis <strong>isAdmin</strong>.
+</p>
+
+<p>
+Cela signifie qu'il faut être connecté et avoir le rôle administrateur.
+</p>
+
+
+<h2>10. Récupération des commandes d'un utilisateur</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/orders/user/:userId
+</p>
+
+<p>
+permet de récupérer les commandes associées à un utilisateur donné.
+</p>
+
+<p>
+La route est protégée par <strong>auth</strong>, mais dans cette version le middleware
+<strong>isAdmin</strong> n'est pas utilisé.
+</p>
+
+
+<h2>11. Récupération d'une commande</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/orders/:id
+</p>
+
+<p>
+permet de récupérer une commande grâce à son identifiant MongoDB.
+</p>
+
+<p>
+L'utilisateur doit être authentifié grâce au middleware <strong>auth</strong>.
+</p>
+
+
+<h2>12. Modification du statut d'une commande</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+PUT /api/orders/:id/status
+</p>
+
+<p>
+permet de modifier le statut d'une commande.
+</p>
+
+<p>
+Elle est réservée aux administrateurs.
+</p>
+
+<p>
+Le statut peut par exemple passer de <strong>En attente</strong> à
+<strong>En préparation</strong>, puis à <strong>Expédiée</strong> et enfin
+<strong>Livrée</strong>.
+</p>
+
+
+<h2>13. Modification du statut de paiement</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+PUT /api/orders/:id/payment-status
+</p>
+
+<p>
+permet de modifier le statut du paiement d'une commande.
+</p>
+
+<p>
+Cette opération est également réservée à l'administrateur.
+</p>
+
+
+<h2>14. Suppression d'une commande</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+DELETE /api/orders/:id
+</p>
+
+<p>
+permet de supprimer une commande.
+</p>
+
+<p>
+Cette opération est protégée par <strong>auth</strong> et <strong>isAdmin</strong>.
+Un utilisateur normal ne peut donc pas supprimer une commande.
+</p>
+
+
+<h2>15. Routes des paiements Stripe</h2>
+
+<p>
+Le fichier <strong>paymentRoutes.js</strong> contient les routes permettant de gérer
+les paiements avec Stripe.
+</p>
+
+
+<h2>16. Création d'une session Stripe</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+POST /api/payments/create-checkout-session
+</p>
+
+<p>
+permet de créer une session de paiement Stripe.
+</p>
+
+<p>
+La route utilise le middleware <strong>auth</strong>.
+L'utilisateur doit donc être connecté avant de pouvoir effectuer le paiement.
+</p>
+
+<p>
+Le contrôleur appelé est <strong>createCheckoutSession</strong>.
+</p>
+
+
+<h2>17. Récupération des paiements</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/payments/admin
+</p>
+
+<p>
+permet à l'administrateur de récupérer la liste des paiements.
+</p>
+
+<p>
+Elle utilise <strong>auth</strong> et <strong>isAdmin</strong>.
+</p>
+
+
+<h2>18. Webhook Stripe</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+POST /api/payments/webhook
+</p>
+
+<p>
+est utilisée par Stripe pour envoyer automatiquement des notifications au serveur.
+</p>
+
+<p>
+Elle utilise <strong>express.raw()</strong> parce que Stripe a besoin du contenu brut
+de la requête pour vérifier la signature du webhook.
+</p>
+
+<p>
+Le contrôleur <strong>stripeWebhook</strong> reçoit ensuite l'événement envoyé par
+Stripe.
+</p>
+
+
+<h2>19. Routes des produits</h2>
+
+<p>
+Le fichier <strong>productRoutes.js</strong> contient les routes permettant de gérer
+les produits de la pharmacie.
+</p>
+
+
+<h2>20. Création d'un produit</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+POST /api/products
+</p>
+
+<p>
+permet à un administrateur de créer un nouveau produit.
+</p>
+
+<p>
+Elle utilise trois middlewares :
+<strong>auth</strong>, <strong>isAdmin</strong> et
+<strong>upload.single("image")</strong>.
+</p>
+
+<p>
+Le premier vérifie l'identité de l'utilisateur.
+Le deuxième vérifie qu'il est administrateur.
+Le troisième permet de recevoir une image.
+</p>
+
+
+<h2>21. Récupération des produits</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/products
+</p>
+
+<p>
+permet de récupérer tous les produits.
+</p>
+
+<p>
+Cette route est publique. Aucun token JWT n'est nécessaire.
+</p>
+
+<p>
+Cela permet aux visiteurs et aux clients de consulter les produits disponibles.
+</p>
+
+
+<h2>22. Modification d'un produit</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+PUT /api/products/:id
+</p>
+
+<p>
+permet à un administrateur de modifier un produit.
+</p>
+
+<p>
+L'image est optionnelle grâce à <strong>upload.single("image")</strong>.
+</p>
+
+<p>
+Si une nouvelle image est envoyée, elle peut remplacer l'ancienne image.
+</p>
+
+
+<h2>23. Routes des ventes</h2>
+
+<p>
+Le fichier <strong>salesRoutes.js</strong> permet d'accéder aux statistiques
+commerciales de la plateforme.
+</p>
+
+
+<h2>24. Vue globale des ventes</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/sales/overview
+</p>
+
+<p>
+permet de récupérer une vue globale des ventes.
+</p>
+
+<p>
+Elle est protégée par <strong>auth</strong> et <strong>isAdmin</strong>.
+Seul un administrateur peut consulter ces informations.
+</p>
+
+<p>
+Le contrôleur peut retourner notamment le chiffre d'affaires total, le nombre
+de commandes et la moyenne des commandes.
+</p>
+
+
+<h2>25. Ventes par jour</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/sales/by-day
+</p>
+
+<p>
+permet d'obtenir les ventes regroupées par jour.
+</p>
+
+<p>
+Ces données peuvent ensuite être utilisées dans un dashboard administrateur pour
+afficher des graphiques statistiques.
+</p>
+
+
+<h2>26. Routes des paramètres</h2>
+
+<p>
+Le fichier <strong>settingsRoutes.js</strong> permet de gérer les paramètres
+généraux de la boutique.
+</p>
+
+
+<h2>27. Récupération des paramètres</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/settings
+</p>
+
+<p>
+permet à l'administrateur de récupérer les paramètres de la boutique.
+</p>
+
+<p>
+Elle nécessite une authentification et le rôle administrateur.
+</p>
+
+
+<h2>28. Modification des paramètres</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+PUT /api/settings
+</p>
+
+<p>
+permet à l'administrateur de modifier les paramètres.
+</p>
+
+<p>
+Ces paramètres peuvent concerner le nom de la boutique, l'email, le téléphone,
+l'adresse, la devise, les commandes, la maintenance, la livraison et Stripe.
+</p>
+
+
+<h2>29. Routes utilisateurs</h2>
+
+<p>
+Le fichier <strong>userRoutes.js</strong> contient les routes liées à
+l'authentification et aux clients.
+</p>
+
+
+<h2>30. Inscription</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+POST /api/users/register
+</p>
+
+<p>
+permet à un nouvel utilisateur de créer un compte.
+</p>
+
+<p>
+Cette route est publique car l'utilisateur n'est pas encore connecté.
+</p>
+
+
+<h2>31. Connexion</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+POST /api/users/login
+</p>
+
+<p>
+permet à un utilisateur existant de se connecter.
+</p>
+
+<p>
+Le serveur vérifie l'adresse email et le mot de passe.
+Si les informations sont correctes, un token JWT est généré.
+</p>
+
+
+<h2>32. Liste des clients</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/users/customers
+</p>
+
+<p>
+permet de récupérer la liste des clients.
+</p>
+
+<p>
+Dans le contrôleur, seuls les utilisateurs ayant le rôle
+<strong>user</strong> sont sélectionnés.
+</p>
+
+
+<h2>33. Récupération d'un client</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+GET /api/users/customers/:id
+</p>
+
+<p>
+permet de récupérer un client grâce à son identifiant.
+</p>
+
+
+<h2>34. Suppression d'un client</h2>
+
+<p>
+La route :
+</p>
+
+<p class="code">
+DELETE /api/users/customers/:id
+</p>
+
+<p>
+permet de supprimer un client.
+</p>
+
+<p>
+Attention : dans le code présenté, ces trois routes clients ne sont pas protégées
+par <strong>auth</strong> et <strong>isAdmin</strong>.
+</p>
+
+<p>
+Pour une application réelle, il est fortement recommandé de protéger ces routes
+si elles sont utilisées uniquement par l'administration.
+</p>
+
+
+<h2>35. Script Python de lancement du scraper</h2>
+
+<p>
+Le code :
+</p>
+
+<p class="code">
+from scrapers.pharma_scraper import scrape_products
+
+scrape_products()
+</p>
+
+<p>
+importe une fonction appelée <strong>scrape_products</strong> depuis le module
+<strong>scrapers.pharma_scraper</strong>.
+</p>
+
+<p>
+Ensuite, la fonction est exécutée avec <strong>scrape_products()</strong>.
+</p>
+
+<p>
+Son objectif est de lancer automatiquement le scraping des produits.
+</p>
+
+
+<h2>36. Bibliothèque Requests</h2>
+
+<p>
+Dans le scraper Python, la bibliothèque <strong>requests</strong> permet d'envoyer
+une requête HTTP vers un site web.
+</p>
+
+<p>
+La fonction <strong>requests.get()</strong> récupère le contenu HTML de la page.
+</p>
+
+
+<h2>37. Bibliothèque BeautifulSoup</h2>
+
+<p>
+<strong>BeautifulSoup</strong> permet d'analyser le code HTML récupéré depuis
+le site web.
+</p>
+
+<p>
+Grâce à BeautifulSoup, le programme peut rechercher les éléments HTML contenant
+les informations des produits.
+</p>
+
+
+<h2>38. Connexion à MongoDB avec Python</h2>
+
+<p>
+La bibliothèque <strong>pymongo</strong> permet à Python de communiquer avec
+MongoDB.
+</p>
+
+<p>
+La connexion est réalisée avec :
+</p>
+
+<p class="code">
+MongoClient("mongodb://localhost:27017/")
+</p>
+
+<p>
+Le programme se connecte donc à une instance MongoDB installée localement sur
+la machine.
+</p>
+
+
+<h2>39. Base de données pharma_db</h2>
+
+<p>
+Le code utilise la base de données :
+</p>
+
+<p class="code">
+pharma_db
+</p>
+
+<p>
+Puis il utilise la collection :
+</p>
+
+<p class="code">
+products
+</p>
+
+<p>
+Les produits récupérés depuis les sites web seront enregistrés dans cette
+collection.
+</p>
+
+
+<h2>40. Premier scraper : Pharma Shop</h2>
+
+<p>
+Le premier scraper utilise l'adresse :
+</p>
+
+<p class="code">
+https://pharma-shop.tn/
+</p>
+
+<p>
+Le programme envoie une requête HTTP avec un User-Agent.
+Cela permet de simuler un navigateur lors de la récupération de la page.
+</p>
+
+
+<h2>41. Recherche des produits</h2>
+
+<p>
+Le programme recherche tous les éléments HTML ayant la structure :
+</p>
+
+<p class="code">
+div class="product"
+</p>
+
+<p>
+Chaque élément trouvé est considéré comme un produit.
+</p>
+
+
+<h2>42. Extraction du nom du produit</h2>
+
+<p>
+Pour chaque produit, le programme recherche la balise
+<strong>h2</strong>.
+</p>
+
+<p>
+Le texte est ensuite récupéré avec <strong>.text</strong> et nettoyé avec
+<strong>.strip()</strong>.
+</p>
+
+<p>
+Le résultat est enregistré dans la variable <strong>name</strong>.
+</p>
+
+
+<h2>43. Extraction du prix</h2>
+
+<p>
+Le scraper recherche ensuite une balise :
+</p>
+
+<p class="code">
+span class="price"
+</p>
+
+<p>
+Le contenu de cette balise est récupéré et enregistré dans la variable
+<strong>price</strong>.
+</p>
+
+
+<h2>44. Création de l'objet produit</h2>
+
+<p>
+Le programme crée ensuite un dictionnaire Python contenant le nom et le prix :
+</p>
+
+<p class="code">
+{
+    "name": name,
+    "price": price
+}
+</p>
+
+<p>
+Cet objet représente les informations du produit qui seront enregistrées dans
+MongoDB.
+</p>
+
+
+<h2>45. Insertion dans MongoDB</h2>
+
+<p>
+La fonction <strong>collection.insert_one()</strong> permet d'insérer un produit
+dans MongoDB.
+</p>
+
+<p>
+Après l'insertion, le programme affiche le nom du produit dans la console grâce
+à <strong>print("Inserted:", name)</strong>.
+</p>
+
+
+<h2>46. Gestion des erreurs du scraper</h2>
+
+<p>
+Le traitement de chaque produit est placé dans un bloc
+<strong>try / except</strong>.
+</p>
+
+<p>
+Si le scraper rencontre un problème pour récupérer le nom, le prix ou insérer
+le produit, l'erreur est capturée et affichée dans la console.
+</p>
+
+<p>
+Cela permet au scraper de continuer son traitement au lieu de s'arrêter
+complètement à la première erreur.
+</p>
+
+
+<h2>47. Deuxième scraper : Doppelherz</h2>
+
+<p>
+Le deuxième scraper fonctionne de manière similaire, mais il utilise une autre
+source :
+</p>
+
+<p class="code">
+https://www.doppelherz.tn/produits
+</p>
+
+<p>
+Il récupère le contenu de cette page avec <strong>requests</strong>.
+</p>
+
+<p>
+Ensuite, <strong>BeautifulSoup</strong> analyse le HTML et recherche les éléments
+ayant la classe <strong>product</strong>.
+</p>
+
+<p>
+Pour chaque produit, le programme récupère son nom et son prix.
+</p>
+
+<p>
+Les informations sont ensuite enregistrées dans la même collection MongoDB :
+<strong>pharma_db.products</strong>.
+</p>
+
+
+<h2>48. Exécution directe du scraper</h2>
+
+<p>
+La condition :
+</p>
+
+<p class="code">
+if __name__ == "__main__":
+</p>
+
+<p>
+permet d'exécuter automatiquement la fonction <strong>scrape_and_save()</strong>
+lorsque le fichier Python est lancé directement.
+</p>
+
+<p>
+Cela évite que la fonction soit automatiquement exécutée si le fichier est
+simplement importé dans un autre programme.
+</p>
+
+
+<h2>49. Architecture générale du projet</h2>
+
+<p>
+L'architecture globale peut être représentée de la manière suivante :
+</p>
+
+<p class="code">
+Frontend React
+        ↓
+API REST Express
+        ↓
+Middleware JWT
+        ↓
+Routes
+        ↓
+Controllers
+        ↓
+Models Mongoose
+        ↓
+MongoDB
+</p>
+
+<p>
+Pour les paiements, une partie supplémentaire intervient :
+</p>
+
+<p class="code">
+React
+   ↓
+Express
+   ↓
+Payment Controller
+   ↓
+Stripe Checkout
+   ↓
+Stripe Webhook
+   ↓
+MongoDB
+</p>
+
+<p>
+Pour la récupération des produits externes, le flux est différent :
+</p>
+
+<p class="code">
+Site externe
+     ↓
+Python Requests
+     ↓
+BeautifulSoup
+     ↓
+Scraper
+     ↓
+PyMongo
+     ↓
+MongoDB
+</p>
+
+
+<h2>50. Flux d'authentification</h2>
+
+<p>
+Lorsqu'un utilisateur s'inscrit, le serveur crée son compte et génère un token
+JWT.
+</p>
+
+<p>
+Lorsqu'il se connecte, le serveur vérifie son mot de passe puis génère également
+un token JWT.
+</p>
+
+<p>
+Le frontend conserve ensuite ce token et l'envoie dans les requêtes nécessitant
+une authentification.
+</p>
+
+<p>
+Le middleware <strong>auth</strong> vérifie le token et place les informations
+de l'utilisateur dans <strong>req.user</strong>.
+</p>
+
+<p>
+Le middleware <strong>isAdmin</strong> vérifie ensuite le rôle de cet utilisateur.
+</p>
+
+
+<h2>51. Flux d'une commande</h2>
+
+<p>
+Le client consulte les produits grâce à la route publique
+<strong>GET /api/products</strong>.
+</p>
+
+<p>
+Il ajoute ensuite les produits au panier.
+</p>
+
+<p>
+Lorsqu'il valide son panier, le frontend envoie une requête
+<strong>POST /api/orders</strong>.
+</p>
+
+<p>
+Le middleware JWT vérifie que le client est connecté.
+</p>
+
+<p>
+Le contrôleur <strong>createOrder</strong> valide les produits, calcule le montant
+total et crée la commande dans MongoDB.
+</p>
+
+
+<h2>52. Flux du paiement Stripe</h2>
+
+<p>
+Après la création de la commande, le frontend peut demander la création d'une
+session Stripe.
+</p>
+
+<p>
+Le backend vérifie que la commande appartient bien à l'utilisateur connecté.
+</p>
+
+<p>
+Il crée ensuite une session Stripe Checkout contenant les produits et leurs prix.
+</p>
+
+<p>
+Le client est redirigé vers Stripe pour effectuer le paiement.
+</p>
+
+<p>
+Une fois le paiement terminé, Stripe peut envoyer un événement au serveur grâce
+au webhook.
+</p>
+
+<p>
+Le webhook met alors à jour le paiement et la commande dans MongoDB.
+</p>
+
+
+<h2>53. Flux du scraping</h2>
+
+<p>
+Les scripts Python permettent de récupérer automatiquement des produits depuis
+plusieurs sites pharmaceutiques.
+</p>
+
+<p>
+Le scraper envoie une requête HTTP, analyse la page HTML, récupère les
+informations des produits puis les sauvegarde dans MongoDB.
+</p>
+
+<p>
+Les données peuvent ensuite être récupérées par le backend Node.js et affichées
+dans l'application React.
+</p>
+
+
+<h2>54. Points importants à améliorer</h2>
+
+<p>
+Le premier point concerne les doublons de code. Tu as deux versions du middleware
+<strong>isAdmin</strong>. Il est préférable de conserver une seule fonction
+<strong>isAdmin</strong>.
+</p>
+
+<p>
+Le deuxième point concerne les routes clients. Les routes
+<strong>/customers</strong> sont actuellement publiques. Si elles sont destinées
+au dashboard administrateur, il est préférable d'utiliser :
+</p>
+
+<p class="code">
+auth, isAdmin
+</p>
+
+<p>
+avant les contrôleurs concernés.
+</p>
+
+<p>
+Le troisième point concerne le scraping. Les sélecteurs HTML
+<strong>div.product</strong>, <strong>h2</strong> et
+<strong>span.price</strong> doivent correspondre exactement à la structure
+réelle des sites concernés. Si le site change son HTML, le scraper peut ne plus
+fonctionner.
+</p>
+
+<p>
+Le quatrième point concerne le prix. Dans le scraper, le prix est actuellement
+récupéré comme une chaîne de caractères. Pour effectuer correctement des calculs
+dans MongoDB ou dans le backend, il est préférable de nettoyer puis convertir
+le prix en nombre.
+</p>
+
+<p>
+Le cinquième point concerne les variables sensibles. Les valeurs comme
+<strong>JWT_SECRET</strong> et <strong>STRIPE_SECRET_KEY</strong> doivent être
+conservées dans le fichier <strong>.env</strong> et ne doivent jamais être
+publiées sur GitHub.
+</p>
+
+
+<h2>55. Résumé général</h2>
+
+<p>
+Le backend de cette plateforme Pharma est construit autour de plusieurs
+technologies complémentaires.
+</p>
+
+<p>
+<strong>Node.js et Express</strong> permettent de créer l'API REST et les routes.
+</p>
+
+<p>
+<strong>JWT</strong> permet d'authentifier les utilisateurs et de protéger les
+routes privées.
+</p>
+
+<p>
+<strong>isAdmin</strong> permet de limiter certaines fonctionnalités aux
+administrateurs.
+</p>
+
+<p>
+<strong>Multer</strong> permet de recevoir et stocker les images des produits.
+</p>
+
+<p>
+<strong>MongoDB</strong> permet de stocker les utilisateurs, produits, commandes,
+paiements et paramètres.
+</p>
+
+<p>
+<strong>Stripe</strong> permet de gérer les paiements en ligne.
+</p>
+
+<p>
+<strong>Python Requests et BeautifulSoup</strong> permettent de récupérer les
+produits depuis des sites externes.
+</p>
+
+<p>
+<strong>PyMongo</strong> permet ensuite au scraper Python d'enregistrer les
+produits récupérés directement dans MongoDB.
+</p>
+
+<p>
+L'ensemble forme donc une architecture complète de commerce électronique avec
+gestion des utilisateurs, administration, produits, commandes, paiements,
+statistiques et récupération automatisée de données externes.
+</p>
+
+</div>
+
+</body>
+</html>

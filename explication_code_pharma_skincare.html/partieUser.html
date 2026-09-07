@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Explication du code - PharmaShop</title>
+
+    <style>
+        /* =========================
+           STYLE GENERAL
+        ========================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #263238;
+            line-height: 1.8;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            background: linear-gradient(135deg, #1976d2, #0d47a1);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 38px;
+            font-weight: bold;
+        }
+
+        header p {
+            margin-top: 15px;
+            font-size: 18px;
+            opacity: 0.95;
+        }
+
+        /* =========================
+           CONTENEUR PRINCIPAL
+        ========================= */
+
+        main {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        /* =========================
+           SECTIONS
+        ========================= */
+
+        section {
+            background: white;
+            margin-bottom: 25px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #1976d2;
+        }
+
+        h2 {
+            color: #1565c0;
+            font-size: 25px;
+            margin-top: 0;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e3f2fd;
+        }
+
+        p {
+            font-size: 16px;
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+
+        /* =========================
+           MOTS TECHNIQUES
+        ========================= */
+
+        code {
+            background: #eef5ff;
+            color: #0d47a1;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+        }
+
+        /* =========================
+           BOX IMPORTANT
+        ========================= */
+
+        .important {
+            background: #fff8e1;
+            border-left: 5px solid #ffb300;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        .important h2 {
+            color: #e65100;
+            border-bottom: none;
+        }
+
+        /* =========================
+           BOX ARCHITECTURE
+        ========================= */
+
+        .architecture {
+            background: #e8f5e9;
+            border-left: 5px solid #43a047;
+            padding: 25px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .architecture p {
+            font-weight: bold;
+            text-align: center;
+            color: #1b5e20;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #263238;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+        }
+
+        footer p {
+            text-align: center;
+            margin: 5px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            header h1 {
+                font-size: 28px;
+            }
+
+            header p {
+                font-size: 16px;
+            }
+
+            main {
+                width: 95%;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 21px;
+            }
+
+            p {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>Explication du code React – PharmaShop</h1>
+
+    <p>
+        Documentation complète du fonctionnement de l'application e-commerce
+    </p>
+
+</header>
+
+<main>
+
+<section>
+
+    <h2>1. Présentation générale du projet PharmaShop</h2>
+
+    <p>
+        Le projet PharmaShop est une application e-commerce développée avec React
+        pour le frontend et Node.js, Express et MongoDB pour le backend.
+        L'objectif principal de cette application est de permettre aux utilisateurs
+        de consulter des produits pharmaceutiques et skincare, de rechercher et
+        filtrer les produits, de les ajouter dans un panier, de modifier les
+        quantités, de supprimer des produits, de créer une commande et finalement
+        de réaliser un paiement avec Stripe.
+    </p>
+
+    <p>
+        L'application contient également un système d'authentification permettant
+        à un utilisateur de créer un compte ou de se connecter. Selon le rôle de
+        l'utilisateur, notamment administrateur ou utilisateur normal, l'application
+        peut rediriger vers des interfaces différentes.
+    </p>
+
+    <p>
+        Le frontend React communique avec le backend grâce à Axios, tandis que le
+        backend communique avec MongoDB afin de récupérer ou enregistrer les données.
+        L'ensemble du projet fonctionne donc selon une architecture composée d'une
+        interface frontend, d'une API backend et d'une base de données.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>2. Fonction login()</h2>
+
+    <p>
+        La fonction <code>login()</code> permet de gérer la connexion d'un utilisateur
+        dans l'application. Elle reçoit deux paramètres importants : <code>user</code>,
+        qui représente les informations de l'utilisateur connecté, et
+        <code>token</code>, qui représente généralement un token JWT permettant
+        d'authentifier l'utilisateur.
+    </p>
+
+    <p>
+        La première instruction utilise <code>localStorage.setItem()</code> pour
+        enregistrer les informations de l'utilisateur dans le navigateur.
+        Comme localStorage ne peut pas directement enregistrer un objet JavaScript,
+        <code>JSON.stringify()</code> transforme l'objet utilisateur en texte JSON.
+    </p>
+
+    <p>
+        Le token est ensuite sauvegardé sous la clé <code>token</code>.
+        Enfin, <code>setUser(user)</code> met à jour l'état React contenant
+        l'utilisateur actuellement connecté.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>3. Gestion globale du panier avec CartContext</h2>
+
+    <p>
+        <code>CartContext</code> est utilisé pour gérer le panier de manière globale
+        dans l'application React. Sans Context API, il faudrait transmettre les
+        informations du panier entre plusieurs composants avec des props, ce qui
+        rendrait l'application plus difficile à maintenir.
+    </p>
+
+    <p>
+        Avec <code>createContext()</code>, un espace partagé est créé pour contenir
+        les informations et les fonctions du panier. Le composant
+        <code>CartProvider</code> contient ensuite cet état global et fournit les
+        données aux composants qui se trouvent à l'intérieur du Provider.
+    </p>
+
+    <p>
+        Le panier est initialisé avec <code>useState([])</code>, ce qui signifie
+        qu'au démarrage le tableau cart est vide. Les composants comme Products,
+        Cart et Checkout peuvent ensuite accéder aux mêmes données grâce à
+        <code>useContext()</code>.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>4. Fonction addToCart()</h2>
+
+    <p>
+        La fonction <code>addToCart()</code> permet d'ajouter un produit dans
+        le panier. Avant d'ajouter le produit, le code utilise la méthode
+        <code>find()</code> pour rechercher si un produit possédant le même
+        identifiant <code>_id</code> existe déjà.
+    </p>
+
+    <p>
+        Si le produit existe déjà, la méthode <code>map()</code> parcourt le panier
+        et crée une nouvelle version du produit avec une quantité augmentée de un.
+        L'opérateur spread permet de conserver les autres propriétés du produit.
+    </p>
+
+    <p>
+        Si le produit n'existe pas encore, il est ajouté au tableau avec une
+        propriété <code>quantity: 1</code>. Cette logique permet donc de gérer
+        automatiquement les quantités des produits dans le panier.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>5. Suppression et modification des produits du panier</h2>
+
+    <p>
+        La fonction <code>removeFromCart()</code> permet de supprimer un produit
+        du panier. Elle utilise la méthode <code>filter()</code> afin de créer
+        un nouveau tableau contenant uniquement les produits dont l'identifiant
+        est différent de celui du produit à supprimer.
+    </p>
+
+    <p>
+        La fonction <code>updateQuantity()</code> permet de modifier la quantité
+        d'un produit. Si la nouvelle quantité est inférieure ou égale à zéro,
+        la fonction appelle automatiquement <code>removeFromCart()</code>.
+    </p>
+
+    <p>
+        La fonction <code>clearCart()</code> permet de vider complètement le
+        panier en utilisant <code>setCart([])</code>.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>6. Calcul du nombre de produits et du montant total</h2>
+
+    <p>
+        Le code utilise la méthode <code>reduce()</code> pour effectuer les
+        calculs concernant le panier. La variable <code>cartCount</code>
+        représente le nombre total d'articles présents dans le panier.
+    </p>
+
+    <p>
+        La variable <code>cartTotal</code> représente le montant total de la
+        commande. Pour chaque produit, le prix est multiplié par la quantité,
+        puis le résultat est ajouté au total général.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>7. Fonction useCart()</h2>
+
+    <p>
+        <code>useCart()</code> est un hook personnalisé créé pour simplifier
+        l'utilisation du CartContext. Au lieu d'écrire directement
+        <code>useContext(CartContext)</code> dans chaque composant, le développeur
+        peut simplement appeler <code>useCart()</code>.
+    </p>
+
+    <p>
+        Ce hook permet de récupérer facilement le panier, les fonctions
+        d'ajout et de suppression, la modification des quantités, le nombre
+        d'articles et le montant total.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>8. Composant Auth</h2>
+
+    <p>
+        Le composant <code>Auth</code> permet de gérer deux opérations :
+        la connexion et l'inscription. La variable <code>isLogin</code>
+        permet de déterminer le mode actuel du formulaire.
+    </p>
+
+    <p>
+        Lorsque <code>isLogin</code> vaut true, le formulaire affiche la
+        connexion. Lorsqu'il vaut false, le formulaire affiche l'inscription.
+        Les variables username, email et password sont des états React utilisés
+        pour contrôler les champs du formulaire.
+    </p>
+
+    <p>
+        Le composant utilise également <code>useNavigate()</code> afin de
+        rediriger l'utilisateur vers une autre page après une opération réussie.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>9. Connexion de l'utilisateur</h2>
+
+    <p>
+        Lors d'une connexion, la fonction <code>handleAuth()</code> vérifie
+        d'abord que l'adresse email et le mot de passe sont renseignés.
+        L'utilisation de <code>trim()</code> permet de supprimer les espaces
+        inutiles autour de l'adresse email.
+    </p>
+
+    <p>
+        L'email est également converti en minuscules avec
+        <code>toLowerCase()</code>. Ensuite, Axios envoie une requête POST
+        vers <code>/api/users/login</code>.
+    </p>
+
+    <p>
+        Si la réponse contient un token et un utilisateur, ces informations
+        sont enregistrées dans localStorage. Le rôle de l'utilisateur est
+        ensuite vérifié. Si le rôle est admin, l'utilisateur est redirigé
+        vers <code>/admin</code>. Sinon, il est redirigé vers
+        <code>/products</code>.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>10. Inscription de l'utilisateur</h2>
+
+    <p>
+        Lorsque le formulaire est en mode inscription, le username devient
+        obligatoire en plus de l'email et du mot de passe.
+    </p>
+
+    <p>
+        Les informations sont regroupées dans un objet
+        <code>registerData</code> puis envoyées avec Axios vers
+        <code>/api/users/register</code>.
+    </p>
+
+    <p>
+        Le backend crée le nouvel utilisateur et peut retourner un token
+        ainsi que les informations du compte. Le frontend sauvegarde ces
+        informations dans localStorage lorsqu'elles sont disponibles.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>11. Gestion des erreurs dans Auth</h2>
+
+    <p>
+        Les requêtes de connexion et d'inscription sont placées dans un bloc
+        <code>try/catch</code>. Si le serveur retourne une erreur, le programme
+        entre dans <code>catch</code>.
+    </p>
+
+    <p>
+        Le code utilise <code>err.response?.data?.message</code> afin d'essayer
+        de récupérer le message envoyé par le backend. Le symbole
+        <code>?.</code> correspond à l'optional chaining et permet d'éviter
+        une erreur si certaines propriétés n'existent pas.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>12. Composant Cart</h2>
+
+    <p>
+        Le composant <code>Cart</code> représente la page du panier.
+        Il récupère les informations nécessaires grâce à CartContext.
+        Lorsque <code>cart.length</code> est égal à zéro, l'application
+        affiche un message indiquant que le panier est vide.
+    </p>
+
+    <p>
+        Lorsque le panier contient des produits, <code>cart.map()</code>
+        est utilisé pour afficher chaque article. Pour chaque produit,
+        l'application affiche son nom, son prix, sa quantité et son sous-total.
+    </p>
+
+    <p>
+        Le bouton moins diminue la quantité avec
+        <code>updateQuantity()</code>, tandis que le bouton plus utilise
+        <code>addToCart()</code>. Le bouton supprimer appelle
+        <code>removeFromCart()</code>.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>13. Composant Checkout</h2>
+
+    <p>
+        <code>Checkout</code> représente l'étape de finalisation de la commande.
+        Ce composant récupère les informations provenant soit du panier,
+        soit d'un achat direct.
+    </p>
+
+    <p>
+        <code>useLocation()</code> permet de récupérer les informations
+        transmises lors de la navigation. Si un produit est envoyé directement,
+        il est ajouté à checkoutItems avec une quantité de un.
+    </p>
+
+    <p>
+        Dans le cas contraire, les produits du panier sont utilisés.
+        Le composant contient également un état customer regroupant le prénom,
+        le nom, le téléphone et l'adresse du client.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>14. Gestion du formulaire client</h2>
+
+    <p>
+        La fonction <code>handleChange()</code> permet de mettre à jour
+        dynamiquement les informations du client. Elle utilise le nom du champ
+        HTML comme clé de l'objet customer.
+    </p>
+
+    <p>
+        Cette technique évite de créer une fonction différente pour chaque
+        champ du formulaire. Le formulaire reste ainsi contrôlé par React
+        et les valeurs saisies sont toujours disponibles dans l'état customer.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>15. Récupération de l'identifiant utilisateur</h2>
+
+    <p>
+        La fonction <code>getUserIdFromToken()</code> récupère le token JWT
+        enregistré dans localStorage. Un token JWT possède généralement
+        trois parties séparées par des points.
+    </p>
+
+    <p>
+        Le code récupère la partie centrale, la décode avec
+        <code>atob()</code> puis transforme le résultat JSON en objet
+        JavaScript avec <code>JSON.parse()</code>.
+    </p>
+
+    <p>
+        L'application recherche ensuite une propriété id, _id ou userId.
+        Cela permet de retrouver l'identifiant de l'utilisateur connecté
+        afin de l'associer à la commande.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>16. Préparation des produits pour la commande</h2>
+
+    <p>
+        Avant de créer une commande, le code normalise les informations
+        des produits. La fonction <code>getProductPrice()</code> recherche
+        le prix dans plusieurs propriétés possibles.
+    </p>
+
+    <p>
+        La fonction <code>getProductName()</code> recherche le nom du produit
+        dans plusieurs propriétés possibles comme name, productName ou title.
+    </p>
+
+    <p>
+        La fonction <code>getProductQuantity()</code> recherche la quantité
+        dans qty ou quantity et utilise une quantité minimale de un.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>17. Création de la commande</h2>
+
+    <p>
+        Lorsque l'utilisateur valide le formulaire Checkout,
+        <code>handleSubmit()</code> commence par empêcher le comportement
+        classique du formulaire avec <code>preventDefault()</code>.
+    </p>
+
+    <p>
+        Le code vérifie ensuite les informations du client, les produits,
+        le token et l'identifiant de l'utilisateur.
+    </p>
+
+    <p>
+        Les produits sont transformés en orderItems contenant le produit,
+        son nom, son prix et sa quantité. Le montant total est calculé
+        avec reduce.
+    </p>
+
+    <p>
+        L'objet orderData contient les produits, les informations du client,
+        le moyen de paiement Stripe et le statut initial du paiement.
+        Cet objet est envoyé au backend avec une requête POST vers
+        <code>/api/orders</code>.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>18. Paiement Stripe</h2>
+
+    <p>
+        Après la création de la commande, Checkout récupère l'identifiant
+        de la commande créée par le backend.
+    </p>
+
+    <p>
+        Une deuxième requête est ensuite envoyée vers
+        <code>/api/payments/create-checkout-session</code> afin de demander
+        au backend de créer une session de paiement Stripe.
+    </p>
+
+    <p>
+        Si le backend retourne une URL Stripe valide, le frontend redirige
+        l'utilisateur vers cette URL avec <code>window.location.href</code>.
+        L'utilisateur peut alors effectuer son paiement sur Stripe.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>19. Composant Home</h2>
+
+    <p>
+        Le composant <code>Home</code> représente la page d'accueil de PharmaShop.
+        Il affiche un titre présentant la boutique, un sous-titre expliquant
+        son activité et un bouton permettant d'accéder aux produits.
+    </p>
+
+    <p>
+        Le composant <code>Link</code> de React Router est utilisé pour
+        naviguer vers <code>/products</code> sans recharger complètement
+        l'application.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>20. Composant Orders</h2>
+
+    <p>
+        Le composant <code>Orders</code> sert à afficher l'historique des
+        commandes. Dans le code fourni, les commandes sont récupérées depuis
+        localStorage avec la clé « orders ».
+    </p>
+
+    <p>
+        Si aucune commande n'est disponible, un message indique qu'il n'y a
+        pas encore de commande. Sinon, map est utilisé pour afficher chaque
+        commande avec le client, le téléphone, l'adresse, les produits,
+        le montant total et la date.
+    </p>
+
+    <p>
+        Un point important est que Checkout crée réellement les commandes
+        dans le backend. Si MongoDB est la source officielle des commandes,
+        il serait préférable que Orders récupère les commandes depuis une
+        route API protégée.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>21. Composant Product</h2>
+
+    <p>
+        Le composant <code>Product</code> affiche le détail d'un produit.
+        <code>useParams()</code> récupère l'identifiant du produit depuis
+        l'URL.
+    </p>
+
+    <p>
+        Axios effectue ensuite une requête GET vers
+        <code>/api/products/:id</code>. Le composant possède des états
+        loading et error afin d'afficher correctement les différentes
+        situations pendant la récupération des données.
+    </p>
+
+    <p>
+        Une fois le produit récupéré, l'application peut afficher son nom,
+        son image, son prix, sa catégorie et sa description.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>22. Gestion des images des produits</h2>
+
+    <p>
+        La fonction <code>getImageUrl()</code> permet de construire
+        correctement l'adresse d'une image. Si l'image commence déjà
+        par http, elle est considérée comme une URL complète.
+    </p>
+
+    <p>
+        Si l'image correspond à un chemin relatif, l'adresse du serveur
+        backend est ajoutée devant le chemin. Cette logique est utile lorsque
+        MongoDB conserve seulement le chemin de l'image alors que les fichiers
+        sont servis par le serveur Node.js.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>23. Composant Products</h2>
+
+    <p>
+        <code>Products</code> est la page qui affiche la liste des produits
+        disponibles. Au démarrage, products est initialisé avec un tableau vide.
+    </p>
+
+    <p>
+        useEffect est utilisé pour récupérer les produits depuis l'API.
+        Axios envoie une requête GET vers <code>/api/products</code>.
+    </p>
+
+    <p>
+        Les données reçues sont ensuite enregistrées dans l'état avec
+        <code>setProducts()</code>. React met automatiquement à jour
+        l'affichage lorsque cet état est modifié.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>24. Recherche et filtrage des produits</h2>
+
+    <p>
+        La variable <code>search</code> permet de rechercher un produit
+        par son nom. La méthode <code>filter()</code> est utilisée pour
+        sélectionner les produits correspondant aux critères.
+    </p>
+
+    <p>
+        Le nom est converti en minuscules avec <code>toLowerCase()</code>,
+        puis <code>includes()</code> vérifie si le texte recherché existe
+        dans le nom du produit.
+    </p>
+
+    <p>
+        Le filtre de catégorie compare la catégorie du produit avec la
+        catégorie sélectionnée. Le filtre de prix vérifie que le prix
+        du produit est inférieur ou égal au prix maximum.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>25. Ajout au panier depuis Products</h2>
+
+    <p>
+        La fonction <code>handleAddToCart()</code> permet d'ajouter un produit
+        au panier directement depuis la liste des produits.
+    </p>
+
+    <p>
+        Avant l'ajout, <code>some()</code> vérifie si le produit existe déjà
+        dans le panier en comparant les identifiants <code>_id</code>.
+    </p>
+
+    <p>
+        Cette vérification permet d'éviter les doublons et de laisser
+        CartContext gérer correctement l'augmentation de la quantité.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>26. Fonction Buy Now</h2>
+
+    <p>
+        <code>handleBuyNow()</code> permet de réaliser un achat direct
+        d'un produit. La première étape consiste à vérifier si l'utilisateur
+        est connecté grâce à la présence du token dans localStorage.
+    </p>
+
+    <p>
+        Si aucun token n'existe, le produit sélectionné peut être enregistré
+        temporairement dans localStorage sous la clé pendingProduct, puis
+        l'utilisateur est redirigé vers la page Auth.
+    </p>
+
+    <p>
+        Si l'utilisateur est déjà connecté, il est directement redirigé
+        vers Checkout avec le produit transmis dans l'état de navigation.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>27. Déconnexion</h2>
+
+    <p>
+        <code>handleLogout()</code> permet de déconnecter l'utilisateur.
+        Le token, les informations utilisateur et le produit temporaire
+        pendingProduct sont supprimés de localStorage.
+    </p>
+
+    <p>
+        Après cette opération, l'application redirige l'utilisateur vers
+        la page Auth. La suppression du token empêche les prochaines requêtes
+        protégées d'utiliser l'ancienne session.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>28. Axios et communication avec le backend</h2>
+
+    <p>
+        Axios est utilisé dans plusieurs composants pour communiquer avec
+        l'API backend. Les requêtes GET servent principalement à récupérer
+        les produits ou d'autres informations.
+    </p>
+
+    <p>
+        Les requêtes POST servent à envoyer des données, par exemple lors
+        de la connexion, de l'inscription, de la création d'une commande
+        ou de la création d'une session Stripe.
+    </p>
+
+    <p>
+        Le frontend utilise l'adresse
+        <code>http://localhost:3000/api</code> comme base de l'API dans
+        le code fourni.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>29. Architecture complète de l'application</h2>
+
+    <p>
+        Le fonctionnement global peut être résumé par une chaîne de
+        communication. L'utilisateur interagit d'abord avec l'interface React.
+        React utilise ensuite Axios pour envoyer une requête HTTP vers l'API Express.
+    </p>
+
+    <p>
+        Express reçoit la requête et la transmet au contrôleur approprié.
+        Le contrôleur peut consulter ou modifier les données dans MongoDB
+        à travers les modèles Mongoose.
+    </p>
+
+    <p>
+        Le backend retourne ensuite une réponse JSON. React récupère cette
+        réponse et met à jour ses états avec useState, ce qui provoque une
+        nouvelle mise à jour de l'interface.
+    </p>
+
+    <div class="architecture">
+
+        <p>
+            React → Axios → Express → Controller → MongoDB
+            → JSON → React
+        </p>
+
+    </div>
+
+</section>
+
+
+<section>
+
+    <h2>30. Utilisation de useState</h2>
+
+    <p>
+        <code>useState</code> est l'un des hooks principaux de React.
+        Il permet de conserver une donnée dans un composant et de la modifier.
+    </p>
+
+    <p>
+        Dans PharmaShop, useState est utilisé pour gérer les produits,
+        le panier, les champs des formulaires, les messages d'erreur,
+        les états de chargement et les informations de l'utilisateur.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>31. Utilisation de useEffect</h2>
+
+    <p>
+        <code>useEffect</code> permet d'exécuter une action après le rendu
+        d'un composant. Il est particulièrement important dans PharmaShop
+        pour effectuer les appels API au chargement d'une page.
+    </p>
+
+    <p>
+        Par exemple, Products utilise useEffect pour récupérer les produits,
+        Product l'utilise pour récupérer un produit précis et Checkout
+        l'utilise pour préparer les produits à commander.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>32. Utilisation de React Router</h2>
+
+    <p>
+        React Router permet de gérer les différentes pages de l'application
+        sans recharger complètement le navigateur.
+    </p>
+
+    <p>
+        <code>Link</code> est utilisé pour créer des liens, tandis que
+        <code>useNavigate()</code> permet de réaliser des redirections
+        depuis une fonction JavaScript.
+    </p>
+
+    <p>
+        <code>useParams()</code> permet de récupérer les paramètres présents
+        dans l'URL et <code>useLocation()</code> permet de récupérer les
+        informations liées à la navigation.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>33. Gestion des erreurs et des chargements</h2>
+
+    <p>
+        Les appels vers le backend peuvent échouer pour différentes raisons :
+        serveur arrêté, mauvaise URL, erreur réseau, problème d'authentification
+        ou erreur côté serveur.
+    </p>
+
+    <p>
+        C'est pourquoi le code utilise <code>try</code>, <code>catch</code>
+        et parfois <code>finally</code>. try contient l'opération principale,
+        catch récupère l'erreur et finally permet de réaliser une action
+        qui doit avoir lieu dans tous les cas.
+    </p>
+
+</section>
+
+
+<section class="important">
+
+    <h2>34. Points importants à vérifier dans le projet</h2>
+
+    <p>
+        Un premier point concerne le composant Orders. Dans le code fourni,
+        Orders utilise localStorage alors que Checkout envoie les commandes
+        au backend. Il existe donc un risque que les commandes créées dans
+        MongoDB ne soient pas visibles dans Orders.
+    </p>
+
+    <p>
+        Pour une application réelle, il est recommandé d'utiliser MongoDB
+        comme source principale des commandes et de créer une route backend
+        permettant à l'utilisateur connecté de récupérer ses commandes.
+    </p>
+
+    <p>
+        Un deuxième point concerne le filtre par catégorie dans Products.
+        Le code contient un état category et une condition de filtrage,
+        mais le JSX fourni ne montre pas nécessairement un élément permettant
+        à l'utilisateur de sélectionner une catégorie.
+    </p>
+
+    <p>
+        Un troisième point concerne handleBuyNow. La fonction est prévue
+        pour effectuer un achat direct, mais il faut vérifier que le bouton
+        « Acheter maintenant » est réellement présent dans l'interface Products.
+    </p>
+
+</section>
+
+
+<section>
+
+    <h2>35. Conclusion générale</h2>
+
+    <p>
+        Le code PharmaShop met en place une application e-commerce complète
+        basée sur React. React est responsable de l'interface utilisateur et
+        de la gestion des états, Context API permet de partager le panier
+        entre les composants, React Router permet de gérer la navigation,
+        Axios assure la communication avec l'API et localStorage conserve
+        certaines informations de session.
+    </p>
+
+    <p>
+        Le backend Node.js et Express traite les requêtes, vérifie les
+        utilisateurs, crée les commandes et prépare les paiements Stripe.
+        MongoDB constitue la base de données permettant de conserver les
+        utilisateurs, produits et commandes.
+    </p>
+
+    <p>
+        Le fonctionnement général est donc le suivant : l'utilisateur
+        consulte les produits, recherche ou filtre un produit, ajoute ses
+        produits au panier, se connecte si nécessaire, remplit les informations
+        de livraison, crée une commande, puis est redirigé vers Stripe pour
+        effectuer le paiement.
+    </p>
+
+    <p>
+        Cette organisation constitue une bonne base pour une application
+        e-commerce moderne, à condition de maintenir une séparation claire
+        entre les données temporaires du navigateur et les données officielles
+        stockées dans le backend et MongoDB.
+    </p>
+
+</section>
+
+</main>
+
+
+<footer>
+
+    <p>PharmaShop - Documentation technique</p>
+
+    <p>
+        Explication du frontend React, du panier, de l'authentification,
+        des commandes et du paiement Stripe.
+    </p>
+
+</footer>
+
+</body>
+</html>
