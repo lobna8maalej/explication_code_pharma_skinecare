@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>React Components Explanation - PharmaShop</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      color: #222;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1976d2, #0d47a1);
+      color: white;
+      padding: 45px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    section {
+      background: white;
+      margin-bottom: 25px;
+      padding: 25px 30px;
+      border-radius: 10px;
+      border-left: 5px solid #1976d2;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      color: #0d47a1;
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    code {
+      background: #eef3f8;
+      padding: 3px 7px;
+      border-radius: 4px;
+      color: #c62828;
+      font-family: Consolas, monospace;
+    }
+
+    .important {
+      background: #fff3cd;
+      border-left: 5px solid #ffc107;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+
+    .architecture {
+      background: #e8f5e9;
+      border-left: 5px solid #43a047;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    footer {
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 25px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 700px) {
+      header h1 {
+        font-size: 27px;
+      }
+
+      section {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>PharmaShop Project Explanation</h1>
+  <p>React Router, route protection, components, navigation and administration</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>1. General Code Overview</h2>
+
+    <p>
+      The code presented corresponds to the frontend part of the
+      <strong>PharmaShop</strong> project.
+      The application is developed with React and uses
+      <code>react-router-dom</code> to manage navigation between the different pages.
+    </p>
+
+    <p>
+      The project contains two main parts:
+      one part intended for users and another part intended for the administrator.
+    </p>
+
+    <p>
+      Users can browse products, add products to the cart,
+      place an order and access the payment process.
+      The administrator has additional pages for managing
+      products, orders, payments, customers, sales and settings.
+    </p>
+  </section>
+
+  <section>
+    <h2>2. The AdminRoute Component</h2>
+
+    <p>
+      <code>AdminRoute</code> is a component used to protect administrator routes.
+      Its purpose is to prevent regular users from accessing pages reserved for administrators.
+    </p>
+
+    <p>
+      The component first retrieves the token from
+      <code>localStorage</code> using
+      <code>localStorage.getItem("token")</code>.
+    </p>
+
+    <p>
+      The token is used to determine whether the user is logged in.
+      If no token exists, the user is considered unauthenticated.
+    </p>
+
+    <p>
+      In this case, <code>Navigate</code> automatically redirects the user to
+      <code>/auth</code>, which corresponds to the login page.
+    </p>
+
+    <p>
+      The component then retrieves the user's information from
+      <code>localStorage</code>.
+      The data is converted from JSON into a JavaScript object using
+      <code>JSON.parse()</code>.
+    </p>
+
+    <p>
+      The program then checks:
+      <code>user.role !== "admin"</code>.
+      If the user is logged in but does not have the
+      <strong>admin</strong> role, they are redirected to <code>/products</code>.
+    </p>
+
+    <p>
+      If the token exists and the user's role is
+      <strong>admin</strong>, the component returns
+      <code>children</code>.
+      This means that the administrator page can be displayed.
+    </p>
+
+    <div class="important">
+      <strong>Important:</strong>
+      AdminRoute protects navigation on the frontend, but real security must
+      also be verified on the backend using the JWT token and the user's role.
+    </div>
+  </section>
+
+  <section>
+    <h2>3. How Navigate Works</h2>
+
+    <p>
+      <code>Navigate</code> is provided by React Router.
+      It allows the application to automatically redirect the user to another URL.
+    </p>
+
+    <p>
+      For example, <code>&lt;Navigate to="/auth" replace /&gt;</code>
+      redirects the user to the login page.
+    </p>
+
+    <p>
+      The <code>replace</code> property replaces the current entry
+      in the browser history instead of adding a new one.
+    </p>
+  </section>
+
+  <section>
+    <h2>4. The AdminSidebar Component</h2>
+
+    <p>
+      <code>AdminSidebar</code> represents the sidebar menu of the administrator area.
+    </p>
+
+    <p>
+      It uses the <code>Link</code> component from React Router to allow
+      the administrator to navigate between the different pages without
+      completely reloading the application.
+    </p>
+
+    <p>
+      The first link points to <code>/admin</code>.
+      This URL corresponds to the administrator dashboard.
+    </p>
+
+    <p>
+      The second link points to <code>/admin/products</code>.
+      It provides access to product management.
+    </p>
+
+    <p>
+      The third link points to <code>/admin/orders</code>.
+      It allows the administrator to view and manage orders.
+    </p>
+
+    <p>
+      The <code>/products</code> link allows the administrator to return
+      to the public store.
+    </p>
+  </section>
+
+  <section>
+    <h2>5. AdminSidebar Styling</h2>
+
+    <p>
+      The menu styling is defined in the JavaScript object
+      <code>styles</code>.
+    </p>
+
+    <p>
+      The property <code>position: "fixed"</code> keeps the menu
+      fixed on the left side of the screen.
+    </p>
+
+    <p>
+      <code>height: "100vh"</code> means that the sidebar occupies
+      the entire height of the window.
+    </p>
+
+    <p>
+      <code>display: "flex"</code> and
+      <code>flexDirection: "column"</code> organize
+      the links vertically.
+    </p>
+
+    <p>
+      The background color <code>#111</code> gives the menu a dark appearance.
+    </p>
+  </section>
+
+  <section>
+    <h2>6. The Footer Component</h2>
+
+    <p>
+      <code>Footer</code> represents the footer of the application.
+      It contains several important pieces of information about the store.
+    </p>
+
+    <p>
+      The first part corresponds to the company presentation.
+      It explains that PharmaShop offers skincare,
+      beauty and pharmacy products.
+    </p>
+
+    <p>
+      The second part contains contact information:
+      email address, phone number and location.
+    </p>
+
+    <p>
+      The third part presents the available services:
+      skincare products, pharmaceutical products, cosmetics and fast delivery.
+    </p>
+
+    <p>
+      The last part displays the copyright notice:
+      <code>© 2026 Pharma & Skincare Store</code>.
+    </p>
+  </section>
+
+  <section>
+    <h2>7. Footer.css</h2>
+
+    <p>
+      The Footer component imports the
+      <code>Footer.css</code> file.
+      This means that the graphical presentation of the footer can be separated
+      from its React logic.
+    </p>
+
+    <p>
+      This approach keeps the React code cleaner and
+      centralizes the footer styles in a dedicated CSS file.
+    </p>
+  </section>
+
+  <section>
+    <h2>8. The Loader Component</h2>
+
+    <p>
+      <code>Loader</code> is a component used to display a message
+      while data is being loaded.
+    </p>
+
+    <p>
+      It displays an element containing the CSS class
+      <code>spinner</code>.
+      This class can be defined in a CSS file to create
+      a loading animation.
+    </p>
+
+    <p>
+      The text <code>Loading...</code> informs the user that
+      the data is still being retrieved.
+    </p>
+
+    <p>
+      This component is particularly useful during API calls,
+      for example when the application retrieves products from MongoDB
+      through the backend.
+    </p>
+  </section>
+
+  <section>
+    <h2>9. The Navbar Component</h2>
+
+    <p>
+      <code>Navbar</code> represents the main navigation bar
+      of the store.
+    </p>
+
+    <p>
+      It uses <code>Link</code> to navigate to the home page
+      and the products page.
+    </p>
+
+    <p>
+      The component also uses <code>useNavigate()</code>
+      to redirect the user after logging out.
+    </p>
+  </section>
+
+  <section>
+    <h2>10. Retrieving the User in Navbar</h2>
+
+    <p>
+      The code retrieves the user with:
+      <code>JSON.parse(localStorage.getItem("user"))</code>.
+    </p>
+
+    <p>
+      If no user is stored, the
+      <code>user</code> variable is empty.
+      In this case, the <strong>Login</strong> button is displayed.
+    </p>
+
+    <p>
+      If a user exists, the <strong>Logout</strong> button
+      is displayed instead.
+    </p>
+  </section>
+
+  <section>
+    <h2>11. The logout Function</h2>
+
+    <p>
+      The <code>logout()</code> function allows the user to log out.
+    </p>
+
+    <p>
+      It removes the account stored in
+      <code>localStorage</code> using
+      <code>localStorage.removeItem("user")</code>.
+    </p>
+
+    <p>
+      It also removes the JWT token using
+      <code>localStorage.removeItem("token")</code>.
+    </p>
+
+    <p>
+      Finally, <code>navigate("/auth")</code> redirects the user to
+      the login page.
+    </p>
+  </section>
+
+  <section>
+    <h2>12. The PrivateRoute Component</h2>
+
+    <p>
+      <code>PrivateRoute</code> protects pages that require
+      authentication.
+    </p>
+
+    <p>
+      Unlike <code>AdminRoute</code>, it does not check the user's role.
+      It only checks whether the token exists.
+    </p>
+
+    <p>
+      If no token exists, the user is redirected to
+      <code>/auth</code>.
+    </p>
+
+    <p>
+      If the token exists, the component returns
+      <code>children</code> and grants access to the page.
+    </p>
+
+    <p>
+      In your application, <code>PrivateRoute</code> is used in particular
+      to protect the cart and the Checkout page.
+    </p>
+  </section>
+
+  <section>
+    <h2>13. Difference Between PrivateRoute and AdminRoute</h2>
+
+    <p>
+      <strong>PrivateRoute</strong> simply checks whether the user
+      is logged in.
+    </p>
+
+    <p>
+      <strong>AdminRoute</strong> checks two conditions:
+      the user must be logged in and their role must be
+      <code>admin</code>.
+    </p>
+
+    <p>
+      It can therefore be summarized as follows:
+      PrivateRoute = logged-in user.
+      AdminRoute = logged-in user + administrator.
+    </p>
+  </section>
+
+  <section>
+    <h2>14. The ProductCard Component</h2>
+
+    <p>
+      <code>ProductCard</code> displays a product as
+      a card on the products page.
+    </p>
+
+    <p>
+      The component receives a product through the
+      <code>product</code> property.
+    </p>
+
+    <p>
+      It displays the product image, name,
+      category and price.
+    </p>
+
+    <p>
+      The price is displayed using the currency
+      <strong>DT</strong>, which corresponds to the Tunisian dinar.
+    </p>
+  </section>
+
+  <section>
+    <h2>15. Using CartContext in ProductCard</h2>
+
+    <p>
+      The component uses
+      <code>useContext(CartContext)</code>
+      to access the <code>addToCart</code> function.
+    </p>
+
+    <p>
+      This function normally allows the selected product
+      to be added to the application's global cart.
+    </p>
+
+    <div class="important">
+      <strong>Important error in the code:</strong>
+      the button calls <code>ajouteraupanier(product)</code>,
+      but this function is not defined in the component.
+    </div>
+
+    <p>
+      Since the function retrieved from the context is called
+      <code>addToCart</code>, the button should normally use
+      <code>addToCart(product)</code>.
+    </p>
+  </section>
+
+  <section>
+    <h2>16. Displaying the Product Image</h2>
+
+    <p>
+      The image is constructed using:
+      <code>http://localhost:3000/${product.image}</code>.
+    </p>
+
+    <p>
+      This means that the images are expected to be served
+      by the Node.js backend running on port 3000.
+    </p>
+
+    <p>
+      For example, if <code>product.image</code> contains
+      <code>uploads/cream.jpg</code>, the application will look for
+      the image at the corresponding address on the backend server.
+    </p>
+  </section>
+
+  <section>
+    <h2>17. The App.jsx File</h2>
+
+    <p>
+      <code>App.jsx</code> is the main component that organizes
+      the different routes of the application.
+    </p>
+
+    <p>
+      It imports <code>BrowserRouter</code>,
+      <code>Routes</code>,
+      <code>Route</code> and
+      <code>Navigate</code> from React Router.
+    </p>
+
+    <p>
+      It also imports all user and administrator pages.
+    </p>
+  </section>
+
+  <section>
+    <h2>18. BrowserRouter</h2>
+
+    <p>
+      <code>BrowserRouter</code> allows React Router to manage
+      the application's URLs.
+    </p>
+
+    <p>
+      Thanks to it, a URL such as
+      <code>/products</code> can display the Products page
+      without reloading the entire application.
+    </p>
+  </section>
+
+  <section>
+    <h2>19. Routes and Route</h2>
+
+    <p>
+      <code>Routes</code> contains all the available routes
+      in the application.
+    </p>
+
+    <p>
+      Each <code>Route</code> element associates a URL with a component.
+    </p>
+
+    <p>
+      For example:
+      <code>/products</code> displays the
+      <code>Products</code> component.
+    </p>
+
+    <p>
+      Similarly,
+      <code>/checkout</code> displays the Checkout page.
+    </p>
+  </section>
+
+  <section>
+    <h2>20. Home Route</h2>
+
+    <p>
+      The <code>/</code> route corresponds to the home page.
+    </p>
+
+    <p>
+      It displays the <code>Home</code> component.
+    </p>
+  </section>
+
+  <section>
+    <h2>21. Products Route</h2>
+
+    <p>
+      The <code>/products</code> route displays
+      the list of products available in the store.
+    </p>
+
+    <p>
+      This page is public because it is not wrapped
+      by <code>PrivateRoute</code>.
+    </p>
+  </section>
+
+  <section>
+    <h2>22. Cart Route</h2>
+
+    <p>
+      The <code>/cart</code> route is protected by
+      <code>PrivateRoute</code>.
+    </p>
+
+    <p>
+      This means that a user must be logged in
+      to access the cart.
+    </p>
+
+    <p>
+      If the user is not logged in, they will automatically
+      be redirected to <code>/auth</code>.
+    </p>
+  </section>
+
+  <section>
+    <h2>23. Checkout Route</h2>
+
+    <p>
+      The <code>/checkout</code> route is also protected
+      by <code>PrivateRoute</code>.
+    </p>
+
+    <p>
+      Therefore, only authenticated users can access
+      the page used to complete an order.
+    </p>
+  </section>
+
+  <section>
+    <h2>24. Auth Route</h2>
+
+    <p>
+      The <code>/auth</code> route displays the
+      <code>Auth</code> component.
+    </p>
+
+    <p>
+      This page generally allows the user
+      to log in or create an account.
+    </p>
+
+    <p>
+      It remains accessible even when the user
+      is not logged in.
+    </p>
+  </section>
+
+  <section>
+    <h2>25. Admin Dashboard Route</h2>
+
+    <p>
+      The <code>/admin</code> route displays
+      <code>AdminDashboard</code>.
+    </p>
+
+    <p>
+      This route is protected by <code>AdminRoute</code>.
+    </p>
+
+    <p>
+      Therefore, only a user with the
+      <code>admin</code> role can access the dashboard.
+    </p>
+  </section>
+
+  <section>
+    <h2>26. Admin Products Route</h2>
+
+    <p>
+      The <code>/admin/products</code> route displays
+      <code>AdminProducts</code>.
+    </p>
+
+    <p>
+      This page is intended for product management
+      by the administrator.
+    </p>
+
+    <p>
+      It is protected by <code>AdminRoute</code>.
+    </p>
+  </section>
+
+  <section>
+    <h2>27. Admin Orders Route</h2>
+
+    <p>
+      The <code>/admin/orders</code> route displays
+      <code>AdminOrders</code>.
+    </p>
+
+    <p>
+      It allows the administrator to view and manage
+      customer orders.
+    </p>
+
+    <p>
+      Like the other administrator pages,
+      it is protected by <code>AdminRoute</code>.
+    </p>
+  </section>
+
+  <section>
+    <h2>28. Admin Payments Route</h2>
+
+    <p>
+      The <code>/admin/payments</code> route displays
+      <code>AdminPayments</code>.
+    </p>
+
+    <p>
+      This page is intended for viewing or managing
+      payments made in the store.
+    </p>
+  </section>
+
+  <section>
+    <h2>29. Admin Customers Route</h2>
+
+    <p>
+      The <code>/admin/customers</code> route displays
+      <code>AdminCustomers</code>.
+    </p>
+
+    <p>
+      This page allows the administrator to view
+      registered customers in the application.
+    </p>
+  </section>
+
+  <section>
+    <h2>30. Admin Sales Route</h2>
+
+    <p>
+      The <code>/admin/sales</code> route displays
+      <code>AdminSales</code>.
+    </p>
+
+    <p>
+      It can be used to display statistics
+      or information about completed sales.
+    </p>
+  </section>
+
+  <section>
+    <h2>31. Admin Settings Route</h2>
+
+    <p>
+      The <code>/admin/settings</code> route displays
+      <code>AdminSettings</code>.
+    </p>
+
+    <p>
+      This page is intended for configuring
+      the administrator area.
+    </p>
+  </section>
+
+  <section>
+    <h2>32. Protecting Administrator Routes</h2>
+
+    <p>
+      All routes beginning with
+      <code>/admin</code> are placed inside
+      <code>AdminRoute</code>.
+    </p>
+
+    <p>
+      This creates a common protection layer.
+      If the user is not an administrator,
+      they cannot display these pages.
+    </p>
+
+    <p>
+      This organization avoids repeating the role verification logic
+      in every administrator page.
+    </p>
+  </section>
+
+  <section>
+    <h2>33. Non-Existing Route</h2>
+
+    <p>
+      The <code>*</code> route corresponds to all URLs
+      that do not match any previously defined route.
+    </p>
+
+    <p>
+      In this case, <code>Navigate</code> redirects the user
+      to the home page <code>/</code>.
+    </p>
+
+    <p>
+      This prevents a blank page or an error
+      when the user enters an incorrect URL.
+    </p>
+  </section>
+
+  <section>
+    <h2>34. Footer in App.jsx</h2>
+
+    <p>
+      The <code>Footer</code> component is placed after
+      <code>Routes</code>, but still inside
+      <code>BrowserRouter</code>.
+    </p>
+
+    <p>
+      This means that the footer will be displayed globally
+      throughout the application, regardless of the current route.
+    </p>
+
+    <div class="important">
+      If you want to hide the Footer on certain pages,
+      such as administrator pages, you will need to add conditional logic
+      based on the current URL.
+    </div>
+  </section>
+
+  <section>
+    <h2>35. General Navigation Architecture</h2>
+
+    <p>
+      The application follows a navigation architecture
+      organized around React Router.
+    </p>
+
+    <p class="architecture">
+      BrowserRouter → Routes → Route → Page
+    </p>
+
+    <p>
+      For private pages:
+    </p>
+
+    <p class="architecture">
+      Route → PrivateRoute → Token verification → Page
+    </p>
+
+    <p>
+      For administrator pages:
+    </p>
+
+    <p class="architecture">
+      Route → AdminRoute → Token + admin role → Page
+    </p>
+  </section>
+
+  <section>
+    <h2>36. Overall Project Organization</h2>
+
+    <p>
+      The project can be organized into several folders.
+    </p>
+
+    <p>
+      The <code>pages</code> folder contains pages intended
+      for users such as Home, Products, Cart, Checkout and Auth.
+    </p>
+
+    <p>
+      The <code>admin</code> folder contains pages reserved
+      for the administrator.
+    </p>
+
+    <p>
+      The <code>components</code> folder contains reusable components
+      such as Navbar, Footer, Loader, PrivateRoute,
+      AdminRoute and ProductCard.
+    </p>
+
+    <p>
+      The <code>context</code> folder can contain the
+      <code>CartContext</code>, which allows cart information
+      to be shared between multiple components.
+    </p>
+  </section>
+
+  <section>
+    <h2>37. User Access Flow</h2>
+
+    <p>
+      When a user opens the application, they can access
+      the home page and the list of products.
+    </p>
+
+    <p>
+      When they want to access the cart or checkout,
+      <code>PrivateRoute</code> checks whether the token exists.
+    </p>
+
+    <p>
+      If the token is missing, the user is sent to the
+      login page.
+    </p>
+
+    <p>
+      After logging in, the user can access the
+      private features of the store.
+    </p>
+  </section>
+
+  <section>
+    <h2>38. Administrator Access Flow</h2>
+
+    <p>
+      When a user wants to access
+      <code>/admin</code> or another administrator route,
+      <code>AdminRoute</code> is executed.
+    </p>
+
+    <p>
+      The component first checks whether the token exists.
+    </p>
+
+    <p>
+      It then retrieves the user's information
+      from <code>localStorage</code>.
+    </p>
+
+    <p>
+      Finally, it verifies that
+      <code>user.role === "admin"</code>.
+    </p>
+
+    <p>
+      If all conditions are satisfied,
+      the administrator page is displayed.
+    </p>
+  </section>
+
+  <section>
+    <h2>39. Important Point to Fix in ProductCard</h2>
+
+    <p>
+      In your <code>ProductCard</code> component, you retrieve:
+      <code>const { addToCart } = useContext(CartContext)</code>.
+    </p>
+
+    <p>
+      However, the button uses:
+      <code>ajouteraupanier(product)</code>.
+    </p>
+
+    <p>
+      This function does not exist in the presented code.
+      This will cause a JavaScript error when the user
+      clicks the button.
+    </p>
+
+    <p>
+      The function retrieved from the context is
+      <code>addToCart</code>.
+      Therefore, this function should be used to add the product
+      to the cart.
+    </p>
+  </section>
+
+  <section>
+    <h2>40. Conclusion</h2>
+
+    <p>
+      This code provides a complete structure for a
+      React store with a clear separation between users
+      and administrators.
+    </p>
+
+    <p>
+      <code>PrivateRoute</code> protects features that require
+      authentication.
+    </p>
+
+    <p>
+      <code>AdminRoute</code> protects features reserved
+      for administrators.
+    </p>
+
+    <p>
+      <code>Navbar</code> provides the main navigation and logout functionality.
+    </p>
+
+    <p>
+      <code>AdminSidebar</code> allows the administrator to navigate
+      through the management area.
+    </p>
+
+    <p>
+      <code>ProductCard</code> displays products
+      and allows them to be added to the cart.
+    </p>
+
+    <p>
+      <code>Footer</code> displays the store's general information.
+    </p>
+
+    <p>
+      Finally, <code>App.jsx</code> centralizes all routes
+      and defines the navigation structure of the PharmaShop application.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <p>Pharma & Skincare Store — React Code Documentation</p>
+  <p>© 2026 All rights reserved</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Explicação da Interface de Administração Pharma</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f7fa;
+        color: #222;
+        line-height: 1.7;
+        margin: 0;
+        padding: 40px;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        background-color: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 40px;
+        color: #222;
+    }
+
+    h2 {
+        margin-top: 35px;
+        padding: 12px 15px;
+        background-color: #e8f5e9;
+        border-left: 5px solid #2e7d32;
+        color: #222;
+    }
+
+    p {
+        margin: 15px 0;
+    }
+
+    .code {
+        background-color: #f1f1f1;
+        padding: 15px;
+        border-radius: 6px;
+        font-family: Consolas, monospace;
+        white-space: pre-wrap;
+    }
+
+    .important {
+        background-color: #fff3cd;
+        padding: 15px;
+        border-left: 5px solid #ffc107;
+        border-radius: 5px;
+    }
+
+    .success {
+        background-color: #e8f5e9;
+        padding: 15px;
+        border-left: 5px solid #2e7d32;
+        border-radius: 5px;
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Explicação da Interface de Administração Pharma</h1>
+
+<h2>1. Descrição geral</h2>
+
+<p> Esta parte do projeto corresponde à interface de administração da plataforma Pharma. Ela é desenvolvida com React e permite que o administrador gerencie produtos, pedidos, pagamentos, vendas, configurações e clientes. </p>
+
+<p> A interface se comunica com o backend por meio do Axios. O backend fornece APIs REST desenvolvidas com Node.js e Express. </p>
+
+<p> O fluxo geral é o seguinte: </p>
+
+<p class="code"> React
+    ↓ Axios
+    ↓ API Express
+    ↓ Controllers
+    ↓ MongoDB </p>
+
+<h2>2. Componente AdminCustomers</h2>
+
+<p> O componente <strong>AdminCustomers</strong> representa a página que permite ao administrador consultar e excluir os clientes registrados na plataforma. </p>
+
+<p> Ele utiliza os hooks do React <strong>useState</strong> e <strong>useEffect</strong>. </p>
+
+<h2>3. Importação de useEffect e useState</h2>
+
+<p> O código começa importando <strong>useEffect</strong> e <strong>useState</strong> do React. </p>
+
+<p> <strong>useState</strong> permite criar e modificar os dados internos do componente. </p>
+
+<p> <strong>useEffect</strong> permite executar automaticamente uma função quando o componente é carregado. </p>
+
+<h2>4. Importação do Axios</h2>
+
+<p> O Axios é utilizado para enviar solicitações HTTP ao backend. </p>
+
+<p> Neste componente, o Axios é utilizado principalmente para obter a lista de clientes e excluir um cliente. </p>
+
+<h2>5. URL da API</h2>
+
+<p> A constante <strong>API</strong> contém o endereço principal do backend: </p>
+
+<p class="code"> http://localhost:3000/api </p>
+
+<p> Todas as solicitações deste componente utilizam esse endereço como URL base. </p>
+
+<h2>6. Estado customers</h2>
+
+<p> O estado <strong>customers</strong> contém a lista de clientes obtidos do MongoDB. </p>
+
+<p> Ele é inicializado com um array vazio: </p>
+
+<p class="code"> const [customers, setCustomers] = useState([]); </p>
+
+<p> <strong>setCustomers</strong> permite modificar essa lista. </p>
+
+<h2>7. Estado loading</h2>
+
+<p> O estado <strong>loading</strong> permite saber se os dados ainda estão sendo carregados. </p>
+
+<p> Ele começa com o valor <strong>true</strong>. Durante esse período, o usuário vê a mensagem <strong>Loading customers...</strong>. </p>
+
+<h2>8. Estado error</h2>
+
+<p> O estado <strong>error</strong> permite armazenar uma possível mensagem de erro. </p>
+
+<p> Se ocorrer um erro durante a comunicação com o backend, a mensagem é exibida ao administrador. </p>
+
+<h2>9. Função fetchCustomers</h2>
+
+<p> A função <strong>fetchCustomers</strong> permite obter a lista de clientes do backend. </p>
+
+<p> Primeiro, ela ativa o estado de carregamento com: </p>
+
+<p class="code"> setLoading(true); </p>
+
+<p> Depois, redefine a mensagem de erro anterior com: </p>
+
+<p class="code"> setError(""); </p>
+
+<h2>10. Solicitação GET de clientes</h2>
+
+<p> O Axios envia posteriormente uma solicitação GET para: </p>
+
+<p class="code"> GET /api/users/customers </p>
+
+<p> O backend retorna os clientes registrados. </p>
+
+<p> Se a resposta contiver <strong>success: true</strong>, a lista <strong>response.data.customers</strong> é armazenada no estado <strong>customers</strong>. </p>
+
+<h2>11. Tratamento de uma resposta sem clientes</h2>
+
+<p> Se o backend retornar uma resposta negativa, o array de clientes é redefinido e uma mensagem de erro é exibida. </p>
+
+<p> Isso evita mostrar dados antigos quando a solicitação falha. </p>
+
+<h2>12. Tratamento de erros do Axios</h2>
+
+<p> O bloco <strong>catch</strong> gerencia os erros provenientes da solicitação HTTP. </p>
+
+<p> O código tenta primeiro obter a mensagem enviada pelo backend por meio de: <strong>error.response?.data?.message</strong>. </p>
+
+<p> Se nenhuma mensagem existir, uma mensagem de erro geral é exibida. </p>
+
+<h2>13. Bloco finally</h2>
+
+<p> O bloco <strong>finally</strong> é executado tanto quando a solicitação é bem-sucedida quanto quando ocorre uma falha. </p>
+
+<p> Ele permite desativar o estado de carregamento por meio de: </p>
+
+<p class="code"> setLoading(false); </p>
+
+<h2>14. useEffect para carregar os clientes</h2>
+
+<p> O hook <strong>useEffect</strong> chama automaticamente <strong>fetchCustomers()</strong> quando a página é carregada. </p>
+
+<p> O array vazio <strong>[]</strong> significa que essa função é executada apenas uma vez quando o componente é montado. </p>
+
+<h2>15. Exclusão de um cliente</h2>
+
+<p> A função <strong>handleDelete</strong> permite excluir um cliente. Ela recebe o ID do MongoDB do cliente. </p>
+
+<h2>16. Confirmação antes da exclusão</h2>
+
+<p> Antes de excluir o cliente, o código utiliza: </p>
+
+<p class="code"> window.confirm(...) </p>
+
+<p> Uma janela de confirmação pergunta ao administrador se ele realmente deseja excluir o cliente. </p>
+
+<p> Se o administrador decidir cancelar, a função é interrompida imediatamente. </p>
+
+<h2>17. Solicitação DELETE</h2>
+
+<p> Se o administrador confirmar, o Axios envia uma solicitação DELETE para: </p>
+
+<p class="code"> DELETE /api/users/customers/:id </p>
+
+<p> O ID do cliente é incluído na URL. </p>
+
+<h2>18. Exclusão imediata no React</h2>
+
+<p> Quando o backend confirma a exclusão, o cliente também é removido do array do React. </p>
+
+<p> O código utiliza a função <strong>filter()</strong> para manter todos os clientes, exceto aquele que acabou de ser excluído. </p>
+
+<p> Isso permite atualizar imediatamente a interface sem precisar recarregar toda a página. </p>
+
+<h2>19. Estado Loading em AdminCustomers</h2>
+
+<p> Quando <strong>loading</strong> é igual a true, o componente exibe uma página simples que contém o título Customers e a mensagem <strong>Loading customers...</strong>. </p>
+
+<h2>20. Estado Error em AdminCustomers</h2>
+
+<p> Quando o estado <strong>error</strong> contém uma mensagem, a página exibe uma seção de erro. </p>
+
+<p> Um botão <strong>Retry</strong> permite ao administrador chamar novamente <strong>fetchCustomers()</strong> para repetir a solicitação. </p>
+
+<h2>21. Exibir o número de clientes</h2>
+
+<p> Quando os dados são carregados, o componente exibe o número total de clientes por meio de: </p>
+
+<p class="code"> customers.length </p>
+
+<p> Isso permite que o administrador saiba imediatamente o número de clientes armazenados no banco de dados. </p>
+
+<h2>22. Exibir quando não há clientes</h2>
+
+<p> Se o array <strong>customers</strong> estiver vazio, o componente exibe <strong>No customers</strong>. </p>
+
+<p> Ele também indica que nenhum usuário com a função <strong>user</strong> foi encontrado. </p>
+
+<h2>23. Tabela de clientes</h2>
+
+<p> Quando existem clientes, eles são exibidos em uma tabela HTML. </p>
+
+<p> A tabela contém as colunas ID, Username, Email, Role, Registration e Actions. </p>
+
+<h2>24. Função map</h2>
+
+<p> A função <strong>map()</strong> percorre todos os clientes e cria uma linha HTML para cada cliente. </p>
+
+<p> Cada linha utiliza como chave o ID exclusivo do MongoDB do cliente. </p>
+
+<h2>25. Exibir o ID</h2>
+
+<p> O código utiliza: </p>
+
+<p class="code"> customer._id.slice(-8) </p>
+
+<p> Isso permite exibir somente os últimos oito caracteres do ID do MongoDB para tornar a tabela mais fácil de ler. </p>
+
+<h2>26. Exibir o username</h2>
+
+<p> O nome de usuário é exibido por meio de: </p>
+
+<p class="code"> customer.username </p>
+
+<p> Ele é colocado dentro de uma tag <strong>strong</strong> para destacá-lo. </p>
+
+<h2>27. Exibir o email</h2>
+
+<p> O endereço de e-mail do cliente é exibido por meio de: </p>
+
+<p class="code"> customer.email </p>
+
+<h2>28. Exibir a função</h2>
+
+<p> A função é exibida dentro de um badge por meio de: </p>
+
+<p class="code"> customer.role </p>
+
+<p> Nesta página, os clientes recuperados normalmente possuem a função <strong>user</strong>. </p>
+
+<h2>29. Exibir a data de registro</h2>
+
+<p> O código verifica se <strong>createdAt</strong> existe. Se esse valor existir, ele é convertido em um objeto Date do JavaScript. </p>
+
+<p> O método <strong>toLocaleDateString("fr-FR")</strong> permite exibir a data de acordo com o formato francês. </p>
+
+<h2>30. Botão Excluir</h2>
+
+<p> Cada linha contém um botão que permite ao administrador excluir o cliente. </p>
+
+<p> Quando o administrador clica nesse botão, a função <strong>handleDelete(customer._id)</strong> é executada. </p>
+
+<h2>31. Componente AdminDashboard</h2>
+
+<p> O componente <strong>AdminDashboard</strong> representa a página principal do painel de administração. </p>
+
+<p> Ele reúne várias informações importantes da loja: produtos, pedidos, pagamentos, vendas e configurações. </p>
+
+<h2>32. Importação do AdminNavbar</h2>
+
+<p> O componente importa <strong>AdminNavbar</strong>. Essa barra de navegação permite ao administrador navegar entre as diferentes páginas de administração. </p>
+
+<h2>33. Estado products</h2>
+
+<p> O estado <strong>products</strong> contém a lista de produtos obtidos da API. </p>
+
+<p> O número de produtos é calculado por meio de: </p>
+
+<p class="code"> products.length </p>
+
+<h2>34. Estado orders</h2>
+
+<p> O estado <strong>orders</strong> contém a lista de pedidos. </p>
+
+<p> O número total de pedidos é exibido no cartão <strong>Orders</strong>. </p>
+
+<h2>35. Estado payments</h2>
+
+<p> O estado <strong>payments</strong> contém a lista de pagamentos. </p>
+
+<p> Essa lista também é utilizada para calcular o número de pagamentos realizados e pendentes. </p>
+
+<h2>36. Estado sales</h2>
+
+<p> O estado <strong>sales</strong> contém três estatísticas: receita total, número de pedidos e valor médio do pedido. </p>
+
+<p> Os valores iniciais são todos iguais a zero. </p>
+
+<h2>37. Estado settings</h2>
+
+<p> O estado <strong>settings</strong> contém as configurações da loja obtidas do backend. </p>
+
+<p> Ele é inicializado com <strong>null</strong> porque as configurações ainda não foram carregadas no início. </p>
+
+<h2>38. Recuperação do token JWT</h2>
+
+<p> Quando o dashboard é carregado, o token é recuperado do <strong>localStorage</strong>. </p>
+
+<p class="code"> localStorage.getItem("token") </p>
+
+<p> Esse token permite que o frontend demonstre ao backend que o usuário está autenticado. </p>
+
+<h2>39. Criação do header Authorization</h2>
+
+<p> O token é posteriormente colocado no header HTTP Authorization. </p>
+
+<p class="code"> Authorization: Bearer TOKEN </p>
+
+<p> Esse formato corresponde ao funcionamento do middleware JWT do backend. </p>
+
+<h2>40. Recuperação de produtos no Dashboard</h2>
+
+<p> O dashboard envia uma solicitação GET para: </p>
+
+<p class="code"> GET /api/products </p>
+
+<p> Essa rota é pública no seu backend. Portanto, não é obrigatório enviar o token para essa solicitação. </p>
+
+<p> A resposta é verificada para determinar se contém diretamente um array ou se os produtos estão em uma propriedade <strong>products</strong> ou <strong>data</strong>. </p>
+
+<h2>41. Recuperação de pedidos</h2>
+
+<p> O dashboard chama: </p>
+
+<p class="code"> GET /api/orders </p>
+
+<p> Essa rota é protegida por <strong>auth</strong> e <strong>isAdmin</strong>. </p>
+
+<p> Portanto, o token JWT é enviado nos headers. </p>
+
+<h2>42. Recuperação de pagamentos</h2>
+
+<p> O dashboard chama: </p>
+
+<p class="code"> GET /api/payments/admin </p>
+
+<p> Essa rota é reservada aos administradores. O token JWT é enviado com a solicitação. </p>
+
+<h2>43. Recuperação das estatísticas de vendas</h2>
+
+<p> O dashboard chama: </p>
+
+<p class="code"> GET /api/sales/overview </p>
+
+<p> O backend calcula a receita total, o número de pedidos e o valor médio dos pedidos. </p>
+
+<p> Esses valores são posteriormente armazenados no estado <strong>sales</strong>. </p>
+
+<h2>44. Recuperação das configurações</h2>
+
+<p> O dashboard chama: </p>
+
+<p class="code"> GET /api/settings </p>
+
+<p> Essa rota é protegida por <strong>auth</strong> e <strong>isAdmin</strong>. </p>
+
+<p> As configurações recuperadas são armazenadas no estado <strong>settings</strong>. </p>
+
+<h2>45. Função formatMoney</h2>
+
+<p> A função <strong>formatMoney</strong> permite formatar os valores financeiros. </p>
+
+<p> Ela utiliza <strong>toLocaleString("fr-FR")</strong> para obter um formato adaptado ao idioma francês. </p>
+
+<p> O número sempre contém duas casas após a vírgula decimal. </p>
+
+<h2>46. Estatísticas de pagamentos realizados</h2>
+
+<p> A constante <strong>paidPayments</strong> utiliza a função <strong>filter()</strong> para contar os pagamentos cujo status é <strong>paid</strong>. </p>
+
+<p> Ela permite exibir o número de pagamentos realizados corretamente. </p>
+
+<h2>47. Estatísticas de pagamentos pendentes</h2>
+
+<p> A constante <strong>pendingPayments</strong> faz o mesmo para os pagamentos cujo status é <strong>pending</strong>. </p>
+
+<h2>48. Admin Dashboard: cartão Products</h2>
+
+<p> O primeiro cartão do dashboard exibe o número total de produtos. </p>
+
+<p> O valor exibido corresponde a: </p>
+
+<p class="code"> products.length </p>
+
+<p> O ícone utilizado é o ícone de uma caixa que representa os produtos. </p>
+
+<h2>49. Admin Dashboard: cartão Orders</h2>
+
+<p> O segundo cartão exibe o número total de pedidos. </p>
+
+<p> O valor corresponde a: </p>
+
+<p class="code"> orders.length </p>
+
+<h2>50. Admin Dashboard: cartão Payments</h2>
+
+<p> O terceiro cartão exibe o número total de pagamentos. </p>
+
+<p> Ele também exibe o número de pagamentos cujo status é <strong>paid</strong>. </p>
+
+<h2>51. Admin Dashboard: cartão Sales</h2>
+
+<p> O cartão Sales exibe a receita total. </p>
+
+<p> O valor vem do backend por meio da API <strong>/api/sales/overview</strong>. </p>
+
+<p> O valor é formatado com <strong>formatMoney()</strong> e posteriormente exibido em TND. </p>
+
+<h2>52. Admin Dashboard: cartão Settings</h2>
+
+<p> O cartão Settings indica se a loja está atualmente ativa ou em modo de manutenção. </p>
+
+<p> Se <strong>maintenanceMode</strong> for true, o dashboard exibe <strong>Maintenance</strong>. </p>
+
+<p> Caso contrário, exibe <strong>Active</strong>. </p>
+
+<p> O cartão também mostra se o Stripe está ativado ou desativado por meio de <strong>settings.stripeEnabled</strong>. </p>
+
+<h2>53. Resumo de vendas</h2>
+
+<p> A seção <strong>Sales Summary</strong> apresenta três informações principais. </p>
+
+<p> A primeira é a receita total. A segunda é o número de pedidos pagos. A terceira é o valor médio do pedido. </p>
+
+<h2>54. Receita</h2>
+
+<p> A receita é obtida de: </p>
+
+<p class="code"> sales.totalSales </p>
+
+<p> Posteriormente, ela é formatada e exibida utilizando a moeda TND. </p>
+
+<h2>55. Pedidos pagos</h2>
+
+<p> O número de pedidos pagos corresponde a: </p>
+
+<p class="code"> sales.totalOrders </p>
+
+<p> Esse valor vem diretamente do controlador de estatísticas de vendas. </p>
+
+<h2>56. Valor médio do pedido</h2>
+
+<p> O valor médio do pedido corresponde a: </p>
+
+<p class="code"> sales.averageOrder </p>
+
+<p> Ele representa o valor médio de um pedido. </p>
+
+<h2>57. Resumo de pagamentos</h2>
+
+<p> A seção Payments Summary apresenta três informações: o número total de pagamentos, os pagamentos realizados corretamente e os pagamentos pendentes. </p>
+
+<p> Isso permite que o administrador obtenha rapidamente uma visão do estado atual dos pagamentos. </p>
+
+<h2>58. Estilos do Dashboard</h2>
+
+<p> O componente utiliza um objeto JavaScript chamado <strong>styles</strong> para definir diretamente vários estilos CSS. </p>
+
+<p> Por exemplo, <strong>styles.page</strong> define o espaçamento interno, a cor de fundo e a altura mínima da página. </p>
+
+<p> <strong>styles.cards</strong> utiliza CSS Grid para organizar os cartões do dashboard em várias colunas. </p>
+
+<h2>59. Componente AdminNavbar</h2>
+
+<p> O componente <strong>AdminNavbar</strong> representa a barra de navegação da administração. </p>
+
+<p> Ele permite acessar rapidamente as diferentes funcionalidades do dashboard. </p>
+
+<h2>60. useNavigate</h2>
+
+<p> O hook <strong>useNavigate</strong> do React Router permite alterar a página atual de forma programática. </p>
+
+<p> Ele é utilizado principalmente aqui durante o logout. </p>
+
+<h2>61. Função handleLogout</h2>
+
+<p> A função <strong>handleLogout</strong> permite encerrar a sessão do usuário. </p>
+
+<p> Ela remove o token JWT do navegador por meio de: </p>
+
+<p class="code"> localStorage.removeItem("token"); </p>
+
+<p> Ela também remove as informações do usuário armazenadas localmente. </p>
+
+<p class="code"> localStorage.removeItem("user"); </p>
+
+<p> Finalmente, o usuário é redirecionado para: </p>
+
+<p class="code"> /auth </p>
+
+<h2>62. Logo Admin Panel</h2>
+
+<p> A barra de navegação exibe o título <strong>Admin Panel</strong>. Ele representa o espaço reservado para a administração da loja. </p>
+
+<h2>63. Link Dashboard</h2>
+
+<p> O primeiro link permite acessar: </p>
+
+<p class="code"> /admin </p>
+
+<p> Essa rota corresponde ao dashboard principal. </p>
+
+<h2>64. Link Products</h2>
+
+<p> O link Products redireciona para: </p>
+
+<p class="code"> /admin/products </p>
+
+<p> Essa página permite ao administrador gerenciar os produtos. </p>
+
+<h2>65. Link Orders</h2>
+
+<p> O link Orders redireciona para: </p>
+
+<p class="code"> /admin/orders </p>
+
+<p> Essa página permite consultar e gerenciar os pedidos. </p>
+
+<h2>66. Link Payments</h2>
+
+<p> O link Payments redireciona para: </p>
+
+<p class="code"> /admin/payments </p>
+
+<p> Essa página permite consultar os pagamentos registrados. </p>
+
+<h2>67. Link Sales</h2>
+
+<p> O link Sales redireciona para: </p>
+
+<p class="code"> /admin/sales </p>
+
+<p> Essa página é destinada às estatísticas comerciais. </p>
+
+<h2>68. Link Settings</h2>
+
+<p> O link Settings redireciona para: </p>
+
+<p class="code"> /admin/settings </p>
+
+<p> Essa página permite modificar as configurações da loja. </p>
+
+<h2>69. Link Customers</h2>
+
+<p> O link Customers redireciona para: </p>
+
+<p class="code"> /admin/customers </p>
+
+<p> Essa página corresponde ao componente <strong>AdminCustomers</strong>. Ela permite ao administrador consultar os clientes. </p>
+
+<h2>70. Botão Logout</h2>
+
+<p> O botão Logout chama a função <strong>handleLogout</strong>. </p>
+
+<p> A função remove os dados de autenticação e redireciona o usuário para a página de autenticação. </p>
+
+<h2>71. Organização da navegação</h2>
+
+<p> A navegação permite que o administrador percorra as principais funcionalidades do painel de administração. </p>
+
+<p class="code"> Dashboard Products Orders Payments Sales Settings Customers Logout </p>
+
+<h2>72. Comunicação entre AdminDashboard e o backend</h2>
+
+<p> O dashboard obtém várias categorias de dados do backend. Cada categoria corresponde a uma API diferente. </p>
+
+<p class="code"> Products  → GET /api/products
+
+Orders    → GET /api/orders
+
+Payments  → GET /api/payments/admin
+
+Sales     → GET /api/sales/overview
+
+Settings  → GET /api/settings
+
+</p>
+
+<h2>73. Comunicação entre AdminCustomers e o backend</h2>
+
+<p> A página Customers utiliza principalmente duas operações. </p>
+
+<p class="code"> GET /api/users/customers
+
+DELETE
+/api/users/customers/
+
+</p>
+
+<p> A primeira obtém os clientes e a segunda exclui um cliente. </p>
+
+<h2>74. Correspondência com o backend</h2>
+
+<p> As rotas do React correspondem diretamente às rotas do Express definidas no backend. </p>
+
+<p> Por exemplo, a rota do Axios no frontend <strong>GET /api/orders</strong> corresponde à rota Express protegida por <strong>auth</strong> e <strong>isAdmin</strong>. </p>
+
+<p> Isso significa que o backend verifica o token JWT antes de autorizar o acesso aos pedidos administrativos. </p>
+
+<h2>75. Segurança com JWT</h2>
+
+<p> O token JWT é essencial para as funcionalidades administrativas. Ele é recuperado do localStorage e enviado no header Authorization. </p>
+
+<p> O middleware do backend <strong>auth</strong> verifica o token. Em seguida, <strong>isAdmin</strong> verifica se a função do usuário é realmente <strong>admin</strong>. </p>
+
+<p class="success"> O princípio de segurança é, portanto: usuário autenticado → token válido → verificação da função admin → acesso ao dashboard. </p>
+
+<h2>76. Ponto importante sobre AdminCustomers</h2>
+
+<p> No seu frontend, a página Customers chama diretamente: </p>
+
+<p class="code"> GET /api/users/customers </p>
+
+<p> e: </p>
+
+<p class="code"> DELETE /api/users/customers/:id </p>
+
+<p> Nas rotas do backend que você mostrou anteriormente, essas duas rotas atualmente não utilizam nem <strong>auth</strong> nem <strong>isAdmin</strong>. </p>
+
+<p class="important"> Para uma aplicação real, é recomendável proteger essas rotas para que um usuário comum não possa consultar nem excluir as contas de outros clientes. </p>
+
+<h2>77. Proteção recomendada das rotas Customers</h2>
+
+<p> As rotas de administração de clientes deveriam funcionar idealmente utilizando o mesmo princípio das demais rotas do dashboard: </p>
+
+<p class="code"> router.get(     "/customers",     auth,     isAdmin,     getCustomers );
+
+router.get(
+"/customers/",
+auth,
+isAdmin,
+getCustomerById
+);
+
+router.delete(
+"/customers/",
+auth,
+isAdmin,
+deleteCustomer
+);
+
+</p>
+
+<p> Dessa maneira, somente um administrador autenticado poderá consultar e excluir clientes. </p>
+
+<h2>78. Fluxo completo de administração</h2>
+
+<p> Quando o administrador abre o dashboard, o React carrega o componente <strong>AdminDashboard</strong>. </p>
+
+<p> O componente recupera o token JWT do localStorage. </p>
+
+<p> Em seguida, várias solicitações Axios são enviadas ao backend para obter produtos, pedidos, pagamentos, estatísticas e configurações. </p>
+
+<p> O backend verifica as permissões quando necessário e recupera os dados do MongoDB. </p>
+
+<p> Os resultados são retornados ao React. O React armazena os resultados em seus estados e depois os exibe em forma de cartões e estatísticas. </p>
+
+<h2>79. Fluxo completo de clientes</h2>
+
+<p> Quando o administrador abre a página Customers, o componente <strong>AdminCustomers</strong> é carregado. </p>
+
+<p> O hook <strong>useEffect</strong> chama automaticamente <strong>fetchCustomers()</strong>. </p>
+
+<p> O Axios envia uma solicitação GET ao backend. O backend recupera os usuários que possuem a função <strong>user</strong>. </p>
+
+<p> O React recebe a lista e a exibe em uma tabela. </p>
+
+<p> Quando o administrador clica em Delete, o Axios envia uma solicitação DELETE. Após a confirmação do backend, o cliente é imediatamente removido da interface. </p>
+
+<h2>80. Arquitetura geral</h2>
+
+<p> A arquitetura desta parte da aplicação pode ser resumida da seguinte maneira: </p>
+
+<p class="code">                     ADMIN
+                       ↓
+              React Admin Panel
+                       ↓
+                 React Router
+                       ↓
+                    Axios
+                       ↓
+                 Express API
+                       ↓
+                JWT Middleware
+                       ↓
+                Admin Middleware
+                       ↓
+                  Controllers
+                       ↓
+                   Mongoose
+                       ↓
+                    MongoDB </p>
+
+<h2>81. Conclusão</h2>
+
+<p> Esta parte do projeto constitui o painel de administração da plataforma Pharma. </p>
+
+<p> <strong>AdminNavbar</strong> permite navegar entre as diferentes páginas. </p>
+
+<p> <strong>AdminDashboard</strong> fornece uma visão geral da loja com produtos, pedidos, pagamentos, vendas e configurações. </p>
+
+<p> <strong>AdminCustomers</strong> permite ao administrador consultar e excluir clientes. </p>
+
+<p> <strong>Axios</strong> gerencia a comunicação entre React e a API backend. </p>
+
+<p> <strong>JWT</strong> fornece autenticação e permite que o backend verifique a identidade do usuário. </p>
+
+<p> <strong>isAdmin</strong> garante que as operações sensíveis sejam restritas aos administradores. </p>
+
+<p> Em conjunto, esses componentes fornecem uma interface de administração completa para gerenciar uma loja farmacêutica online. </p>
+
+</div>
+
+</body>
+
+</html>

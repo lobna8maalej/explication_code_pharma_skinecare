@@ -1,0 +1,802 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Explanation of AdminProducts, AdminSales and AdminSettings
+    </title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.7;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 25px;
+            color: #222;
+            background-color: #f5f5f5;
+        }
+
+        main {
+            background-color: white;
+            padding: 35px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            color: #17365d;
+            border-bottom: 3px solid #17365d;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #245a8d;
+            margin-top: 35px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        code {
+            background-color: #eeeeee;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+        }
+
+        .section {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        .important {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 5px solid #ffc107;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<main>
+
+    <h1>
+        Explanation of the AdminProducts,
+        AdminSales and AdminSettings Components
+    </h1>
+
+
+    <!-- ADMIN PRODUCTS -->
+
+    <div class="section">
+
+        <h2>1. Overview of AdminProducts</h2>
+
+        <p>
+            The <code>AdminProducts</code> component allows
+            the administrator to manage the store's products.
+        </p>
+
+        <p>
+            It allows the administrator to display the list of products,
+            modify their information, quickly update their stock
+            and delete a product.
+        </p>
+
+
+        <h2>2. AdminProducts Imports</h2>
+
+        <p>
+            <code>useState</code> is a React Hook that allows
+            the component to create and manage state variables.
+        </p>
+
+        <p>
+            <code>useEffect</code> allows a function to be executed
+            automatically when a specific condition is met. Here,
+            it is used to retrieve the products when the page is loaded.
+        </p>
+
+        <p>
+            <code>axios</code> allows the React frontend to communicate
+            with the Node.js/Express backend through HTTP requests.
+        </p>
+
+        <p>
+            <code>AdminNavbar</code> represents the navigation bar
+            used in the administrator area.
+        </p>
+
+
+        <h2>3. useState Variables</h2>
+
+        <p>
+            The <code>products</code> variable contains the list
+            of products retrieved from the backend.
+        </p>
+
+        <p>
+            The <code>loading</code> variable indicates whether
+            the products are still being loaded.
+        </p>
+
+        <p>
+            <code>editingProduct</code> contains the product currently
+            selected for editing.
+        </p>
+
+        <p>
+            The variables <code>name</code>, <code>price</code>,
+            <code>stock</code> and <code>category</code> correspond
+            to the fields of the edit form.
+        </p>
+
+        <p>
+            <code>updatingStock</code> indicates which product
+            is currently undergoing a stock update.
+        </p>
+
+
+        <h2>4. Retrieving Products</h2>
+
+        <p>
+            The <code>fetchProducts()</code> function retrieves
+            products from the backend.
+        </p>
+
+        <p>
+            It uses an HTTP GET request to:
+            <code>/api/products</code>.
+        </p>
+
+        <p>
+            When the backend responds, the products are stored
+            in the <code>products</code> state.
+        </p>
+
+        <p>
+            The code checks several possible response formats,
+            for example a direct array or an array contained
+            in <code>response.data.products</code>.
+        </p>
+
+
+        <h2>5. useEffect in AdminProducts</h2>
+
+        <p>
+            The code uses <code>useEffect</code> with an empty
+            dependency array.
+        </p>
+
+        <p>
+            This means that <code>fetchProducts()</code> is executed
+            when the component is loaded.
+        </p>
+
+        <p>
+            The goal is to automatically retrieve the products
+            when the administrator opens the page.
+        </p>
+
+
+        <h2>6. Updating Stock</h2>
+
+        <p>
+            The <code>updateStock()</code> function allows
+            the available quantity of a product to be modified.
+        </p>
+
+        <p>
+            Before performing the update, the code checks
+            that the stock is not negative.
+        </p>
+
+        <p>
+            The JWT token is retrieved from
+            <code>localStorage</code>.
+        </p>
+
+        <p>
+            The token is sent to the backend in the header:
+            <code>Authorization: Bearer TOKEN</code>.
+        </p>
+
+        <p>
+            A PUT request is then sent to:
+            <code>/products/:id</code>.
+        </p>
+
+
+        <h2>7. Increasing Stock</h2>
+
+        <p>
+            The <code>increaseStock()</code> function retrieves
+            the current stock of the product and adds one unit.
+        </p>
+
+        <p>
+            For example, if the stock is equal to 10,
+            the new stock becomes 11.
+        </p>
+
+
+        <h2>8. Decreasing Stock</h2>
+
+        <p>
+            The <code>decreaseStock()</code> function removes one unit
+            from the stock.
+        </p>
+
+        <p>
+            The code checks that the current stock is greater than zero.
+            This prevents the quantity from becoming negative.
+        </p>
+
+
+        <h2>9. Editing a Product</h2>
+
+        <p>
+            The <code>handleEdit()</code> function allows the administrator
+            to select a product.
+        </p>
+
+        <p>
+            The information of the selected product is then
+            placed into the form fields.
+        </p>
+
+        <p>
+            The administrator can then modify the name,
+            price, stock and category.
+        </p>
+
+
+        <h2>10. Saving Changes</h2>
+
+        <p>
+            The <code>handleUpdate()</code> function is executed
+            when the administrator submits the form.
+        </p>
+
+        <p>
+            It validates the entered data and then sends a
+            PUT request to the backend.
+        </p>
+
+        <p>
+            The price and stock are converted into numbers using
+            <code>Number()</code>.
+        </p>
+
+
+        <h2>11. Deleting a Product</h2>
+
+        <p>
+            The <code>handleDelete()</code> function allows
+            a product to be deleted.
+        </p>
+
+        <p>
+            Before deletion, <code>window.confirm()</code>
+            asks the administrator for confirmation.
+        </p>
+
+        <p>
+            If the administrator confirms, a DELETE request
+            is sent to the backend.
+        </p>
+
+        <p>
+            After deletion, <code>filter()</code> is used
+            to remove the product from the displayed list.
+        </p>
+
+
+        <h2>12. Stock Status</h2>
+
+        <p>
+            The component displays different messages depending
+            on the available quantity.
+        </p>
+
+        <p>
+            If the stock is equal to zero, the product displays
+            "Rupture".
+        </p>
+
+        <p>
+            If the stock is between 1 and 5,
+            the product displays "Stock faible".
+        </p>
+
+        <p>
+            If the stock is greater than 5,
+            the product displays "En stock".
+        </p>
+
+    </div>
+
+
+    <!-- ADMIN SALES -->
+
+    <div class="section">
+
+        <h2>13. Overview of AdminSales</h2>
+
+        <p>
+            The <code>AdminSales</code> component allows
+            the administrator to view the store's
+            sales statistics.
+        </p>
+
+        <p>
+            It displays revenue, the number of orders,
+            the average order value and the daily sales trend.
+        </p>
+
+
+        <h2>14. AdminSales States</h2>
+
+        <p>
+            The <code>sales</code> object contains
+            the general sales statistics.
+        </p>
+
+        <p>
+            <code>totalSales</code> represents the total revenue.
+        </p>
+
+        <p>
+            <code>totalOrders</code> represents the number of orders.
+        </p>
+
+        <p>
+            <code>averageOrder</code> represents the average order value.
+        </p>
+
+        <p>
+            <code>dailySales</code> contains the sales grouped
+            by day.
+        </p>
+
+
+        <h2>15. Retrieving Sales Statistics</h2>
+
+        <p>
+            The <code>fetchSales()</code> function first retrieves
+            the administrator token.
+        </p>
+
+        <p>
+            It then sends a request to:
+            <code>/sales/overview</code>.
+        </p>
+
+        <p>
+            This route returns the store's general statistics.
+        </p>
+
+        <p>
+            A second request is sent to:
+            <code>/sales/by-day</code>.
+        </p>
+
+        <p>
+            This route retrieves the daily sales.
+        </p>
+
+
+        <h2>16. Error Handling</h2>
+
+        <p>
+            The component uses <code>try</code>, <code>catch</code>
+            and <code>finally</code> to handle asynchronous requests.
+        </p>
+
+        <p>
+            A 401 error generally means that the token
+            is no longer valid or that the session has expired.
+        </p>
+
+        <p>
+            A 403 error means that the user does not have
+            the required permissions.
+        </p>
+
+
+        <h2>17. Amount Formatting</h2>
+
+        <p>
+            The <code>formatMoney()</code> function uses
+            <code>toLocaleString("fr-FR")</code>.
+        </p>
+
+        <p>
+            This allows numbers to be displayed according
+            to the French format with two decimal places.
+        </p>
+
+
+        <h2>18. Date Formatting</h2>
+
+        <p>
+            The <code>formatDate()</code> function transforms
+            a date such as <code>2026-09-07</code> into:
+            <strong>07/09/2026</strong>.
+        </p>
+
+
+        <h2>19. Sales Chart</h2>
+
+        <p>
+            The chart is created directly using HTML and CSS.
+            No external chart library is required.
+        </p>
+
+        <p>
+            The width of each bar depends on the day's sales amount
+            compared with the maximum sales amount.
+        </p>
+
+        <p>
+            The higher the amount, the larger the displayed bar.
+        </p>
+
+
+        <h2>20. Sales Table</h2>
+
+        <p>
+            The table displays the date, number of orders,
+            revenue and average order value for each day.
+        </p>
+
+        <p>
+            The average order value is calculated by dividing
+            the revenue by the number of orders.
+        </p>
+
+    </div>
+
+
+    <!-- ADMIN SETTINGS -->
+
+    <div class="section">
+
+        <h2>21. Overview of AdminSettings</h2>
+
+        <p>
+            The <code>AdminSettings</code> component allows
+            the administrator to configure the store's
+            general settings.
+        </p>
+
+        <p>
+            It allows the administrator to modify store information,
+            currency, delivery, Stripe and maintenance mode.
+        </p>
+
+
+        <h2>22. Store Information</h2>
+
+        <p>
+            <code>storeName</code> contains the store name.
+        </p>
+
+        <p>
+            <code>email</code> contains the store email address.
+        </p>
+
+        <p>
+            <code>phone</code> contains the phone number.
+        </p>
+
+        <p>
+            <code>address</code> contains the store address.
+        </p>
+
+
+        <h2>23. Commercial Settings</h2>
+
+        <p>
+            <code>currency</code> defines the main currency
+            used by the store.
+        </p>
+
+        <p>
+            <code>allowOrders</code> allows orders to be enabled
+            or disabled.
+        </p>
+
+
+        <h2>24. Delivery Settings</h2>
+
+        <p>
+            <code>deliveryEnabled</code> allows delivery to be
+            enabled or disabled.
+        </p>
+
+        <p>
+            <code>deliveryFee</code> corresponds to the delivery fee.
+        </p>
+
+
+        <h2>25. Stripe Settings</h2>
+
+        <p>
+            <code>stripeEnabled</code> allows Stripe to be
+            enabled or disabled.
+        </p>
+
+        <p>
+            <code>stripeCurrency</code> defines the currency
+            used for Stripe.
+        </p>
+
+        <p>
+            <code>stripeExchangeRate</code> represents the exchange
+            rate used by the application.
+        </p>
+
+        <p>
+            For example, with an exchange rate of 0.32,
+            a value of 100 TND can be converted into
+            32 units of the selected Stripe currency.
+        </p>
+
+
+        <h2>26. handleChange</h2>
+
+        <p>
+            The <code>handleChange()</code> function manages
+            changes to all form fields.
+        </p>
+
+        <p>
+            For a checkbox, the code uses <code>checked</code>.
+            For other fields, it uses <code>value</code>.
+        </p>
+
+        <p>
+            The <code>[name]</code> notation allows the corresponding
+            property of the field to be updated automatically.
+        </p>
+
+
+        <h2>27. Saving the Settings</h2>
+
+        <p>
+            The <code>handleSubmit()</code> function is executed
+            when the administrator clicks the save button.
+        </p>
+
+        <p>
+            The data is prepared and then sent to the backend
+            with a PUT request to <code>/settings</code>.
+        </p>
+
+        <p>
+            After a successful server response, the new
+            settings are stored in the React state.
+        </p>
+
+    </div>
+
+
+    <!-- CONCEPTS -->
+
+    <div class="section">
+
+        <h2>28. useState</h2>
+
+        <p>
+            <code>useState</code> allows data to be stored
+            that may change while the page is being used.
+        </p>
+
+        <p>
+            When the state update function is called,
+            React automatically updates the interface.
+        </p>
+
+
+        <h2>29. useEffect</h2>
+
+        <p>
+            <code>useEffect</code> is mainly used here
+            to make API calls when the components are loaded.
+        </p>
+
+
+        <h2>30. Axios</h2>
+
+        <p>
+            Axios is a JavaScript library that allows
+            HTTP requests to be sent.
+        </p>
+
+        <p>
+            In the project, Axios allows React to communicate
+            with the Node.js/Express server.
+        </p>
+
+
+        <h2>31. localStorage and JWT</h2>
+
+        <p>
+            The JWT token is retrieved from
+            <code>localStorage</code>.
+        </p>
+
+        <p>
+            It is then sent to the backend with:
+            <code>Authorization: Bearer TOKEN</code>.
+        </p>
+
+        <p>
+            The backend can therefore verify the identity
+            and permissions of the administrator.
+        </p>
+
+
+        <h2>32. map()</h2>
+
+        <p>
+            The <code>map()</code> method allows an array to be
+            iterated over and creates a new element for each
+            element in the array.
+        </p>
+
+        <p>
+            It is used in particular to display products
+            and sales in HTML tables.
+        </p>
+
+
+        <h2>33. filter()</h2>
+
+        <p>
+            The <code>filter()</code> method keeps only
+            the elements that satisfy a condition.
+        </p>
+
+        <p>
+            In <code>AdminProducts</code>, it can for example
+            be used to remove a product after it has been deleted.
+        </p>
+
+
+        <h2>34. async and await</h2>
+
+        <p>
+            The <code>async</code> and <code>await</code> keywords
+            make it easier to work with asynchronous operations
+            such as API calls.
+        </p>
+
+        <p>
+            The program waits for the server response before
+            continuing the execution of certain instructions.
+        </p>
+
+
+        <h2>35. try, catch and finally</h2>
+
+        <p>
+            <code>try</code> contains the code that may
+            generate an error.
+        </p>
+
+        <p>
+            <code>catch</code> captures the error so that
+            an appropriate message can be displayed.
+        </p>
+
+        <p>
+            <code>finally</code> allows an action to be executed
+            in all cases, for example stopping the loading indicator.
+        </p>
+
+    </div>
+
+
+    <!-- ARCHITECTURE -->
+
+    <div class="section">
+
+        <h2>36. General Project Architecture</h2>
+
+        <p>
+            The general workflow is:
+        </p>
+
+        <p>
+            <strong>
+                React → Axios → Express API → JWT Middleware
+                → Controller → MongoDB → JSON Response → React
+            </strong>
+        </p>
+
+        <p>
+            React represents the frontend. Axios sends the requests.
+            Express receives the requests. The middleware verifies
+            authentication. The controller processes the data.
+            MongoDB stores the information.
+        </p>
+
+        <p>
+            Finally, the backend returns a JSON response and React
+            updates the interface.
+        </p>
+
+
+        <h2>37. Important Points to Check</h2>
+
+        <div class="important">
+
+            <p>
+                <strong>API Port:</strong>
+                the components currently use
+                <code>http://localhost:3000/api</code>.
+                You must verify that the backend is actually
+                using port 3000.
+            </p>
+
+            <p>
+                <strong>Category:</strong>
+                the value <code>skinecare</code> appears to be
+                a spelling mistake. If the backend uses
+                <code>skincare</code>, both values must be identical.
+            </p>
+
+            <p>
+                <strong>Security:</strong>
+                validations performed in React do not replace
+                backend validation.
+            </p>
+
+            <p>
+                <strong>Routes:</strong>
+                the GET, PUT and DELETE routes used by React
+                must exist in the Express backend.
+            </p>
+
+        </div>
+
+
+        <h2>38. Conclusion</h2>
+
+        <p>
+            <strong>AdminProducts</strong> allows products
+            and stock to be managed.
+        </p>
+
+        <p>
+            <strong>AdminSales</strong> allows the administrator
+            to view sales performance and sales statistics.
+        </p>
+
+        <p>
+            <strong>AdminSettings</strong> allows the administrator
+            to configure the store's general settings, delivery
+            and payment options.
+        </p>
+
+        <p>
+            These three components use React, Axios,
+            a Node.js/Express API, MongoDB and JWT authentication
+            to build a complete administration area.
+        </p>
+
+    </div>
+
+</main>
+
+</body>
+</html>
+```

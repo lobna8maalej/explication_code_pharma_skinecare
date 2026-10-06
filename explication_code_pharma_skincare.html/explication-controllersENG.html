@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Explanation of Controllers - Pharma & Skincare</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.7;
+      margin: 0;
+      padding: 40px;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      margin-top: 40px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ddd;
+    }
+
+    p {
+      margin: 12px 0;
+    }
+
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Explanation of Backend Controllers</h1>
+
+  <p>
+    This page explains how the different controllers used in the
+    Pharma & Skincare e-commerce application work.
+    Controllers contain the business logic of the backend.
+    They receive requests sent by the frontend, process the data,
+    and return a response to the client.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- ORDER CONTROLLER -->
+  <!-- ===================================================== -->
+
+  <h2>1. Order Controller - Order Management</h2>
+
+  <p>
+    The Order Controller manages all operations related to
+    customer orders. It allows the application to create an order,
+    retrieve orders, update their status, and delete an order.
+  </p>
+
+  <h2>2. createOrder Function</h2>
+
+  <p>
+    The <code>createOrder</code> function allows a new order to be created.
+    It retrieves the information sent by the frontend from
+    <code>req.body</code>.
+  </p>
+
+  <p>
+    The retrieved information includes the ordered products,
+    customer information, payment method, and payment status.
+  </p>
+
+  <p>
+    The controller first checks that <code>items</code> is an array
+    and that it contains at least one product.
+    Therefore, an empty order is rejected.
+  </p>
+
+  <p>
+    The controller then retrieves the identifier of the logged-in user
+    using <code>req.user.id</code> or <code>req.user._id</code>.
+    This information generally comes from the JWT authentication middleware.
+  </p>
+
+  <p>
+    The user's identifier is then validated to ensure that it has
+    a valid MongoDB ObjectId format.
+  </p>
+
+  <h2>3. Order Product Validation</h2>
+
+  <p>
+    For each product included in the order, the controller checks
+    that a product identifier exists.
+  </p>
+
+  <p>
+    It also checks that the product name is not empty.
+  </p>
+
+  <p>
+    The price is converted to a number using <code>Number()</code>
+    and must be greater than or equal to zero.
+  </p>
+
+  <p>
+    The quantity is also converted to a number and must be greater
+    than or equal to one.
+  </p>
+
+  <p>
+    These validations help prevent incorrect data from being stored
+    in MongoDB.
+  </p>
+
+  <h2>4. Order Total Calculation</h2>
+
+  <p>
+    The controller automatically calculates the total amount of the order.
+    For each product, the price is multiplied by the quantity.
+  </p>
+
+  <p>
+    All the results are then added together to obtain the total
+    order amount.
+  </p>
+
+  <p>
+    The <code>toFixed(2)</code> method keeps two digits after the decimal point.
+  </p>
+
+  <h2>5. Creating the Order in MongoDB</h2>
+
+  <p>
+    After all validations have been completed, the controller uses
+    <code>Order.create()</code> to save the order in MongoDB.
+  </p>
+
+  <p>
+    The order contains the user, customer information,
+    products, total amount, payment method, payment status,
+    and order status.
+  </p>
+
+  <p>
+    The initial order status is set to
+    <code>En attente</code>.
+  </p>
+
+  <h2>6. Populating the Order</h2>
+
+  <p>
+    After creation, the controller uses <code>populate()</code>
+    to retrieve the complete information of the user and products.
+  </p>
+
+  <p>
+    The <code>user</code> relationship allows the user's information
+    to be retrieved.
+  </p>
+
+  <p>
+    The <code>items.product</code> relationship allows the information
+    of the products associated with the order to be retrieved.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- GET ALL ORDERS -->
+  <!-- ===================================================== -->
+
+  <h2>7. getAllOrders Function</h2>
+
+  <p>
+    The <code>getAllOrders</code> function allows the administrator
+    to retrieve all orders stored in MongoDB.
+  </p>
+
+  <p>
+    Orders are sorted by creation date in descending order.
+    Therefore, the most recent orders appear first.
+  </p>
+
+  <p>
+    User and product information is also retrieved using
+    <code>populate()</code>.
+  </p>
+
+  <p>
+    This function is mainly used by the administrator dashboard.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- GET USER ORDERS -->
+  <!-- ===================================================== -->
+
+  <h2>8. getUserOrders Function</h2>
+
+  <p>
+    The <code>getUserOrders</code> function retrieves all
+    orders belonging to a specific user.
+  </p>
+
+  <p>
+    The user's identifier is retrieved from
+    <code>req.params.userId</code>.
+  </p>
+
+  <p>
+    The controller checks that this identifier exists and corresponds
+    to a valid MongoDB ObjectId.
+  </p>
+
+  <p>
+    MongoDB then searches for all orders whose
+    <code>user</code> field corresponds to this identifier.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- GET ORDER BY ID -->
+  <!-- ===================================================== -->
+
+  <h2>9. getOrderById Function</h2>
+
+  <p>
+    The <code>getOrderById</code> function retrieves a specific order
+    using its identifier.
+  </p>
+
+  <p>
+    The controller first checks that the provided identifier is valid.
+  </p>
+
+  <p>
+    If no order corresponds to this identifier,
+    the server returns a 404 error with the message
+    <code>Commande introuvable</code>.
+  </p>
+
+  <p>
+    If the order exists, it is returned with the information
+    of the associated user and products.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- GET MY ORDERS -->
+  <!-- ===================================================== -->
+
+  <h2>10. getMyOrders Function</h2>
+
+  <p>
+    The <code>getMyOrders</code> function allows the logged-in user
+    to retrieve only their own orders.
+  </p>
+
+  <p>
+    The identifier is retrieved from the JWT token using
+    <code>req.user.id</code> or <code>req.user._id</code>.
+  </p>
+
+  <p>
+    This function is useful for displaying a
+    "My Orders" page in the customer area.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- UPDATE ORDER STATUS -->
+  <!-- ===================================================== -->
+
+  <h2>11. updateOrderStatus Function</h2>
+
+  <p>
+    The <code>updateOrderStatus</code> function allows the administrator
+    to modify the status of an order.
+  </p>
+
+  <p>
+    The allowed statuses are:
+    <code>En attente</code>,
+    <code>En préparation</code>,
+    <code>Expédiée</code>,
+    <code>Livrée</code>, and
+    <code>Annulée</code>.
+  </p>
+
+  <p>
+    The controller checks that the new status belongs
+    to this list before updating the order.
+  </p>
+
+  <p>
+    The <code>findByIdAndUpdate()</code> method is then used
+    to update the status in MongoDB.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- UPDATE PAYMENT STATUS -->
+  <!-- ===================================================== -->
+
+  <h2>12. updatePaymentStatus Function</h2>
+
+  <p>
+    The <code>updatePaymentStatus</code> function allows the status
+    of the payment associated with an order to be modified.
+  </p>
+
+  <p>
+    The three allowed statuses are:
+    <code>En attente</code>,
+    <code>Payé</code>, and
+    <code>Échec</code>.
+  </p>
+
+  <p>
+    This function can be used by the administrator
+    to monitor payment status.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- DELETE ORDER -->
+  <!-- ===================================================== -->
+
+  <h2>13. deleteOrder Function</h2>
+
+  <p>
+    The <code>deleteOrder</code> function allows an order
+    to be deleted using its identifier.
+  </p>
+
+  <p>
+    The controller first checks that the identifier is valid.
+  </p>
+
+  <p>
+    The <code>findByIdAndDelete()</code> method then removes
+    the order from MongoDB.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- PAYMENT CONTROLLER -->
+  <!-- ===================================================== -->
+
+  <h2>14. Payment Controller - Payment Management</h2>
+
+  <p>
+    The Payment Controller is responsible for integrating with Stripe.
+    It allows the application to create a payment session, retrieve payments
+    for the administrator, and process notifications sent by Stripe.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- STRIPE CHECKOUT -->
+  <!-- ===================================================== -->
+
+  <h2>15. createCheckoutSession Function</h2>
+
+  <p>
+    The <code>createCheckoutSession</code> function allows a Stripe Checkout
+    session to be created for an order.
+  </p>
+
+  <p>
+    It retrieves <code>orderId</code> from the request sent
+    by the frontend.
+  </p>
+
+  <p>
+    The controller then checks that the user is logged in.
+  </p>
+
+  <p>
+    It searches for the order in MongoDB and verifies that the order
+    actually belongs to the logged-in user.
+  </p>
+
+  <p>
+    This verification is important to prevent a user
+    from paying for or accessing another user's order.
+  </p>
+
+  <h2>16. Payment Verification</h2>
+
+  <p>
+    Before creating a new Stripe session, the controller checks
+    that the order has not already been paid.
+  </p>
+
+  <p>
+    It also checks that the order contains products
+    and that its total amount is greater than zero.
+  </p>
+
+  <h2>17. Creating the Payment</h2>
+
+  <p>
+    A <code>Payment</code> document is created in MongoDB with
+    the order identifier, user identifier, amount, currency,
+    Stripe as the method, and the status
+    <code>pending</code>.
+  </p>
+
+  <h2>18. Creating Stripe Products</h2>
+
+  <p>
+    Each product in the order is transformed into a Stripe
+    <code>line_item</code>.
+  </p>
+
+  <p>
+    Stripe receives the product name, its price converted into cents,
+    and its quantity.
+  </p>
+
+  <p>
+    The price is multiplied by 100 because Stripe generally uses
+    the smallest unit of the currency.
+  </p>
+
+  <h2>19. Creating the Stripe Session</h2>
+
+  <p>
+    The <code>stripe.checkout.sessions.create()</code> method
+    creates the Stripe payment page.
+  </p>
+
+  <p>
+    The mode used is <code>payment</code>, which corresponds
+    to a one-time payment.
+  </p>
+
+  <p>
+    After payment, Stripe redirects the customer to
+    <code>payment-success</code>.
+    In case of cancellation, the customer is redirected to
+    <code>payment-cancel</code>.
+  </p>
+
+  <p>
+    Stripe metadata contains the order identifier
+    and the MongoDB payment identifier.
+    This information is then used to find the corresponding documents
+    when Stripe confirms the payment.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- GET ALL PAYMENTS -->
+  <!-- ===================================================== -->
+
+  <h2>20. getAllPayments Function</h2>
+
+  <p>
+    The <code>getAllPayments</code> function allows the administrator
+    to retrieve all registered payments.
+  </p>
+
+  <p>
+    User and order information is retrieved using
+    <code>populate()</code>.
+  </p>
+
+  <p>
+    Payments are sorted from the most recent to the oldest.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- WEBHOOK -->
+  <!-- ===================================================== -->
+
+  <h2>21. stripeWebhook Function</h2>
+
+  <p>
+    The Stripe webhook allows Stripe to automatically inform
+    the backend when a payment event occurs.
+  </p>
+
+  <p>
+    The controller uses the
+    <code>stripe-signature</code> signature to verify that the notification
+    actually comes from Stripe.
+  </p>
+
+  <p>
+    The <code>STRIPE_WEBHOOK_SECRET</code> secret is used
+    to verify this signature.
+  </p>
+
+  <h2>22. Stripe Payment Confirmation</h2>
+
+  <p>
+    When the event is
+    <code>checkout.session.completed</code>,
+    it means that the Checkout session has been completed.
+  </p>
+
+  <p>
+    The controller then retrieves <code>orderId</code> and
+    <code>paymentId</code> from the Stripe metadata.
+  </p>
+
+  <p>
+    The MongoDB payment is then updated with the status
+    <code>paid</code>.
+  </p>
+
+  <p>
+    The order is also updated with the payment status
+    <code>Payé</code>.
+  </p>
+
+  <p>
+    Its order status automatically becomes
+    <code>En préparation</code>.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- PRODUCT CONTROLLER -->
+  <!-- ===================================================== -->
+
+  <h2>23. Product Controller - Product Management</h2>
+
+  <p>
+    The Product Controller allows the administrator to manage
+    the products available in the store.
+  </p>
+
+
+  <h2>24. createProduct Function</h2>
+
+  <p>
+    The <code>createProduct</code> function allows a new product to be created.
+  </p>
+
+  <p>
+    It retrieves the name, price, stock, and category from
+    <code>req.body</code>.
+  </p>
+
+  <p>
+    The image is retrieved from <code>req.file</code> when an image
+    is sent with the request.
+  </p>
+
+  <p>
+    The product is then saved in MongoDB using
+    <code>Product.create()</code>.
+  </p>
+
+
+  <h2>25. getProducts Function</h2>
+
+  <p>
+    The <code>getProducts</code> function retrieves all products
+    stored in MongoDB.
+  </p>
+
+  <p>
+    It uses <code>Product.find()</code> and returns the products
+    to the frontend in JSON format.
+  </p>
+
+
+  <h2>26. updateProduct Function</h2>
+
+  <p>
+    The <code>updateProduct</code> function allows an existing product
+    to be modified.
+  </p>
+
+  <p>
+    The product is searched using its identifier with
+    <code>Product.findById()</code>.
+  </p>
+
+  <p>
+    If the product does not exist, the server returns a 404 error.
+  </p>
+
+  <p>
+    The fields sent by the frontend are then modified.
+    The controller only modifies the fields present in the request.
+  </p>
+
+  <p>
+    If a new image is uploaded, the path of the new image
+    replaces the previous image.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- SALES CONTROLLER -->
+  <!-- ===================================================== -->
+
+  <h2>27. Sales Controller - Sales Statistics</h2>
+
+  <p>
+    The Sales Controller calculates the sales statistics
+    used in the administrator dashboard.
+  </p>
+
+
+  <h2>28. getSalesOverview Function</h2>
+
+  <p>
+    The <code>getSalesOverview</code> function retrieves orders
+    that are not cancelled.
+  </p>
+
+  <p>
+    It then calculates the total revenue by adding
+    the amounts of all orders.
+  </p>
+
+  <p>
+    It also calculates the total number of orders.
+  </p>
+
+  <p>
+    The average order value is calculated by dividing the revenue
+    by the number of orders.
+  </p>
+
+  <p>
+    If there are no orders, the average order value is set to zero
+    to avoid division by zero.
+  </p>
+
+
+  <h2>29. getSalesByDay Function</h2>
+
+  <p>
+    The <code>getSalesByDay</code> function uses MongoDB aggregation
+    to calculate sales by day.
+  </p>
+
+  <p>
+    Cancelled orders are excluded from the statistics.
+  </p>
+
+  <p>
+    MongoDB groups the orders according to their creation date
+    using <code>$dateToString</code>.
+  </p>
+
+  <p>
+    For each day, the system calculates the total sales amount
+    and the number of orders.
+  </p>
+
+  <p>
+    The results are then sorted by date.
+    These data can be used to create a chart
+    in the administrator dashboard.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- SETTINGS CONTROLLER -->
+  <!-- ===================================================== -->
+
+  <h2>30. Settings Controller - Store Settings</h2>
+
+  <p>
+    The Settings Controller allows the application to retrieve
+    and modify the general store settings.
+  </p>
+
+
+  <h2>31. getSettings Function</h2>
+
+  <p>
+    The <code>getSettings</code> function searches for the settings
+    stored in MongoDB.
+  </p>
+
+  <p>
+    If no Settings document exists yet, the controller
+    automatically creates a new document with the default values.
+  </p>
+
+  <p>
+    This method therefore ensures that the application always
+    has a configuration available.
+  </p>
+
+
+  <h2>32. updateSettings Function</h2>
+
+  <p>
+    The <code>updateSettings</code> function allows the administrator
+    to modify the store settings.
+  </p>
+
+  <p>
+    It can modify the store name, email,
+    phone, address, and currency.
+  </p>
+
+  <p>
+    It can also enable or disable orders.
+  </p>
+
+  <p>
+    Maintenance mode can be enabled or disabled.
+  </p>
+
+  <p>
+    Delivery settings can also be modified,
+    including enabling delivery and changing delivery fees.
+  </p>
+
+  <p>
+    Stripe payments can also be enabled or disabled
+    using the <code>stripeEnabled</code> field.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- AUTH CONTROLLER -->
+  <!-- ===================================================== -->
+
+  <h2>33. Auth Controller - Authentication</h2>
+
+  <p>
+    The Auth Controller manages registration,
+    login, and customer management.
+  </p>
+
+
+  <h2>34. register Function</h2>
+
+  <p>
+    The <code>register</code> function allows a new user account to be created.
+  </p>
+
+  <p>
+    It retrieves the username, email, and password
+    from the request.
+  </p>
+
+  <p>
+    It checks that all three required pieces of information are present.
+  </p>
+
+  <p>
+    It then checks whether the email already exists in MongoDB.
+    Therefore, two users cannot use the same email address.
+  </p>
+
+  <h2>35. Password Encryption</h2>
+
+  <p>
+    Before saving the user, the password is transformed
+    using <code>bcrypt.hash()</code>.
+  </p>
+
+  <p>
+    The original password is therefore not stored directly
+    in MongoDB.
+  </p>
+
+  <h2>36. JWT Token Creation</h2>
+
+  <p>
+    After the account is created, the backend generates a JWT token
+    using <code>jwt.sign()</code>.
+  </p>
+
+  <p>
+    The token contains the user's identifier,
+    email, and role.
+  </p>
+
+  <p>
+    The token is configured to expire after seven days.
+  </p>
+
+  <p>
+    The frontend can then store this token and send it
+    in requests that require authentication.
+  </p>
+
+
+  <h2>37. login Function</h2>
+
+  <p>
+    The <code>login</code> function allows an existing user
+    to log in to their account.
+  </p>
+
+  <p>
+    It retrieves the email and password sent by the frontend.
+  </p>
+
+  <p>
+    The email is cleaned using <code>trim()</code> and converted to lowercase.
+  </p>
+
+  <p>
+    The backend then searches for the corresponding user in MongoDB.
+  </p>
+
+  <p>
+    The provided password is compared with the hashed password
+    stored in MongoDB using <code>bcrypt.compare()</code>.
+  </p>
+
+  <p>
+    If the information is correct, a new JWT token is generated
+    and sent to the frontend.
+  </p>
+
+
+  <h2>38. getCustomers Function</h2>
+
+  <p>
+    The <code>getCustomers</code> function allows the administrator
+    to retrieve all users with the <code>user</code> role.
+  </p>
+
+  <p>
+    The <code>password</code> field is intentionally excluded
+    from the response using <code>select("-password")</code>.
+  </p>
+
+  <p>
+    Customers are sorted from the most recent to the oldest.
+  </p>
+
+
+  <h2>39. getCustomerById Function</h2>
+
+  <p>
+    The <code>getCustomerById</code> function allows the administrator
+    to retrieve the information of a specific customer using their identifier.
+  </p>
+
+  <p>
+    The password is also excluded from the response.
+  </p>
+
+  <p>
+    The controller checks that the user has the
+    <code>user</code> role.
+  </p>
+
+
+  <h2>40. deleteCustomer Function</h2>
+
+  <p>
+    The <code>deleteCustomer</code> function allows the administrator
+    to delete a customer.
+  </p>
+
+  <p>
+    The controller only searches for users with the
+    <code>user</code> role.
+  </p>
+
+  <p>
+    If the customer exists, they are deleted using
+    <code>findOneAndDelete()</code>.
+  </p>
+
+
+  <!-- ===================================================== -->
+  <!-- ARCHITECTURE -->
+  <!-- ===================================================== -->
+
+  <h2>41. General Backend Operation</h2>
+
+  <p>
+    The React frontend sends HTTP requests to the Node.js
+    and Express backend.
+  </p>
+
+  <p>
+    Express routes direct the requests to the corresponding controllers.
+  </p>
+
+  <p>
+    Controllers apply business rules, validate the data,
+    and use Mongoose models to communicate with MongoDB.
+  </p>
+
+  <p>
+    MongoDB stores users, products, orders,
+    payments, and store settings.
+  </p>
+
+  <p>
+    Stripe is involved in the payment process.
+    The backend creates a Stripe session and the Stripe webhook
+    then informs the backend when the payment is completed.
+  </p>
+
+  <h2>42. Overall Architecture</h2>
+
+  <p>
+    The overall operation can be summarized as follows:
+    React represents the frontend, Express and Node.js represent the backend,
+    controllers contain the business logic, Mongoose models
+    define the MongoDB structures, MongoDB stores the data,
+    JWT manages authentication, and Stripe manages payments.
+  </p>
+
+  <p>
+    This architecture makes it possible to clearly separate
+    the user interface, business logic, database,
+    authentication, and payment processes.
+  </p>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Explicação dos componentes React - PharmaShop</title>
+
+    <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f7fb;
+      color: #222;
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1976d2, #0d47a1);
+      color: white;
+      padding: 45px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    section {
+      background: white;
+      margin-bottom: 25px;
+      padding: 25px 30px;
+      border-radius: 10px;
+      border-left: 5px solid #1976d2;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      color: #0d47a1;
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    code {
+      background: #eef3f8;
+      padding: 3px 7px;
+      border-radius: 4px;
+      color: #c62828;
+      font-family: Consolas, monospace;
+    }
+
+    .important {
+      background: #fff3cd;
+      border-left: 5px solid #ffc107;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+
+    .architecture {
+      background: #e8f5e9;
+      border-left: 5px solid #43a047;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    footer {
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 25px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 700px) {
+      header h1 {
+        font-size: 27px;
+      }
+
+      section {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 21px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+<header>
+  <h1>Explicação do projeto PharmaShop</h1>
+  <p>React Router, proteção de rotas, componentes, navegação e administração</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>1. Visão geral do código</h2>
+
+    <p>
+      O código apresentado corresponde à parte frontend do
+      <strong>projeto PharmaShop</strong>.
+      A aplicação é desenvolvida com React e utiliza
+      <code>react-router-dom</code> para gerenciar a navegação entre as diferentes páginas.
+    </p>
+
+    <p>
+      O projeto contém duas partes principais:
+      uma parte destinada aos usuários e outra destinada ao administrador.
+    </p>
+
+    <p>
+      Os usuários podem consultar os produtos, adicionar produtos ao carrinho,
+      fazer um pedido e acessar o processo de pagamento.
+      O administrador possui páginas adicionais para gerenciar
+      produtos, pedidos, pagamentos, clientes, vendas e configurações.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>2. O componente AdminRoute</h2>
+
+    <p>
+      <code>AdminRoute</code> é um componente utilizado para proteger as rotas de administração.
+      Seu objetivo é impedir que usuários comuns acessem páginas reservadas aos administradores.
+    </p>
+
+    <p>
+      O componente primeiro obtém o token do
+      <code>localStorage</code> utilizando
+      <code>localStorage.getItem("token")</code>.
+    </p>
+
+    <p>
+      O token é utilizado para determinar se o usuário está conectado.
+      Se não existir nenhum token, o usuário será considerado não autenticado.
+    </p>
+
+    <p>
+      Nesse caso, <code>Navigate</code> redireciona automaticamente o usuário para
+      <code>/auth</code>, que corresponde à página de login.
+    </p>
+
+    <p>
+      Em seguida, o componente obtém as informações do usuário do
+      <code>localStorage</code>.
+      Os dados são convertidos de JSON para um objeto JavaScript usando
+      <code>JSON.parse()</code>.
+    </p>
+
+    <p>
+      O programa então verifica:
+      <code>user.role !== "admin"</code>.
+      Se o usuário estiver conectado, mas não possuir a função
+      <strong>admin</strong>, ele será redirecionado para <code>/products</code>.
+    </p>
+
+    <p>
+      Se o token existir e a função do usuário for
+      <strong>admin</strong>, o componente retorna
+      <code>children</code>.
+      Isso significa que a página de administração poderá ser exibida.
+    </p>
+
+    <div class="important">
+      <strong>Importante:</strong>
+      AdminRoute protege a navegação no frontend, mas a segurança real também deve
+      ser verificada no backend usando o token JWT e a função do usuário.
+    </div>
+
+  </section>
+
+  <section>
+    <h2>3. Como o Navigate funciona</h2>
+
+    <p>
+      <code>Navigate</code> é fornecido pelo React Router.
+      Ele permite que a aplicação redirecione automaticamente o usuário para outra URL.
+    </p>
+
+    <p>
+      Por exemplo, <code>&lt;Navigate to="/auth" replace /&gt;</code>
+      redireciona o usuário para a página de login.
+    </p>
+
+    <p>
+      A propriedade <code>replace</code> substitui a entrada atual
+      no histórico do navegador em vez de adicionar uma nova.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>4. O componente AdminSidebar</h2>
+
+    <p>
+      <code>AdminSidebar</code> representa o menu lateral da área de administração.
+    </p>
+
+    <p>
+      Ele utiliza o componente <code>Link</code> do React Router para permitir
+      que o administrador navegue entre as diferentes páginas sem
+      recarregar completamente a aplicação.
+    </p>
+
+    <p>
+      O primeiro link aponta para <code>/admin</code>.
+      Essa URL corresponde ao painel de administração.
+    </p>
+
+    <p>
+      O segundo link aponta para <code>/admin/products</code>.
+      Ele fornece acesso ao gerenciamento de produtos.
+    </p>
+
+    <p>
+      O terceiro link aponta para <code>/admin/orders</code>.
+      Ele permite que o administrador visualize e gerencie os pedidos.
+    </p>
+
+    <p>
+      O link <code>/products</code> permite que o administrador volte
+      para a loja pública.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>5. Estilos do AdminSidebar</h2>
+
+    <p>
+      Os estilos do menu são definidos no objeto JavaScript
+      <code>styles</code>.
+    </p>
+
+    <p>
+      A propriedade <code>position: "fixed"</code> mantém o menu
+      fixo no lado esquerdo da tela.
+    </p>
+
+    <p>
+      <code>height: "100vh"</code> significa que a barra lateral ocupa
+      toda a altura da janela.
+    </p>
+
+    <p>
+      <code>display: "flex"</code> e
+      <code>flexDirection: "column"</code> organizam
+      os links verticalmente.
+    </p>
+
+    <p>
+      A cor de fundo <code>#111</code> proporciona ao menu
+      uma aparência escura.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>6. O componente Footer</h2>
+
+    <p>
+      <code>Footer</code> representa o rodapé da aplicação.
+      Ele contém várias informações importantes sobre a loja.
+    </p>
+
+    <p>
+      A primeira parte corresponde à apresentação da empresa.
+      Ela explica que a PharmaShop oferece produtos para cuidados com a pele,
+      beleza e farmácia.
+    </p>
+
+    <p>
+      A segunda parte contém as informações de contato:
+      endereço de e-mail, número de telefone e localização.
+    </p>
+
+    <p>
+      A terceira parte apresenta os serviços disponíveis:
+      produtos para cuidados com a pele, produtos farmacêuticos,
+      cosméticos e entrega rápida.
+    </p>
+
+    <p>
+      A última parte exibe o aviso de copyright:
+      <code>© 2026 Pharma & Skincare Store</code>.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>7. Footer.css</h2>
+
+    <p>
+      O componente Footer importa o arquivo
+      <code>Footer.css</code>.
+      Isso significa que a apresentação gráfica do footer pode ser separada
+      da sua lógica React.
+    </p>
+
+    <p>
+      Essa abordagem mantém o código React mais limpo e
+      centraliza os estilos do footer em um arquivo CSS específico.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>8. O componente Loader</h2>
+
+    <p>
+      <code>Loader</code> é um componente utilizado para exibir uma mensagem
+      enquanto os dados estão sendo carregados.
+    </p>
+
+    <p>
+      Ele exibe um elemento que contém a classe CSS
+      <code>spinner</code>.
+      Essa classe pode ser definida em um arquivo CSS para criar
+      uma animação de carregamento.
+    </p>
+
+    <p>
+      O texto <code>Loading...</code> informa ao usuário que
+      os dados ainda estão sendo recuperados.
+    </p>
+
+    <p>
+      Esse componente é especialmente útil durante chamadas à API,
+      por exemplo, quando a aplicação recupera produtos do MongoDB
+      por meio do backend.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>9. O componente Navbar</h2>
+
+    <p>
+      <code>Navbar</code> representa a barra de navegação principal
+      da loja.
+    </p>
+
+    <p>
+      Ele utiliza <code>Link</code> para navegar até a página inicial
+      e a página de produtos.
+    </p>
+
+    <p>
+      O componente também utiliza <code>useNavigate()</code>
+      para redirecionar o usuário após fazer logout.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>10. Recuperação do usuário no Navbar</h2>
+
+    <p>
+      O código obtém o usuário usando:
+      <code>JSON.parse(localStorage.getItem("user"))</code>.
+    </p>
+
+    <p>
+      Se nenhum usuário estiver armazenado, a variável
+      <code>user</code> estará vazia.
+      Nesse caso, o botão <strong>Login</strong> será exibido.
+    </p>
+
+    <p>
+      Se existir um usuário, o botão
+      <strong>Logout</strong> será exibido.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>11. A função logout</h2>
+
+    <p>
+      A função <code>logout()</code> permite que o usuário faça logout.
+    </p>
+
+    <p>
+      Ela remove a conta armazenada no
+      <code>localStorage</code> usando
+      <code>localStorage.removeItem("user")</code>.
+    </p>
+
+    <p>
+      Ela também remove o token JWT usando
+      <code>localStorage.removeItem("token")</code>.
+    </p>
+
+    <p>
+      Finalmente, <code>navigate("/auth")</code> redireciona o usuário
+      para a página de login.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>12. O componente PrivateRoute</h2>
+
+    <p>
+      <code>PrivateRoute</code> protege páginas que exigem
+      autenticação.
+    </p>
+
+    <p>
+      Diferentemente do <code>AdminRoute</code>, ele não verifica a função do usuário.
+      Ele apenas verifica se o token existe.
+    </p>
+
+    <p>
+      Se nenhum token existir, o usuário será redirecionado para
+      <code>/auth</code>.
+    </p>
+
+    <p>
+      Se o token existir, o componente retorna
+      <code>children</code> e permite o acesso à página.
+    </p>
+
+    <p>
+      Na sua aplicação, <code>PrivateRoute</code> é utilizado principalmente
+      para proteger o carrinho e a página Checkout.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>13. Diferença entre PrivateRoute e AdminRoute</h2>
+
+    <p>
+      <strong>PrivateRoute</strong> simplesmente verifica se o usuário
+      está conectado.
+    </p>
+
+    <p>
+      <strong>AdminRoute</strong> verifica duas condições:
+      o usuário deve estar conectado e sua função deve ser
+      <code>admin</code>.
+    </p>
+
+    <p>
+      Portanto, pode ser resumido da seguinte maneira:
+      PrivateRoute = usuário conectado.
+      AdminRoute = usuário conectado + administrador.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>14. O componente ProductCard</h2>
+
+    <p>
+      <code>ProductCard</code> exibe um produto como
+      um cartão na página de produtos.
+    </p>
+
+    <p>
+      O componente recebe um produto por meio da propriedade
+      <code>product</code>.
+    </p>
+
+    <p>
+      Ele exibe a imagem, o nome,
+      a categoria e o preço do produto.
+    </p>
+
+    <p>
+      O preço é exibido utilizando a moeda
+      <strong>DT</strong>, que corresponde ao dinar tunisiano.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>15. Uso do CartContext no ProductCard</h2>
+
+    <p>
+      O componente utiliza
+      <code>useContext(CartContext)</code>
+      para acessar a função <code>addToCart</code>.
+    </p>
+
+    <p>
+      Essa função normalmente permite adicionar o produto selecionado
+      ao carrinho global da aplicação.
+    </p>
+
+    <div class="important">
+      <strong>Erro importante no código:</strong>
+      o botão chama <code>ajouteraupanier(product)</code>,
+      mas essa função não está definida no componente.
+    </div>
+
+    <p>
+      Como a função obtida do contexto se chama
+      <code>addToCart</code>, o botão normalmente deveria utilizar
+      <code>addToCart(product)</code>.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>16. Exibição da imagem do produto</h2>
+
+    <p>
+      A imagem é construída usando:
+      <code>http://localhost:3000/${product.image}</code>.
+    </p>
+
+    <p>
+      Isso significa que as imagens devem ser fornecidas
+      pelo backend Node.js que está sendo executado na porta 3000.
+    </p>
+
+    <p>
+      Por exemplo, se <code>product.image</code> contiver
+      <code>uploads/cream.jpg</code>, a aplicação procurará
+      a imagem no endereço correspondente do servidor backend.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>17. O arquivo App.jsx</h2>
+
+    <p>
+      <code>App.jsx</code> é o componente principal que organiza
+      as diferentes rotas da aplicação.
+    </p>
+
+    <p>
+      Ele importa <code>BrowserRouter</code>,
+      <code>Routes</code>,
+      <code>Route</code> e
+      <code>Navigate</code> do React Router.
+    </p>
+
+    <p>
+      Ele também importa todas as páginas destinadas aos usuários
+      e aos administradores.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>18. BrowserRouter</h2>
+
+    <p>
+      <code>BrowserRouter</code> permite que o React Router gerencie
+      as URLs da aplicação.
+    </p>
+
+    <p>
+      Graças a ele, uma URL como
+      <code>/products</code> pode exibir a página Products
+      sem recarregar toda a aplicação.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>19. Routes e Route</h2>
+
+    <p>
+      <code>Routes</code> contém todas as rotas disponíveis
+      na aplicação.
+    </p>
+
+    <p>
+      Cada elemento <code>Route</code> associa uma URL a um componente.
+    </p>
+
+    <p>
+      Por exemplo:
+      <code>/products</code> exibe o componente
+      <code>Products</code>.
+    </p>
+
+    <p>
+      Da mesma forma,
+      <code>/checkout</code> exibe a página Checkout.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>20. Rota Home</h2>
+
+    <p>
+      A rota <code>/</code> corresponde à página inicial.
+    </p>
+
+    <p>
+      Ela exibe o componente <code>Home</code>.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>21. Rota Products</h2>
+
+    <p>
+      A rota <code>/products</code> exibe
+      a lista de produtos disponíveis na loja.
+    </p>
+
+    <p>
+      Essa página é pública porque não está envolvida
+      pelo <code>PrivateRoute</code>.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>22. Rota Cart</h2>
+
+    <p>
+      A rota <code>/cart</code> é protegida pelo
+      <code>PrivateRoute</code>.
+    </p>
+
+    <p>
+      Isso significa que o usuário precisa estar conectado
+      para acessar o carrinho.
+    </p>
+
+    <p>
+      Se o usuário não estiver conectado, ele será automaticamente
+      redirecionado para <code>/auth</code>.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>23. Rota Checkout</h2>
+
+    <p>
+      A rota <code>/checkout</code> também é protegida
+      pelo <code>PrivateRoute</code>.
+    </p>
+
+    <p>
+      Portanto, apenas usuários autenticados podem acessar
+      a página utilizada para concluir um pedido.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>24. Rota Auth</h2>
+
+    <p>
+      A rota <code>/auth</code> exibe o componente
+      <code>Auth</code>.
+    </p>
+
+    <p>
+      Essa página geralmente permite que o usuário
+      faça login ou crie uma conta.
+    </p>
+
+    <p>
+      Ela continua acessível mesmo quando o usuário
+      não está conectado.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>25. Rota do painel de administração</h2>
+
+    <p>
+      A rota <code>/admin</code> exibe
+      <code>AdminDashboard</code>.
+    </p>
+
+    <p>
+      Essa rota é protegida pelo <code>AdminRoute</code>.
+    </p>
+
+    <p>
+      Portanto, somente um usuário com a função
+      <code>admin</code> pode acessar o painel.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>26. Rota Admin Products</h2>
+
+    <p>
+      A rota <code>/admin/products</code> exibe
+      <code>AdminProducts</code>.
+    </p>
+
+    <p>
+      Essa página é destinada ao gerenciamento de produtos
+      pelo administrador.
+    </p>
+
+    <p>
+      Ela é protegida pelo <code>AdminRoute</code>.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>27. Rota Admin Orders</h2>
+
+    <p>
+      A rota <code>/admin/orders</code> exibe
+      <code>AdminOrders</code>.
+    </p>
+
+    <p>
+      Ela permite que o administrador visualize e gerencie
+      os pedidos dos clientes.
+    </p>
+
+    <p>
+      Assim como as outras páginas administrativas,
+      ela é protegida pelo <code>AdminRoute</code>.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>28. Rota Admin Payments</h2>
+
+    <p>
+      A rota <code>/admin/payments</code> exibe
+      <code>AdminPayments</code>.
+    </p>
+
+    <p>
+      Essa página é destinada à visualização ou gerenciamento
+      dos pagamentos realizados na loja.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>29. Rota Admin Customers</h2>
+
+    <p>
+      A rota <code>/admin/customers</code> exibe
+      <code>AdminCustomers</code>.
+    </p>
+
+    <p>
+      Essa página permite que o administrador visualize
+      os clientes cadastrados na aplicação.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>30. Rota Admin Sales</h2>
+
+    <p>
+      A rota <code>/admin/sales</code> exibe
+      <code>AdminSales</code>.
+    </p>
+
+    <p>
+      Ela pode ser utilizada para exibir estatísticas
+      ou informações sobre as vendas realizadas.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>31. Rota Admin Settings</h2>
+
+    <p>
+      A rota <code>/admin/settings</code> exibe
+      <code>AdminSettings</code>.
+    </p>
+
+    <p>
+      Essa página é destinada à configuração
+      da área de administração.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>32. Proteção das rotas administrativas</h2>
+
+    <p>
+      Todas as rotas que começam com
+      <code>/admin</code> são colocadas dentro do
+      <code>AdminRoute</code>.
+    </p>
+
+    <p>
+      Isso cria uma camada de proteção comum.
+      Se o usuário não for administrador,
+      ele não poderá visualizar essas páginas.
+    </p>
+
+    <p>
+      Essa organização evita repetir a lógica de verificação da função
+      em cada página administrativa.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>33. Rota inexistente</h2>
+
+    <p>
+      A rota <code>*</code> corresponde a todas as URLs
+      que não correspondem a nenhuma das rotas definidas anteriormente.
+    </p>
+
+    <p>
+      Nesse caso, <code>Navigate</code> redireciona o usuário
+      para a página inicial <code>/</code>.
+    </p>
+
+    <p>
+      Isso evita uma página em branco ou um erro
+      quando o usuário digita uma URL incorreta.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>34. Footer no App.jsx</h2>
+
+    <p>
+      O componente <code>Footer</code> é colocado depois de
+      <code>Routes</code>, mas continua dentro do
+      <code>BrowserRouter</code>.
+    </p>
+
+    <p>
+      Isso significa que o footer será exibido globalmente
+      em toda a aplicação, independentemente da rota atual.
+    </p>
+
+    <div class="important">
+      Se você quiser ocultar o Footer em determinadas páginas,
+      como as páginas de administração, será necessário adicionar uma lógica condicional
+      baseada na URL atual.
+    </div>
+
+  </section>
+
+  <section>
+    <h2>35. Arquitetura geral de navegação</h2>
+
+    <p>
+      A aplicação segue uma arquitetura de navegação
+      organizada em torno do React Router.
+    </p>
+
+    <p class="architecture">
+      BrowserRouter → Routes → Route → Page
+    </p>
+
+    <p>
+      Para páginas privadas:
+    </p>
+
+    <p class="architecture">
+      Route → PrivateRoute → Verificação do token → Page
+    </p>
+
+    <p>
+      Para páginas administrativas:
+    </p>
+
+    <p class="architecture">
+      Route → AdminRoute → Token + função admin → Page
+    </p>
+
+  </section>
+
+  <section>
+    <h2>36. Organização geral do projeto</h2>
+
+    <p>
+      O projeto pode ser organizado em várias pastas.
+    </p>
+
+    <p>
+      A pasta <code>pages</code> contém páginas destinadas
+      aos usuários, como Home, Products, Cart, Checkout e Auth.
+    </p>
+
+    <p>
+      A pasta <code>admin</code> contém páginas reservadas
+      ao administrador.
+    </p>
+
+    <p>
+      A pasta <code>components</code> contém componentes reutilizáveis
+      como Navbar, Footer, Loader, PrivateRoute,
+      AdminRoute e ProductCard.
+    </p>
+
+    <p>
+      A pasta <code>context</code> pode conter o
+      <code>CartContext</code>, que permite compartilhar as informações
+      do carrinho entre vários componentes.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>37. Fluxo de acesso do usuário</h2>
+
+    <p>
+      Quando um usuário abre a aplicação, ele pode acessar
+      a página inicial e a lista de produtos.
+    </p>
+
+    <p>
+      Quando deseja acessar o carrinho ou o checkout,
+      o <code>PrivateRoute</code> verifica se o token existe.
+    </p>
+
+    <p>
+      Se o token estiver ausente, o usuário será enviado para a
+      página de login.
+    </p>
+
+    <p>
+      Depois de fazer login, o usuário poderá acessar
+      os recursos privados da loja.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>38. Fluxo de acesso do administrador</h2>
+
+    <p>
+      Quando um usuário deseja acessar
+      <code>/admin</code> ou outra rota administrativa,
+      o <code>AdminRoute</code> é executado.
+    </p>
+
+    <p>
+      O componente primeiro verifica se o token existe.
+    </p>
+
+    <p>
+      Em seguida, ele obtém as informações do usuário
+      do <code>localStorage</code>.
+    </p>
+
+    <p>
+      Finalmente, verifica se
+      <code>user.role === "admin"</code>.
+    </p>
+
+    <p>
+      Se todas as condições forem satisfeitas,
+      a página de administração será exibida.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>39. Ponto importante a corrigir no ProductCard</h2>
+
+    <p>
+      No seu componente <code>ProductCard</code>, você obtém:
+      <code>const { addToCart } = useContext(CartContext)</code>.
+    </p>
+
+    <p>
+      No entanto, o botão utiliza:
+      <code>ajouteraupanier(product)</code>.
+    </p>
+
+    <p>
+      Essa função não existe no código apresentado.
+      Isso causará um erro de JavaScript quando o usuário
+      clicar no botão.
+    </p>
+
+    <p>
+      A função obtida do contexto é
+      <code>addToCart</code>.
+      Portanto, essa função deve ser utilizada para adicionar o produto
+      ao carrinho.
+    </p>
+
+  </section>
+
+  <section>
+    <h2>40. Conclusão</h2>
+
+    <p>
+      Este código fornece uma estrutura completa para uma
+      loja React com uma separação clara entre usuários
+      e administradores.
+    </p>
+
+    <p>
+      <code>PrivateRoute</code> protege as funcionalidades que exigem
+      autenticação.
+    </p>
+
+    <p>
+      <code>AdminRoute</code> protege as funcionalidades reservadas
+      aos administradores.
+    </p>
+
+    <p>
+      <code>Navbar</code> fornece a navegação principal e a funcionalidade de logout.
+    </p>
+
+    <p>
+      <code>AdminSidebar</code> permite que o administrador navegue
+      pela área de gerenciamento.
+    </p>
+
+    <p>
+      <code>ProductCard</code> exibe os produtos
+      e permite adicioná-los ao carrinho.
+    </p>
+
+    <p>
+      <code>Footer</code> exibe as informações gerais da loja.
+    </p>
+
+    <p>
+      Finalmente, <code>App.jsx</code> centraliza todas as rotas
+      e define a estrutura de navegação da aplicação PharmaShop.
+    </p>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>Pharma & Skincare Store — Documentação do código React</p>
+  <p>© 2026 Todos os direitos reservados</p>
+</footer>
+
+</body>
+
+</html>

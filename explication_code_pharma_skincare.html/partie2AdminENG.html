@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Documentation - Store Administration</title>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 40px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      color: #222;
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      color: #1f2937;
+      font-size: 25px;
+      margin-top: 45px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    h3 {
+      color: #374151;
+      font-size: 20px;
+      margin-top: 30px;
+    }
+
+    p {
+      color: #4b5563;
+      font-size: 16px;
+      margin: 12px 0;
+    }
+
+    code {
+      background: #f1f5f9;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-family: Consolas, monospace;
+    }
+
+    pre {
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: Consolas, monospace;
+    }
+
+    .intro {
+      background: #f8fafc;
+      padding: 20px;
+      border-left: 5px solid #2563eb;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+
+    .important {
+      background: #fff7ed;
+      padding: 20px;
+      border-left: 5px solid #f97316;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+
+    .success {
+      background: #f0fdf4;
+      padding: 20px;
+      border-left: 5px solid #22c55e;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+
+    .danger {
+      background: #fef2f2;
+      padding: 20px;
+      border-left: 5px solid #ef4444;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+
+    ul {
+      line-height: 1.8;
+      color: #4b5563;
+    }
+
+    .flow {
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .footer {
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+      text-align: center;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Store Administration Documentation</h1>
+
+  <div class="intro">
+
+    <p>
+      This documentation explains in detail how the React components
+      used in the store administration area work.
+    </p>
+
+    <p>
+      The components covered are
+      <code>AdminOrders</code>,
+      <code>AdminProducts</code> and
+      <code>AdminPayments</code>.
+    </p>
+
+    <p>
+      These components allow the administrator to manage orders,
+      products, inventory and payments made with Stripe.
+    </p>
+
+  </div>
+
+
+  <h2>1. General Architecture</h2>
+
+  <p>
+    The application uses React to build the administration user interface.
+    React communicates with the backend using the Axios library.
+  </p>
+
+  <p>
+    The frontend sends HTTP requests to the backend API available at:
+    <code>http://localhost:3000/api</code>.
+  </p>
+
+  <p>
+    The backend receives the requests, performs the necessary operations,
+    communicates with MongoDB and returns the results to the frontend.
+  </p>
+
+  <div class="flow">
+    React Admin → Axios → API Express/Node.js → MongoDB
+  </div>
+
+  <p>
+    For certain administrative operations, a JWT token is retrieved
+    from <code>localStorage</code> and then sent in the HTTP
+    <code>Authorization</code> header.
+  </p>
+
+
+  <h2>2. AdminOrders Component</h2>
+
+  <p>
+    The <code>AdminOrders</code> component represents the administration
+    page dedicated to managing customer orders.
+  </p>
+
+  <p>
+    The administrator can view orders, see customer information,
+    view ordered products, check the total amount, view the payment,
+    modify the order status and delete an order.
+  </p>
+
+
+  <h2>3. Importing Dependencies in AdminOrders</h2>
+
+  <p>
+    The component begins by importing the React hooks
+    <code>useEffect</code> and <code>useState</code>.
+  </p>
+
+  <p>
+    <code>useState</code> is used to manage the dynamic data of the page,
+    while <code>useEffect</code> is used to execute code when
+    the component is loaded.
+  </p>
+
+  <p>
+    Axios is used to communicate with the backend.
+  </p>
+
+  <p>
+    The component also imports <code>AdminNavbar</code> to display
+    the administration navigation bar.
+  </p>
+
+  <p>
+    The <code>AdminOrders.css</code> file contains the styles specific
+    to the orders page.
+  </p>
+
+
+  <h2>4. API Used by AdminOrders</h2>
+
+  <p>
+    The <code>API</code> constant contains the main backend address.
+  </p>
+
+  <pre>
+const API = "http://localhost:3000/api";
+  </pre>
+
+  <p>
+    All order requests are then built from this address.
+  </p>
+
+
+  <h2>5. Order State</h2>
+
+  <p>
+    The component uses three main states:
+    <code>orders</code>, <code>loading</code> and <code>error</code>.
+  </p>
+
+  <p>
+    <code>orders</code> contains the list of orders retrieved from
+    the backend.
+  </p>
+
+  <p>
+    <code>loading</code> indicates whether the orders are currently
+    being loaded.
+  </p>
+
+  <p>
+    <code>error</code> may contain the error message to display
+    when retrieving the orders fails.
+  </p>
+
+
+  <h2>6. Retrieving Orders</h2>
+
+  <p>
+    The <code>fetchOrders</code> function retrieves all
+    orders from the API.
+  </p>
+
+  <p>
+    Before making the request, the component retrieves the administrator
+    token stored in <code>localStorage</code>.
+  </p>
+
+  <pre>
+const token = localStorage.getItem("token");
+  </pre>
+
+  <p>
+    The token is sent to the backend using the following header:
+    <code>Authorization: Bearer token</code>.
+  </p>
+
+  <p>
+    This method allows the backend to verify that the request comes
+    from an authenticated user.
+  </p>
+
+
+  <h2>7. GET Request for Orders</h2>
+
+  <p>
+    The following request is used to retrieve all orders:
+  </p>
+
+  <pre>
+axios.get(`${API}/orders`, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
+  </pre>
+
+  <p>
+    The backend must then return the orders in the
+    <code>orders</code> property or possibly in <code>data</code>.
+  </p>
+
+  <p>
+    The frontend then verifies that the result is actually an array
+    before storing it in <code>orders</code>.
+  </p>
+
+
+  <h2>8. useEffect in AdminOrders</h2>
+
+  <p>
+    The <code>useEffect</code> hook is used with an empty dependency array.
+  </p>
+
+  <pre>
+useEffect(() => {
+  fetchOrders();
+}, []);
+  </pre>
+
+  <p>
+    This means that <code>fetchOrders</code> is executed only once
+    when the page is loaded.
+  </p>
+
+
+  <h2>9. Changing the Status of an Order</h2>
+
+  <p>
+    The <code>updateStatus</code> function allows the administrator
+    to change the status of an order.
+  </p>
+
+  <p>
+    The order ID and the new status are sent to the backend.
+  </p>
+
+  <pre>
+axios.put(
+  `${API}/orders/${orderId}/status`,
+  {
+    orderStatus: newStatus,
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
+  </pre>
+
+  <p>
+    The new status can be, for example:
+    <code>En attente</code>,
+    <code>En préparation</code>,
+    <code>Expédiée</code>,
+    <code>Livrée</code> or
+    <code>Annulée</code>.
+  </p>
+
+
+  <h2>10. Immediate Interface Update</h2>
+
+  <p>
+    After the status is successfully modified, the frontend does not
+    necessarily reload the entire list from the server.
+  </p>
+
+  <p>
+    It directly updates the relevant order in the
+    <code>orders</code> state.
+  </p>
+
+  <p>
+    This technique provides a faster and more responsive interface.
+  </p>
+
+
+  <h2>11. Deleting an Order</h2>
+
+  <p>
+    The <code>deleteOrder</code> function allows an order to be deleted.
+  </p>
+
+  <p>
+    Before deletion, a confirmation dialog is displayed using
+    <code>window.confirm</code>.
+  </p>
+
+  <p>
+    If the administrator confirms, an HTTP DELETE request is sent
+    to the backend.
+  </p>
+
+  <pre>
+axios.delete(`${API}/orders/${orderId}`, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
+  </pre>
+
+  <p>
+    After deletion, the order is also removed from the
+    <code>orders</code> state.
+  </p>
+
+
+  <h2>12. Retrieving the Customer Name</h2>
+
+  <p>
+    The <code>getCustomerName</code> function determines the name
+    of the customer associated with an order.
+  </p>
+
+  <p>
+    The component first checks the information available in
+    <code>order.customer</code>.
+  </p>
+
+  <p>
+    If the first name or last name exists, they are combined to form
+    the full name.
+  </p>
+
+  <p>
+    If this information is not available, the component uses
+    <code>order.user.username</code>.
+  </p>
+
+  <p>
+    If no information is available, the text
+    <code>Client inconnu</code> is displayed.
+  </p>
+
+
+  <h2>13. Retrieving the Customer Email</h2>
+
+  <p>
+    The <code>getCustomerEmail</code> function looks for the email in
+    <code>order.customer.email</code>.
+  </p>
+
+  <p>
+    If this value does not exist, it uses
+    <code>order.user.email</code>.
+  </p>
+
+  <p>
+    If no address is available, the text
+    <code>Email inconnu</code> is displayed.
+  </p>
+
+
+  <h2>14. Retrieving the Products of an Order</h2>
+
+  <p>
+    The <code>getItems</code> function checks whether the order contains
+    an <code>items</code> array.
+  </p>
+
+  <p>
+    If this array does not exist, it also checks the
+    <code>products</code> property.
+  </p>
+
+  <p>
+    This logic makes the component more flexible when a different
+    structure is returned by the backend.
+  </p>
+
+
+  <h2>15. Calculating the Total Amount</h2>
+
+  <p>
+    The <code>getTotal</code> function retrieves the total amount of the order.
+  </p>
+
+  <p>
+    It first uses <code>totalAmount</code>.
+  </p>
+
+  <p>
+    If this property does not exist, it uses <code>totalPrice</code>.
+  </p>
+
+  <p>
+    If no value is available, the default amount is
+    <code>0</code>.
+  </p>
+
+
+  <h2>16. Payment Status</h2>
+
+  <p>
+    The <code>getPaymentStatus</code> function retrieves the payment status.
+  </p>
+
+  <p>
+    If no status is available, the default value is
+    <code>En attente</code>.
+  </p>
+
+  <p>
+    This prevents an empty value from being displayed in the interface.
+  </p>
+
+
+  <h2>17. Order Status</h2>
+
+  <p>
+    The <code>getOrderStatus</code> function retrieves the current
+    status of the order.
+  </p>
+
+  <p>
+    If the backend does not provide a status, the value
+    <code>En attente</code> is used.
+  </p>
+
+
+  <h2>18. Date Formatting</h2>
+
+  <p>
+    The <code>formatDate</code> function transforms a date coming
+    from MongoDB into a date that is readable by the user.
+  </p>
+
+  <p>
+    The format used is French thanks to
+    <code>toLocaleDateString("fr-FR")</code>.
+  </p>
+
+  <p>
+    A date can therefore be displayed in the form
+    <code>07/09/2026</code>.
+  </p>
+
+
+  <h2>19. Loading Management</h2>
+
+  <p>
+    When <code>loading</code> is <code>true</code>, the component
+    displays a message indicating that the orders are being loaded.
+  </p>
+
+  <p>
+    The <code>AdminNavbar</code> navigation bar also remains visible.
+  </p>
+
+
+  <h2>20. Error Management</h2>
+
+  <p>
+    If an error occurs while retrieving the orders,
+    the message is stored in <code>error</code>.
+  </p>
+
+  <p>
+    The user then sees an error message along with a
+    <code>Réessayer</code> button.
+  </p>
+
+  <p>
+    The button allows the <code>fetchOrders</code> function to be executed
+    again without manually reloading the page.
+  </p>
+
+
+  <h2>21. Displaying an Order</h2>
+
+  <p>
+    Each order is displayed as a card using the
+    <code>order-card</code> class.
+  </p>
+
+  <p>
+    The card contains several pieces of information: order number,
+    date, customer, email, phone number, address, products, amount,
+    payment and status.
+  </p>
+
+
+  <h2>22. Displaying Products</h2>
+
+  <p>
+    For each ordered product, the component retrieves the name,
+    price and quantity.
+  </p>
+
+  <p>
+    The subtotal is then calculated using the following formula:
+  </p>
+
+  <pre>
+Subtotal = Price × Quantity
+  </pre>
+
+  <p>
+    The result is displayed with two decimal places.
+  </p>
+
+
+  <h2>23. Changing the Status with a Select</h2>
+
+  <p>
+    The administrator has an HTML <code>select</code> element
+    that allows them to choose the new status.
+  </p>
+
+  <p>
+    When the value changes, the <code>updateStatus</code> function
+    is automatically called.
+  </p>
+
+  <p>
+    This makes it possible to quickly change the status of an order
+    directly from the management table.
+  </p>
+
+
+  <h2>24. AdminProducts Component</h2>
+
+  <p>
+    The <code>AdminProducts</code> component allows the administrator
+    to manage the store's products.
+  </p>
+
+  <p>
+    It allows the administrator to view products, modify their information,
+    increase or decrease stock and delete a product.
+  </p>
+
+
+  <h2>25. Product State</h2>
+
+  <p>
+    The <code>products</code> state contains the list of products.
+  </p>
+
+  <p>
+    The <code>loading</code> state indicates whether the products
+    are still being retrieved.
+  </p>
+
+  <p>
+    The <code>editingProduct</code> state contains the product
+    currently selected for editing.
+  </p>
+
+
+  <h2>26. Edit Form States</h2>
+
+  <p>
+    Several states are used to manage the form fields:
+    <code>name</code>, <code>price</code>, <code>stock</code> and
+    <code>category</code>.
+  </p>
+
+  <p>
+    Each field is controlled by React. When the user types
+    into a field, its corresponding state is automatically updated.
+  </p>
+
+
+  <h2>27. Retrieving Products</h2>
+
+  <p>
+    The <code>fetchProducts</code> function sends a GET request
+    to <code>/products</code>.
+  </p>
+
+  <pre>
+axios.get(`${API}/products`);
+  </pre>
+
+  <p>
+    The component accepts several possible response formats:
+    an array directly, <code>products</code> or <code>data</code>.
+  </p>
+
+
+  <h2>28. Quick Stock Update</h2>
+
+  <p>
+    The <code>updateStock</code> function allows the stock of a product
+    to be modified directly from the list.
+  </p>
+
+  <p>
+    Before sending the request, the component checks that the new stock
+    is not negative.
+  </p>
+
+  <p>
+    The new stock is then sent to the backend with a PUT request.
+  </p>
+
+  <pre>
+axios.put(
+  `${API}/products/${productId}`,
+  {
+    stock: Number(newStock)
+  }
+);
+  </pre>
+
+
+  <h2>29. Protection Against Negative Stock</h2>
+
+  <p>
+    The code deliberately prevents the creation of stock below zero.
+  </p>
+
+  <p>
+    When the stock is equal to zero, the button used to decrease
+    the stock is disabled.
+  </p>
+
+  <p>
+    This check is important to ensure the consistency of
+    commercial data.
+  </p>
+
+
+  <h2>30. Plus and Minus Stock Buttons</h2>
+
+  <p>
+    The <code>decreaseStock</code> function decreases the stock by one unit.
+  </p>
+
+  <p>
+    The <code>increaseStock</code> function increases the stock by one unit.
+  </p>
+
+  <p>
+    Both functions then call <code>updateStock</code>
+    to send the new value to the backend.
+  </p>
+
+
+  <h2>31. Stock Level Indicator</h2>
+
+  <p>
+    The component uses three stock levels.
+  </p>
+
+  <p>
+    When the stock is equal to zero, the interface displays
+    <code>Rupture</code>.
+  </p>
+
+  <p>
+    When the stock is greater than zero but less than or equal to five,
+    the interface displays <code>Stock faible</code>.
+  </p>
+
+  <p>
+    When the stock is greater than five, the interface displays
+    <code>En stock</code>.
+  </p>
+
+
+  <h2>32. Opening the Edit Form</h2>
+
+  <p>
+    The <code>handleEdit</code> function is called when the administrator
+    clicks the <code>Modifier</code> button.
+  </p>
+
+  <p>
+    It stores the selected product in <code>editingProduct</code>
+    and copies its values into the different form fields.
+  </p>
+
+
+  <h2>33. Canceling the Edit</h2>
+
+  <p>
+    The <code>handleCancelEdit</code> function closes the edit form.
+  </p>
+
+  <p>
+    It also resets the fields <code>name</code>, <code>price</code>,
+    <code>stock</code> and <code>category</code> to their initial values.
+  </p>
+
+
+  <h2>34. Product Form Validation</h2>
+
+  <p>
+    Before modifying a product, the code checks that all required
+    fields have been filled in.
+  </p>
+
+  <p>
+    The name must not be empty, the price must be provided,
+    the stock must be provided and a category must be selected.
+  </p>
+
+  <p>
+    The price and stock cannot be negative.
+  </p>
+
+
+  <h2>35. Saving an Edited Product</h2>
+
+  <p>
+    The <code>handleUpdate</code> function sends the new information
+    to the backend using a PUT request.
+  </p>
+
+  <pre>
+axios.put(
+  `${API}/products/${editingProduct._id}`,
+  {
+    name: name.trim(),
+    price: Number(price),
+    stock: Number(stock),
+    category
+  }
+);
+  </pre>
+
+  <p>
+    After the update, the form is closed and
+    <code>fetchProducts()</code> is executed to retrieve the
+    updated data.
+  </p>
+
+
+  <h2>36. Deleting a Product</h2>
+
+  <p>
+    The <code>handleDelete</code> function allows a product to be deleted.
+  </p>
+
+  <p>
+    Confirmation is requested from the administrator before
+    executing the DELETE request.
+  </p>
+
+  <pre>
+axios.delete(`${API}/products/${productId}`, {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+});
+  </pre>
+
+  <p>
+    Once the deletion is successful, the product is removed from
+    the <code>products</code> state.
+  </p>
+
+
+  <h2>37. Displaying the Product Table</h2>
+
+  <p>
+    Products are displayed in an HTML table.
+  </p>
+
+  <p>
+    The main columns are product, price, stock,
+    category and actions.
+  </p>
+
+  <p>
+    For each product, React uses <code>product._id</code> as
+    the unique key for the row.
+  </p>
+
+
+  <h2>38. AdminPayments Component</h2>
+
+  <p>
+    The <code>AdminPayments</code> component is designed to manage
+    payments made by customers.
+  </p>
+
+  <p>
+    In this application, payments are associated with Stripe.
+  </p>
+
+  <p>
+    The administrator can view the total number of payments,
+    successful payments, pending payments and failed payments.
+  </p>
+
+
+  <h2>39. Payment State</h2>
+
+  <p>
+    The <code>payments</code> state contains the list of payments
+    retrieved from the backend.
+  </p>
+
+  <p>
+    The <code>loading</code> state indicates whether payments
+    are currently being retrieved.
+  </p>
+
+  <p>
+    The <code>error</code> state contains the possible error message.
+  </p>
+
+
+  <h2>40. Retrieving Payments</h2>
+
+  <p>
+    The <code>fetchPayments</code> function retrieves payments from
+    the <code>/payments/admin</code> endpoint.
+  </p>
+
+  <pre>
+axios.get(`${API}/payments/admin`, {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+});
+  </pre>
+
+  <p>
+    This route is intended for administration and therefore requires
+    an authentication token.
+  </p>
+
+
+  <h2>41. Checking the Administrator Token</h2>
+
+  <p>
+    Before contacting the API, the component checks whether the token
+    exists in <code>localStorage</code>.
+  </p>
+
+  <p>
+    If no token is found, a message indicates that the administrator
+    token cannot be found.
+  </p>
+
+  <p>
+    This check prevents an unnecessary request from being sent
+    to a protected route.
+  </p>
+
+
+  <h2>42. Payment Statistics</h2>
+
+  <p>
+    The component directly calculates several statistics from
+    the <code>payments</code> array.
+  </p>
+
+  <p>
+    <code>payments.length</code> represents the total number of payments.
+  </p>
+
+  <p>
+    <code>payments.filter(payment =&gt; payment.status === "paid").length</code>
+    counts successful payments.
+  </p>
+
+  <p>
+    Payments whose status is <code>pending</code> are counted
+    as pending payments.
+  </p>
+
+  <p>
+    Payments whose status is <code>failed</code> are counted
+    as failed payments.
+  </p>
+
+
+  <h2>43. Displaying the Payment Customer</h2>
+
+  <p>
+    For each payment, the component displays the username
+    from <code>payment.userId.username</code>.
+  </p>
+
+  <p>
+    The email address is retrieved from
+    <code>payment.userId.email</code>.
+  </p>
+
+  <p>
+    If this information is not available, default values
+    are displayed.
+  </p>
+
+
+  <h2>44. Payment and Order Association</h2>
+
+  <p>
+    Each payment can be associated with an order through
+    <code>payment.orderId</code>.
+  </p>
+
+  <p>
+    The component displays the last characters of the order's
+    MongoDB identifier.
+  </p>
+
+  <p>
+    Using <code>slice(-8)</code> makes it possible to display only
+    the last eight characters of the identifier, making the display shorter.
+  </p>
+
+
+  <h2>45. Displaying the Payment Amount</h2>
+
+  <p>
+    The amount is converted to a number using <code>Number()</code>.
+  </p>
+
+  <p>
+    Then, <code>toFixed(2)</code> displays exactly two decimal places.
+  </p>
+
+  <p>
+    The currency from <code>payment.currency</code> is converted
+    to uppercase using <code>toUpperCase()</code>.
+  </p>
+
+  <p>
+    For example, the currency <code>usd</code> becomes
+    <code>USD</code>.
+  </p>
+
+
+  <h2>46. Payment Method</h2>
+
+  <p>
+    The component currently displays <code>Stripe</code> as the payment method.
+  </p>
+
+  <p>
+    A visual badge using the <code>stripe-badge</code> class is used
+    to distinguish this method.
+  </p>
+
+
+  <h2>47. Payment Status</h2>
+
+  <p>
+    The payment status can be <code>paid</code>,
+    <code>pending</code>, <code>failed</code> or
+    <code>refunded</code>.
+  </p>
+
+  <p>
+    The frontend transforms these technical values into French text.
+  </p>
+
+  <p>
+    <code>paid</code> becomes <code>Payé</code>.
+  </p>
+
+  <p>
+    <code>pending</code> becomes <code>En attente</code>.
+  </p>
+
+  <p>
+    <code>failed</code> becomes <code>Échec</code>.
+  </p>
+
+  <p>
+    <code>refunded</code> becomes <code>Remboursé</code>.
+  </p>
+
+
+  <h2>48. Status of the Associated Order</h2>
+
+  <p>
+    The component also attempts to display the status of the
+    order associated with the payment.
+  </p>
+
+  <p>
+    This information is retrieved from
+    <code>payment.orderId.status</code>.
+  </p>
+
+  <div class="important">
+
+    <p>
+      It is important to verify that the backend actually uses
+      the name <code>status</code> for the order status.
+    </p>
+
+    <p>
+      In the order controller presented previously,
+      the field used is rather <code>orderStatus</code>.
+      If the backend returns <code>orderStatus</code>, the frontend
+      must use <code>payment.orderId.orderStatus</code>.
+    </p>
+
+  </div>
+
+
+  <h2>49. Displaying the Payment Date</h2>
+
+  <p>
+    The date is retrieved from <code>payment.createdAt</code>.
+  </p>
+
+  <p>
+    It is converted to the French format using
+    <code>toLocaleDateString("fr-FR")</code>.
+  </p>
+
+
+  <h2>50. Refresh Button</h2>
+
+  <p>
+    The <code>Actualiser</code> button allows the administrator
+    to manually run the <code>fetchPayments</code> function again.
+  </p>
+
+  <p>
+    This makes it possible to immediately obtain the latest information
+    from the backend without reloading the entire application.
+  </p>
+
+
+  <h2>51. Handling Empty Payments</h2>
+
+  <p>
+    When the <code>payments</code> array is empty, the component
+    displays the message <code>Aucun paiement trouvé.</code>.
+  </p>
+
+  <p>
+    The message occupies all seven table columns through
+    <code>colSpan="7"</code>.
+  </p>
+
+
+  <h2>52. Handling Payment Loading</h2>
+
+  <p>
+    When payments are still being loaded, the user sees the text
+    <code>Chargement des paiements...</code>.
+  </p>
+
+  <p>
+    This prevents the user from thinking that the page is empty
+    when the data is simply being retrieved.
+  </p>
+
+
+  <h2>53. Handling Payment Errors</h2>
+
+  <p>
+    If the request fails, the component retrieves the message provided
+    by the backend through <code>error.response?.data?.message</code>.
+  </p>
+
+  <p>
+    If no backend message is available, a generic message is displayed.
+  </p>
+
+  <p>
+    The <code>Réessayer</code> button can then be used to retry
+    the retrieval.
+  </p>
+
+
+  <h2>54. JWT Authentication</h2>
+
+  <p>
+    The administration components use a JWT token stored
+    in <code>localStorage</code>.
+  </p>
+
+  <p>
+    The token is sent in the header:
+    <code>Authorization: Bearer token</code>.
+  </p>
+
+  <p>
+    The backend can then use this token to identify
+    the logged-in user and control their permissions.
+  </p>
+
+
+  <h2>55. Communication with MongoDB</h2>
+
+  <p>
+    The React frontend does not communicate directly with MongoDB.
+  </p>
+
+  <p>
+    React sends an HTTP request to the Node.js/Express server.
+  </p>
+
+  <p>
+    The server then uses Mongoose to communicate with MongoDB.
+  </p>
+
+  <div class="flow">
+    Admin → React → Axios → Express → Controller → Mongoose → MongoDB
+  </div>
+
+
+  <h2>56. Order Management Cycle</h2>
+
+  <p>
+    When an order is created by a customer, it is stored
+    in MongoDB.
+  </p>
+
+  <p>
+    The administrator then opens the <code>AdminOrders</code> page.
+  </p>
+
+  <p>
+    React requests the orders from the backend.
+  </p>
+
+  <p>
+    The backend retrieves the orders from MongoDB and returns
+    them to the frontend.
+  </p>
+
+  <p>
+    The administrator can then modify the status or delete
+    an order.
+  </p>
+
+
+  <h2>57. Product Management Cycle</h2>
+
+  <p>
+    The administrator opens <code>AdminProducts</code>.
+  </p>
+
+  <p>
+    The frontend retrieves the products from the API.
+  </p>
+
+  <p>
+    The administrator can modify the name, price, stock
+    and category.
+  </p>
+
+  <p>
+    They can also quickly modify the stock using the
+    <code>+</code> and <code>−</code> buttons.
+  </p>
+
+  <p>
+    All modifications are then saved in MongoDB
+    through the backend API.
+  </p>
+
+
+  <h2>58. Payment Management Cycle</h2>
+
+  <p>
+    When a customer makes a payment with Stripe, the backend
+    stores the payment information.
+  </p>
+
+  <p>
+    The payment can then be viewed from
+    <code>AdminPayments</code>.
+  </p>
+
+  <p>
+    The administrator can see the customer, order, amount,
+    currency, payment status and date.
+  </p>
+
+
+  <h2>59. Relationship Between Orders and Payments</h2>
+
+  <p>
+    An order contains information about its payment,
+    including its payment status.
+  </p>
+
+  <p>
+    The payment also contains a reference to the order
+    through <code>orderId</code>.
+  </p>
+
+  <p>
+    This makes it possible to link both pieces of information
+    and track the complete sales process.
+  </p>
+
+
+  <h2>60. Relationship Between Products and Orders</h2>
+
+  <p>
+    An order contains a list of products in
+    <code>items</code>.
+  </p>
+
+  <p>
+    Each item may contain a product, its name, its price
+    and its quantity.
+  </p>
+
+  <p>
+    This allows the administration area to know exactly which products
+    have been ordered.
+  </p>
+
+
+  <h2>61. Role of AdminNavbar</h2>
+
+  <p>
+    The <code>AdminNavbar</code> component represents the main navigation
+    of the administrator area.
+  </p>
+
+  <p>
+    It contains links to the Dashboard, products, orders,
+    payments, sales, settings and customers.
+  </p>
+
+  <p>
+    The component uses <code>Link</code> from React Router to
+    navigate between the different pages without completely
+    reloading the application.
+  </p>
+
+
+  <h2>62. Administrator Logout</h2>
+
+  <p>
+    The <code>handleLogout</code> function removes the token and user
+    information stored in <code>localStorage</code>.
+  </p>
+
+  <pre>
+localStorage.removeItem("token");
+localStorage.removeItem("user");
+  </pre>
+
+  <p>
+    The user is then redirected to the
+    <code>/auth</code> page.
+  </p>
+
+
+  <h2>63. AdminOrders Summary</h2>
+
+  <p>
+    <code>AdminOrders</code> is responsible for the complete management
+    of orders from the administration area.
+  </p>
+
+  <p>
+    It retrieves orders, displays customer information,
+    displays products, calculates subtotals, displays payments,
+    allows the status to be modified and allows an order to be deleted.
+  </p>
+
+
+  <h2>64. AdminProducts Summary</h2>
+
+  <p>
+    <code>AdminProducts</code> allows the product catalog to be managed.
+  </p>
+
+  <p>
+    It allows the administrator to view products, modify their information,
+    control their stock and delete products.
+  </p>
+
+
+  <h2>65. AdminPayments Summary</h2>
+
+  <p>
+    <code>AdminPayments</code> allows Stripe payments made by customers
+    to be monitored.
+  </p>
+
+  <p>
+    It provides payment statistics and displays detailed information
+    about each transaction.
+  </p>
+
+
+  <h2>66. Complete Administration Flow</h2>
+
+  <div class="flow">
+
+    <p>
+      Administrator
+    </p>
+
+    <p>
+      ↓
+    </p>
+
+    <p>
+      React Interface
+    </p>
+
+    <p>
+      ↓
+    </p>
+
+    <p>
+      Axios
+    </p>
+
+    <p>
+      ↓
+    </p>
+
+    <p>
+      Express / Node.js API
+    </p>
+
+    <p>
+      ↓
+    </p>
+
+    <p>
+      Controllers
+    </p>
+
+    <p>
+      ↓
+    </p>
+
+    <p>
+      Mongoose
+    </p>
+
+    <p>
+      ↓
+    </p>
+
+    <p>
+      MongoDB
+    </p>
+
+  </div>
+
+
+  <h2>67. Important Points to Check</h2>
+
+  <div class="important">
+
+    <p>
+      The frontend currently uses
+      <code>http://localhost:3000/api</code>.
+      You must verify that the backend is actually listening on port 3000.
+    </p>
+
+    <p>
+      In some parts of the project, the backend has also been used
+      on port 5000. Therefore, a single consistent port must be used
+      between the frontend and backend.
+    </p>
+
+    <p>
+      Protected routes must correctly receive the JWT token.
+    </p>
+
+    <p>
+      The names of the fields returned by the backend must match
+      the names used in React.
+    </p>
+
+  </div>
+
+
+  <h2>68. Important Point Regarding the Order Status</h2>
+
+  <div class="danger">
+
+    <p>
+      In <code>AdminOrders</code>, the order status is called
+      <code>orderStatus</code>.
+    </p>
+
+    <p>
+      In <code>AdminPayments</code>, the code currently looks for
+      <code>payment.orderId.status</code>.
+    </p>
+
+    <p>
+      If the Order model actually uses <code>orderStatus</code>,
+      you will need to use:
+      <code>payment.orderId.orderStatus</code>
+      in AdminPayments.
+    </p>
+
+  </div>
+
+
+  <h2>69. Security</h2>
+
+  <p>
+    Sensitive operations such as modification and deletion
+    must be protected on the backend.
+  </p>
+
+  <p>
+    The frontend must not be considered the only layer of protection.
+  </p>
+
+  <p>
+    Even if a delete button is hidden in React, a user could
+    try to call the API directly.
+  </p>
+
+  <p>
+    The backend must therefore verify the JWT and the user's role
+    before authorizing administrative operations.
+  </p>
+
+
+  <h2>70. Conclusion</h2>
+
+  <p>
+    The <code>AdminOrders</code>,
+    <code>AdminProducts</code> and
+    <code>AdminPayments</code> components constitute the main
+    administration interfaces for managing the store.
+  </p>
+
+  <p>
+    <code>AdminOrders</code> allows orders and their statuses to be managed.
+  </p>
+
+  <p>
+    <code>AdminProducts</code> allows products, prices,
+    categories and, above all, stock to be managed.
+  </p>
+
+  <p>
+    <code>AdminPayments</code> allows Stripe transactions
+    and their status to be monitored.
+  </p>
+
+  <p>
+    The entire system works through an architecture based on React,
+    Axios, Node.js, Express, Mongoose and MongoDB, with JWT
+    authentication to secure administrative operations.
+  </p>
+
+  <div class="success">
+
+    <p>
+      The administration area therefore makes it possible to centralize
+      the store's commercial management: products, orders, payments
+      and sales monitoring.
+    </p>
+
+  </div>
+
+
+  <div class="footer">
+
+    <p>
+      Technical Documentation - Store Administration
+    </p>
+
+  </div>
+
+</div>
+
+</body>
+</html>

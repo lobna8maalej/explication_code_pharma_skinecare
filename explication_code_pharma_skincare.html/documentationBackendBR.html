@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Explicação dos modelos MongoDB - Pharma & Skincare</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.7;
+      margin: 0;
+      padding: 40px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      margin-top: 35px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #ddd;
+    }
+
+    h3 {
+      margin-top: 25px;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    code {
+      background: #f1f1f1;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .model {
+      margin-bottom: 45px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Explicação dos modelos MongoDB</h1>
+
+    <p>
+      Esta página explica os diferentes modelos MongoDB utilizados
+      na aplicação de e-commerce Pharma & Skincare.
+      Os modelos definem a estrutura dos dados armazenados
+      no MongoDB usando Mongoose.
+    </p>
+
+    <!-- ===================================================== -->
+    <!-- CONEXÃO MONGODB -->
+    <!-- ===================================================== -->
+
+    <div class="model">
+
+      <h2>1. Conexão com o MongoDB</h2>
+
+      <p>
+        O arquivo de conexão permite que a aplicação Node.js
+        se conecte ao banco de dados MongoDB.
+      </p>
+
+      <p>
+        O método <code>mongoose.connect()</code> utiliza o endereço
+        <code>mongodb://localhost:27017/ecommerce</code>.
+        Isso significa que o MongoDB está sendo executado localmente
+        no computador e que o banco de dados utilizado se chama
+        <code>ecommerce</code>.
+      </p>
+
+      <p>
+        A função <code>connectDB</code> é uma função assíncrona.
+        Ela utiliza <code>try/catch</code> para detectar qualquer possível
+        erro de conexão com o MongoDB.
+      </p>
+
+      <p>
+        Quando a conexão é realizada com sucesso, a mensagem
+        <code>MongoDB connected</code> é exibida no console.
+        Em caso de erro, a mensagem
+        <code>DB connection error</code> é exibida.
+      </p>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- ORDER -->
+    <!-- ===================================================== -->
+
+    <div class="model">
+
+      <h2>2. Modelo Order - Pedidos</h2>
+
+      <p>
+        O modelo <code>Order</code> representa os pedidos realizados
+        pelos clientes na loja Pharma & Skincare.
+      </p>
+
+      <h3>Usuário</h3>
+
+      <p>
+        O campo <code>user</code> contém o identificador MongoDB
+        do cliente que realizou o pedido.
+        Ele utiliza uma referência ao modelo <code>User</code>.
+      </p>
+
+      <p>
+        O campo é opcional devido a
+        <code>required: false</code>.
+        Portanto, um pedido pode eventualmente ser registrado
+        sem um usuário conectado.
+      </p>
+
+      <h3>Informações do cliente</h3>
+
+      <p>
+        O bloco <code>customer</code> contém as informações
+        necessárias para a entrega e o contato com o cliente.
+      </p>
+
+      <p>
+        Ele contém o nome, sobrenome, endereço de e-mail,
+        número de telefone e endereço do cliente.
+      </p>
+
+      <h3>Produtos pedidos</h3>
+
+      <p>
+        O campo <code>items</code> é um array que contém os produtos
+        incluídos no pedido.
+      </p>
+
+      <p>
+        Cada item contém o identificador do produto,
+        seu nome, preço e quantidade solicitada.
+      </p>
+
+      <p>
+        O campo <code>product</code> utiliza uma referência ao modelo
+        <code>Product</code>.
+        Isso permite relacionar o pedido ao produto correspondente.
+      </p>
+
+      <h3>Total do pedido</h3>
+
+      <p>
+        O campo <code>totalAmount</code> representa o valor total
+        do pedido.
+        Ele é obrigatório devido a <code>required: true</code>.
+      </p>
+
+      <h3>Pagamento</h3>
+
+      <p>
+        O campo <code>paymentMethod</code> indica o método de pagamento.
+        Na sua aplicação, o valor padrão é
+        <code>Stripe</code>.
+      </p>
+
+      <p>
+        O campo <code>paymentStatus</code> indica o status do pagamento.
+        Ele pode ser <code>En attente</code>,
+        <code>Payé</code> ou
+        <code>Échec</code>.
+      </p>
+
+      <h3>Status do pedido</h3>
+
+      <p>
+        O campo <code>orderStatus</code> é utilizado para acompanhar
+        a evolução do pedido.
+      </p>
+
+      <p>
+        Um pedido pode estar:
+        <code>En attente</code>,
+        <code>En préparation</code>,
+        <code>Expédiée</code>,
+        <code>Livrée</code> ou
+        <code>Annulée</code>.
+      </p>
+
+      <h3>Carimbos de data e hora</h3>
+
+      <p>
+        A opção <code>timestamps: true</code> adiciona automaticamente
+        dois campos: <code>createdAt</code> e <code>updatedAt</code>.
+        Eles permitem conhecer a data de criação e a data
+        da última modificação do pedido.
+      </p>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- PAYMENT -->
+    <!-- ===================================================== -->
+
+    <div class="model">
+
+      <h2>3. Modelo Payment - Pagamentos</h2>
+
+      <p>
+        O modelo <code>Payment</code> é utilizado para armazenar informações
+        sobre os pagamentos realizados para os pedidos.
+      </p>
+
+      <h3>Pedido</h3>
+
+      <p>
+        O campo <code>orderId</code> contém o identificador do pedido
+        associado ao pagamento.
+        Ele possui uma referência ao modelo <code>Order</code>.
+      </p>
+
+      <h3>Usuário</h3>
+
+      <p>
+        O campo <code>userId</code> contém o identificador do cliente
+        que realizou o pagamento.
+        Ele possui uma referência ao modelo <code>User</code>.
+      </p>
+
+      <h3>Valor</h3>
+
+      <p>
+        O campo <code>amount</code> representa o valor do pagamento.
+        Ele é obrigatório.
+      </p>
+
+      <h3>Moeda</h3>
+
+      <p>
+        O campo <code>currency</code> indica a moeda utilizada
+        para o pagamento.
+        Por padrão, a moeda é <code>USD</code>.
+      </p>
+
+      <p>
+        A opção <code>lowercase: true</code> converte automaticamente
+        o valor para letras minúsculas.
+        Por exemplo, <code>USD</code> se torna <code>usd</code>.
+      </p>
+
+      <h3>Método de pagamento</h3>
+
+      <p>
+        O campo <code>method</code> indica o método de pagamento.
+        Neste modelo, somente o método <code>stripe</code> é permitido.
+      </p>
+
+      <h3>Informações do Stripe</h3>
+
+      <p>
+        <code>stripeSessionId</code> contém o ID da sessão
+        do Stripe Checkout.
+      </p>
+
+      <p>
+        <code>stripePaymentIntentId</code> contém o ID do
+        PaymentIntent do Stripe quando disponível.
+      </p>
+
+      <h3>Status do pagamento</h3>
+
+      <p>
+        O campo <code>status</code> indica o status do pagamento.
+        Ele pode ser <code>pending</code>,
+        <code>paid</code>,
+        <code>failed</code> ou
+        <code>refunded</code>.
+      </p>
+
+      <p>
+        Isso permite que a administração determine se um pedido
+        foi pago, se o pagamento falhou ou se
+        o valor foi reembolsado.
+      </p>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- PRODUCT -->
+    <!-- ===================================================== -->
+
+    <div class="model">
+
+      <h2>4. Modelo Product - Produtos</h2>
+
+      <p>
+        O modelo <code>Product</code> representa os produtos vendidos
+        na loja Pharma & Skincare.
+      </p>
+
+      <h3>Nome do produto</h3>
+
+      <p>
+        O campo <code>name</code> contém o nome do produto.
+        Ele é obrigatório, e a opção <code>trim: true</code>
+        remove espaços desnecessários no início e no final.
+      </p>
+
+      <h3>Preço</h3>
+
+      <p>
+        O campo <code>price</code> contém o preço do produto.
+        Ele é obrigatório.
+      </p>
+
+      <h3>Estoque</h3>
+
+      <p>
+        O campo <code>stock</code> representa a quantidade disponível
+        do produto.
+        Seu valor padrão é <code>0</code>.
+      </p>
+
+      <p>
+        O valor não pode ser negativo devido a
+        <code>min: 0</code>.
+      </p>
+
+      <h3>Categoria</h3>
+
+      <p>
+        O campo <code>category</code> é utilizado para classificar os produtos.
+        Por exemplo: cuidados faciais, cuidados capilares,
+        maquiagem ou proteção solar.
+      </p>
+
+      <h3>Imagem</h3>
+
+      <p>
+        O campo <code>image</code> contém a URL ou o caminho
+        da imagem do produto.
+        Se nenhuma imagem for fornecida, seu valor será uma string vazia.
+      </p>
+
+      <h3>Carimbos de data e hora</h3>
+
+      <p>
+        Com <code>timestamps: true</code>, o MongoDB adiciona automaticamente
+        <code>createdAt</code> e <code>updatedAt</code>.
+      </p>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- SETTINGS -->
+    <!-- ===================================================== -->
+
+    <div class="model">
+
+      <h2>5. Modelo Settings - Configurações da loja</h2>
+
+      <p>
+        O modelo <code>Settings</code> permite que o administrador
+        salve as configurações gerais da loja.
+      </p>
+
+      <h3>Informações da loja</h3>
+
+      <p>
+        Os campos <code>storeName</code>, <code>email</code>,
+        <code>phone</code> e <code>address</code> contêm
+        as informações gerais da loja.
+      </p>
+
+      <h3>Moeda</h3>
+
+      <p>
+        O campo <code>currency</code> representa a moeda utilizada
+        pela loja.
+        Por padrão, ela é definida como <code>TND</code>.
+      </p>
+
+      <h3>Pedidos</h3>
+
+      <p>
+        O campo <code>allowOrders</code> permite que o administrador
+        ative ou desative os pedidos.
+        Seu valor padrão é <code>true</code>.
+      </p>
+
+      <h3>Modo de manutenção</h3>
+
+      <p>
+        O campo <code>maintenanceMode</code> permite que o administrador
+        ative ou desative o modo de manutenção do site.
+      </p>
+
+      <h3>Entrega</h3>
+
+      <p>
+        O campo <code>deliveryEnabled</code> permite que o administrador
+        ative ou desative a entrega.
+      </p>
+
+      <p>
+        O campo <code>deliveryFee</code> contém o custo da entrega.
+        Por padrão, ele é igual a <code>0</code>.
+      </p>
+
+      <h3>Stripe</h3>
+
+      <p>
+        O campo <code>stripeEnabled</code> permite que o administrador
+        ative ou desative o Stripe.
+      </p>
+
+      <p>
+        O campo <code>stripeCurrency</code> indica a moeda utilizada
+        pelo Stripe.
+        No seu modelo, ela é definida como <code>USD</code> por padrão.
+      </p>
+
+      <p>
+        O campo <code>stripeExchangeRate</code> representa a taxa
+        de conversão entre TND e a moeda utilizada pelo Stripe.
+      </p>
+
+      <p>
+        Por exemplo, com um valor de <code>0.32</code>,
+        uma conversão pode ser realizada de acordo com a taxa de câmbio
+        configurada pelo administrador.
+      </p>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- USER -->
+    <!-- ===================================================== -->
+
+    <div class="model">
+
+      <h2>6. Modelo User - Usuários</h2>
+
+      <p>
+        O modelo <code>User</code> é utilizado para gerenciar as contas
+        dos usuários da aplicação.
+      </p>
+
+      <h3>Email</h3>
+
+      <p>
+        O campo <code>email</code> contém o endereço de e-mail do usuário.
+        Ele é obrigatório e único.
+      </p>
+
+      <p>
+        A opção <code>lowercase: true</code> armazena automaticamente
+        o endereço de e-mail em letras minúsculas.
+      </p>
+
+      <h3>Username</h3>
+
+      <p>
+        O campo <code>username</code> contém o nome de usuário.
+        Ele é obrigatório.
+      </p>
+
+      <h3>Password</h3>
+
+      <p>
+        O campo <code>password</code> contém a senha do usuário.
+        Ele é obrigatório.
+      </p>
+
+      <p>
+        Na prática, a senha não deve ser armazenada em texto simples.
+        Ela deve ser transformada em hash antes de ser armazenada no MongoDB,
+        por exemplo usando bcrypt.
+      </p>
+
+      <h3>Função</h3>
+
+      <p>
+        O campo <code>role</code> determina as permissões do usuário.
+      </p>
+
+      <p>
+        Existem duas funções disponíveis:
+        <code>user</code> para um cliente e
+        <code>admin</code> para um administrador.
+      </p>
+
+      <p>
+        Por padrão, um novo usuário possui a função
+        <code>user</code>.
+      </p>
+
+      <h3>Carimbos de data e hora</h3>
+
+      <p>
+        A opção <code>timestamps: true</code> armazena automaticamente
+        as datas de criação e modificação da conta.
+      </p>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- RELATIONS -->
+    <!-- ===================================================== -->
+
+    <div class="model">
+
+      <h2>7. Relações entre os modelos</h2>
+
+      <p>
+        Os diferentes modelos estão conectados entre si usando
+        identificadores MongoDB do tipo <code>ObjectId</code>.
+      </p>
+
+      <p>
+        Um <code>User</code> pode realizar vários pedidos
+        <code>Order</code>.
+      </p>
+
+      <p>
+        Um <code>Order</code> pode conter vários produtos
+        <code>Product</code>.
+      </p>
+
+      <p>
+        Um <code>Order</code> pode ter um pagamento
+        <code>Payment</code>.
+      </p>
+
+      <p>
+        O modelo <code>Settings</code> contém as configurações gerais
+        da loja, incluindo as configurações do Stripe,
+        entrega, moeda e modo de manutenção.
+      </p>
+
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- SUMMARY -->
+    <!-- ===================================================== -->
+
+    <div class="model">
+
+      <h2>8. Resumo do funcionamento</h2>
+
+      <p>
+        O usuário cria uma conta utilizando o modelo
+        <code>User</code>.
+      </p>
+
+      <p>
+        O usuário consulta os produtos armazenados em
+        <code>Product</code>.
+      </p>
+
+      <p>
+        O usuário adiciona os produtos ao carrinho e depois confirma o pedido.
+        As informações do pedido são armazenadas em
+        <code>Order</code>.
+      </p>
+
+      <p>
+        Quando o usuário realiza um pagamento com Stripe,
+        as informações do pagamento são armazenadas em
+        <code>Payment</code>.
+      </p>
+
+      <p>
+        O administrador pode então consultar os pedidos,
+        pagamentos e produtos e modificar as configurações
+        da loja utilizando o modelo <code>Settings</code>.
+      </p>
+
+      <p>
+        Todos esses modelos permitem, portanto, construir o backend
+        da loja de e-commerce Pharma & Skincare
+        utilizando Node.js, Express, MongoDB e Mongoose.
+      </p>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

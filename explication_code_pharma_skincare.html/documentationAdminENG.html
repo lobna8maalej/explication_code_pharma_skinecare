@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pharma Administration Interface Explanation</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #222;
+            line-height: 1.7;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #222;
+        }
+
+        h2 {
+            margin-top: 35px;
+            padding: 12px 15px;
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            color: #222;
+        }
+
+        p {
+            margin: 15px 0;
+        }
+
+        .code {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: Consolas, monospace;
+            white-space: pre-wrap;
+        }
+
+        .important {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 5px solid #ffc107;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-left: 5px solid #2e7d32;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Explanation of the Pharma Administration Interface</h1>
+
+
+<h2>1. General Overview</h2>
+
+<p>
+This part of the project corresponds to the administration interface of the
+Pharma platform. It is developed with React and allows the administrator to manage
+products, orders, payments, sales, settings, and customers.
+</p>
+
+<p>
+The interface communicates with the backend using Axios. The backend provides
+REST APIs developed with Node.js and Express.
+</p>
+
+<p>
+The general workflow is therefore:
+</p>
+
+<p class="code">
+React
+    ↓
+Axios
+    ↓
+Express API
+    ↓
+Controllers
+    ↓
+MongoDB
+</p>
+
+
+<h2>2. AdminCustomers Component</h2>
+
+<p>
+The <strong>AdminCustomers</strong> component represents the page that allows
+the administrator to view and delete customers registered on
+the platform.
+</p>
+
+<p>
+It uses the React hooks <strong>useState</strong> and
+<strong>useEffect</strong>.
+</p>
+
+
+<h2>3. Importing useEffect and useState</h2>
+
+<p>
+The code begins by importing <strong>useEffect</strong> and
+<strong>useState</strong> from React.
+</p>
+
+<p>
+<strong>useState</strong> is used to create and modify the internal data
+of the component.
+</p>
+
+<p>
+<strong>useEffect</strong> allows a function to be executed automatically
+when the component is loaded.
+</p>
+
+
+<h2>4. Importing Axios</h2>
+
+<p>
+Axios is used to send HTTP requests to the backend.
+</p>
+
+<p>
+In this component, Axios is mainly used to retrieve the list of customers
+and delete a customer.
+</p>
+
+
+<h2>5. API URL</h2>
+
+<p>
+The <strong>API</strong> constant contains the main address of the backend:
+</p>
+
+<p class="code">
+http://localhost:3000/api
+</p>
+
+<p>
+All requests from this component use this address as their base URL.
+</p>
+
+
+<h2>6. customers State</h2>
+
+<p>
+The <strong>customers</strong> state contains the list of customers retrieved
+from MongoDB.
+</p>
+
+<p>
+It is initialized with an empty array:
+</p>
+
+<p class="code">
+const [customers, setCustomers] = useState([]);
+</p>
+
+<p>
+<strong>setCustomers</strong> is used to modify this list.
+</p>
+
+
+<h2>7. loading State</h2>
+
+<p>
+The <strong>loading</strong> state indicates whether the data is still
+being loaded.
+</p>
+
+<p>
+It starts with <strong>true</strong>.
+During this period, the user sees the message
+<strong>Loading customers...</strong>.
+</p>
+
+
+<h2>8. error State</h2>
+
+<p>
+The <strong>error</strong> state is used to store a possible error message.
+</p>
+
+<p>
+If an error occurs while communicating with the backend, the message
+is displayed to the administrator.
+</p>
+
+
+<h2>9. fetchCustomers Function</h2>
+
+<p>
+The <strong>fetchCustomers</strong> function retrieves the list
+of customers from the backend.
+</p>
+
+<p>
+It first enables the loading state with:
+</p>
+
+<p class="code">
+setLoading(true);
+</p>
+
+<p>
+Then it resets the previous error message with:
+</p>
+
+<p class="code">
+setError("");
+</p>
+
+
+<h2>10. GET Request for Customers</h2>
+
+<p>
+Axios then sends a GET request to:
+</p>
+
+<p class="code">
+GET /api/users/customers
+</p>
+
+<p>
+The backend returns the registered customers.
+</p>
+
+<p>
+If the response contains <strong>success: true</strong>, the
+<strong>response.data.customers</strong> list is stored in the
+<strong>customers</strong> state.
+</p>
+
+
+<h2>11. Handling a Response Without Customers</h2>
+
+<p>
+If the backend returns a negative response, the customers array is
+reset and an error message is displayed.
+</p>
+
+<p>
+This prevents old data from being displayed when the request fails.
+</p>
+
+
+<h2>12. Handling Axios Errors</h2>
+
+<p>
+The <strong>catch</strong> block handles errors coming from the HTTP request.
+</p>
+
+<p>
+The code first tries to retrieve the message sent by the backend using:
+<strong>error.response?.data?.message</strong>.
+</p>
+
+<p>
+If no message is available, a general error message is displayed.
+</p>
+
+
+<h2>13. finally Block</h2>
+
+<p>
+The <strong>finally</strong> block is executed whether the request succeeds
+or fails.
+</p>
+
+<p>
+It is used to disable the loading state with:
+</p>
+
+<p class="code">
+setLoading(false);
+</p>
+
+
+<h2>14. useEffect to Load Customers</h2>
+
+<p>
+The <strong>useEffect</strong> hook automatically calls
+<strong>fetchCustomers()</strong> when the page is loaded.
+</p>
+
+<p>
+The empty array <strong>[]</strong> means that this function is executed
+only once when the component is mounted.
+</p>
+
+
+<h2>15. Deleting a Customer</h2>
+
+<p>
+The <strong>handleDelete</strong> function is used to delete a customer.
+It receives the customer's MongoDB ID.
+</p>
+
+
+<h2>16. Confirmation Before Deletion</h2>
+
+<p>
+Before deleting the customer, the code uses:
+</p>
+
+<p class="code">
+window.confirm(...)
+</p>
+
+<p>
+A confirmation window asks the administrator whether they really want
+to delete the customer.
+</p>
+
+<p>
+If the administrator chooses to cancel, the function stops immediately.
+</p>
+
+
+<h2>17. DELETE Request</h2>
+
+<p>
+If the administrator confirms, Axios sends a DELETE request to:
+</p>
+
+<p class="code">
+DELETE /api/users/customers/:id
+</p>
+
+<p>
+The customer's ID is included in the URL.
+</p>
+
+
+<h2>18. Immediate Deletion in React</h2>
+
+<p>
+When the backend confirms the deletion, the customer is also removed
+from the React array.
+</p>
+
+<p>
+The code uses the <strong>filter()</strong> function to keep all
+customers except the one that has just been deleted.
+</p>
+
+<p>
+This allows the interface to be updated immediately without having to reload
+the entire page.
+</p>
+
+
+<h2>19. Loading State in AdminCustomers</h2>
+
+<p>
+When <strong>loading</strong> is equal to true, the component displays a
+simple page containing the Customers title and the message
+<strong>Loading customers...</strong>.
+</p>
+
+
+<h2>20. Error State in AdminCustomers</h2>
+
+<p>
+When the <strong>error</strong> state contains a message, the page displays
+an error section.
+</p>
+
+<p>
+A <strong>Retry</strong> button allows the administrator to call
+<strong>fetchCustomers()</strong> again in order to repeat the request.
+</p>
+
+
+<h2>21. Displaying the Number of Customers</h2>
+
+<p>
+When the data is loaded, the component displays the total number of
+customers using:
+</p>
+
+<p class="code">
+customers.length
+</p>
+
+<p>
+This allows the administrator to immediately know the number of customers
+stored in the database.
+</p>
+
+
+<h2>22. Display When There Are No Customers</h2>
+
+<p>
+If the <strong>customers</strong> array is empty, the component displays
+<strong>No customers</strong>.
+</p>
+
+<p>
+It also specifies that users with the
+<strong>user</strong> role were not found.
+</p>
+
+
+<h2>23. Customers Table</h2>
+
+<p>
+When customers exist, they are displayed in an HTML table.
+</p>
+
+<p>
+The table contains the columns ID, Username, Email, Role, Registration,
+and Actions.
+</p>
+
+
+<h2>24. map Function</h2>
+
+<p>
+The <strong>map()</strong> function iterates through all customers
+and creates an HTML row for each customer.
+</p>
+
+<p>
+Each row uses the customer's unique MongoDB ID as its key.
+</p>
+
+
+<h2>25. Displaying the ID</h2>
+
+<p>
+The code uses:
+</p>
+
+<p class="code">
+customer._id.slice(-8)
+</p>
+
+<p>
+This displays only the last eight characters of the MongoDB ID
+to make the table more readable.
+</p>
+
+
+<h2>26. Displaying the Username</h2>
+
+<p>
+The username is displayed using:
+</p>
+
+<p class="code">
+customer.username
+</p>
+
+<p>
+It is placed inside a <strong>strong</strong> tag to make it
+more visible.
+</p>
+
+
+<h2>27. Displaying the Email</h2>
+
+<p>
+The customer's email address is displayed using:
+</p>
+
+<p class="code">
+customer.email
+</p>
+
+
+<h2>28. Displaying the Role</h2>
+
+<p>
+The role is displayed inside a badge using:
+</p>
+
+<p class="code">
+customer.role
+</p>
+
+<p>
+On this page, the retrieved customers normally have the
+<strong>user</strong> role.
+</p>
+
+
+<h2>29. Displaying the Registration Date</h2>
+
+<p>
+The code checks whether <strong>createdAt</strong> exists.
+If this value exists, it is converted into a JavaScript Date object.
+</p>
+
+<p>
+The <strong>toLocaleDateString("fr-FR")</strong> method displays
+the date according to the French format.
+</p>
+
+
+<h2>30. Delete Button</h2>
+
+<p>
+Each row contains a button allowing the administrator to delete the customer.
+</p>
+
+<p>
+When the administrator clicks this button, the function
+<strong>handleDelete(customer._id)</strong> is executed.
+</p>
+
+
+<h2>31. AdminDashboard Component</h2>
+
+<p>
+The <strong>AdminDashboard</strong> component represents the main page
+of the administrator dashboard.
+</p>
+
+<p>
+It brings together several important store-related pieces of information:
+products, orders, payments, sales, and settings.
+</p>
+
+
+<h2>32. Importing AdminNavbar</h2>
+
+<p>
+The component imports <strong>AdminNavbar</strong>.
+This navigation bar allows the administrator to move between
+the different administration pages.
+</p>
+
+
+<h2>33. products State</h2>
+
+<p>
+The <strong>products</strong> state contains the list of products retrieved
+from the API.
+</p>
+
+<p>
+The number of products is then calculated using:
+</p>
+
+<p class="code">
+products.length
+</p>
+
+
+<h2>34. orders State</h2>
+
+<p>
+The <strong>orders</strong> state contains the list of orders.
+</p>
+
+<p>
+The total number of orders is displayed in the
+<strong>Orders</strong> card.
+</p>
+
+
+<h2>35. payments State</h2>
+
+<p>
+The <strong>payments</strong> state contains the list of payments.
+</p>
+
+<p>
+This list is also used to calculate the number of paid and pending payments.
+</p>
+
+
+<h2>36. sales State</h2>
+
+<p>
+The <strong>sales</strong> state contains three statistics:
+total revenue, number of orders, and average order value.
+</p>
+
+<p>
+The initial values are all set to zero.
+</p>
+
+
+<h2>37. settings State</h2>
+
+<p>
+The <strong>settings</strong> state contains the store settings
+retrieved from the backend.
+</p>
+
+<p>
+It is initialized with <strong>null</strong> because the settings have
+not yet been loaded at startup.
+</p>
+
+
+<h2>38. Retrieving the JWT Token</h2>
+
+<p>
+When the dashboard loads, the token is retrieved from
+<strong>localStorage</strong>.
+</p>
+
+<p class="code">
+localStorage.getItem("token")
+</p>
+
+<p>
+This token allows the frontend to prove to the backend that the user
+is authenticated.
+</p>
+
+
+<h2>39. Creating the Authorization Header</h2>
+
+<p>
+The token is then placed in the HTTP Authorization header.
+</p>
+
+<p class="code">
+Authorization: Bearer TOKEN
+</p>
+
+<p>
+This format corresponds to the JWT middleware used by the backend.
+</p>
+
+
+<h2>40. Retrieving Products in the Dashboard</h2>
+
+<p>
+The dashboard sends a GET request to:
+</p>
+
+<p class="code">
+GET /api/products
+</p>
+
+<p>
+This route is public in your backend.
+Therefore, it is not mandatory to send the token for this request.
+</p>
+
+<p>
+The response is then checked to determine whether it directly contains
+an array or whether the products are stored in a
+<strong>products</strong> or <strong>data</strong> property.
+</p>
+
+
+<h2>41. Retrieving Orders</h2>
+
+<p>
+The dashboard calls:
+</p>
+
+<p class="code">
+GET /api/orders
+</p>
+
+<p>
+This route is protected by <strong>auth</strong> and
+<strong>isAdmin</strong>.
+</p>
+
+<p>
+The JWT token is therefore sent in the headers.
+</p>
+
+
+<h2>42. Retrieving Payments</h2>
+
+<p>
+The dashboard calls:
+</p>
+
+<p class="code">
+GET /api/payments/admin
+</p>
+
+<p>
+This route is restricted to administrators.
+The JWT token is sent with the request.
+</p>
+
+
+<h2>43. Retrieving Sales Statistics</h2>
+
+<p>
+The dashboard calls:
+</p>
+
+<p class="code">
+GET /api/sales/overview
+</p>
+
+<p>
+The backend calculates total revenue, the number of orders, and
+the average order value.
+</p>
+
+<p>
+These values are then stored in the <strong>sales</strong> state.
+</p>
+
+
+<h2>44. Retrieving Settings</h2>
+
+<p>
+The dashboard calls:
+</p>
+
+<p class="code">
+GET /api/settings
+</p>
+
+<p>
+This route is protected by <strong>auth</strong> and
+<strong>isAdmin</strong>.
+</p>
+
+<p>
+The retrieved settings are stored in the
+<strong>settings</strong> state.
+</p>
+
+
+<h2>45. formatMoney Function</h2>
+
+<p>
+The <strong>formatMoney</strong> function is used to format
+financial amounts.
+</p>
+
+<p>
+It uses <strong>toLocaleString("fr-FR")</strong> to obtain a format
+adapted to the French language.
+</p>
+
+<p>
+The number always contains two digits after the decimal point.
+</p>
+
+
+<h2>46. Paid Payments Statistics</h2>
+
+<p>
+The <strong>paidPayments</strong> constant uses the
+<strong>filter()</strong> function to count payments whose status is
+<strong>paid</strong>.
+</p>
+
+<p>
+It therefore allows the number of successful payments to be displayed.
+</p>
+
+
+<h2>47. Pending Payments Statistics</h2>
+
+<p>
+The <strong>pendingPayments</strong> constant does the same thing
+for payments with the <strong>pending</strong> status.
+</p>
+
+
+<h2>48. Admin Dashboard: Products Card</h2>
+
+<p>
+The first dashboard card displays the total number of products.
+</p>
+
+<p>
+The displayed value corresponds to:
+</p>
+
+<p class="code">
+products.length
+</p>
+
+<p>
+The icon used is the box icon representing the products.
+</p>
+
+
+<h2>49. Admin Dashboard: Orders Card</h2>
+
+<p>
+The second card displays the total number of orders.
+</p>
+
+<p>
+The value corresponds to:
+</p>
+
+<p class="code">
+orders.length
+</p>
+
+
+<h2>50. Admin Dashboard: Payments Card</h2>
+
+<p>
+The third card displays the total number of payments.
+</p>
+
+<p>
+It also displays the number of payments with the
+<strong>paid</strong> status.
+</p>
+
+
+<h2>51. Admin Dashboard: Sales Card</h2>
+
+<p>
+The Sales card displays the total revenue.
+</p>
+
+<p>
+The amount comes from the backend through the
+<strong>/api/sales/overview</strong> API.
+</p>
+
+<p>
+The amount is formatted using <strong>formatMoney()</strong> and then
+displayed in TND.
+</p>
+
+
+<h2>52. Admin Dashboard: Settings Card</h2>
+
+<p>
+The Settings card indicates whether the store is currently active
+or in maintenance mode.
+</p>
+
+<p>
+If <strong>maintenanceMode</strong> is true, the dashboard displays
+<strong>Maintenance</strong>.
+</p>
+
+<p>
+Otherwise, it displays <strong>Active</strong>.
+</p>
+
+<p>
+The card also displays whether Stripe is enabled or disabled using
+<strong>settings.stripeEnabled</strong>.
+</p>
+
+
+<h2>53. Sales Summary</h2>
+
+<p>
+The <strong>Sales Summary</strong> section displays three main pieces
+of information.
+</p>
+
+<p>
+The first is total revenue.
+The second is the number of paid orders.
+The third is the average order value.
+</p>
+
+
+<h2>54. Revenue</h2>
+
+<p>
+The revenue is retrieved from:
+</p>
+
+<p class="code">
+sales.totalSales
+</p>
+
+<p>
+It is then formatted and displayed using the TND currency.
+</p>
+
+
+<h2>55. Paid Orders</h2>
+
+<p>
+The number of paid orders corresponds to:
+</p>
+
+<p class="code">
+sales.totalOrders
+</p>
+
+<p>
+This value comes directly from the sales statistics controller.
+</p>
+
+
+<h2>56. Average Order Value</h2>
+
+<p>
+The average order value corresponds to:
+</p>
+
+<p class="code">
+sales.averageOrder
+</p>
+
+<p>
+It represents the average amount of an order.
+</p>
+
+
+<h2>57. Payments Summary</h2>
+
+<p>
+The Payments Summary section displays three pieces of information:
+the total number of payments, successful payments, and pending payments.
+</p>
+
+<p>
+This allows the administrator to quickly understand the current payment status.
+</p>
+
+
+<h2>58. Dashboard Styles</h2>
+
+<p>
+The component uses a JavaScript object called <strong>styles</strong>
+to define several CSS styles directly.
+</p>
+
+<p>
+For example, <strong>styles.page</strong> defines the inner spacing,
+background color, and minimum height of the page.
+</p>
+
+<p>
+<strong>styles.cards</strong> uses CSS Grid to organize the dashboard
+cards into multiple columns.
+</p>
+
+
+<h2>59. AdminNavbar Component</h2>
+
+<p>
+The <strong>AdminNavbar</strong> component represents the administration
+navigation bar.
+</p>
+
+<p>
+It provides quick access to the different dashboard functionalities.
+</p>
+
+
+<h2>60. useNavigate</h2>
+
+<p>
+The <strong>useNavigate</strong> hook from React Router allows the current
+page to be changed programmatically.
+</p>
+
+<p>
+It is mainly used here during logout.
+</p>
+
+
+<h2>61. handleLogout Function</h2>
+
+<p>
+The <strong>handleLogout</strong> function is used to log the user out.
+</p>
+
+<p>
+It removes the JWT token from the browser using:
+</p>
+
+<p class="code">
+localStorage.removeItem("token");
+</p>
+
+<p>
+It also removes the user information stored locally.
+</p>
+
+<p class="code">
+localStorage.removeItem("user");
+</p>
+
+<p>
+Finally, the user is redirected to:
+</p>
+
+<p class="code">
+/auth
+</p>
+
+
+<h2>62. Admin Panel Logo</h2>
+
+<p>
+The navigation bar displays the title <strong>Admin Panel</strong>.
+It represents the area reserved for store administration.
+</p>
+
+
+<h2>63. Dashboard Link</h2>
+
+<p>
+The first link provides access to:
+</p>
+
+<p class="code">
+/admin
+</p>
+
+<p>
+This route corresponds to the main dashboard.
+</p>
+
+
+<h2>64. Products Link</h2>
+
+<p>
+The Products link redirects to:
+</p>
+
+<p class="code">
+/admin/products
+</p>
+
+<p>
+This page allows the administrator to manage products.
+</p>
+
+
+<h2>65. Orders Link</h2>
+
+<p>
+The Orders link redirects to:
+</p>
+
+<p class="code">
+/admin/orders
+</p>
+
+<p>
+This page allows the administrator to view and manage orders.
+</p>
+
+
+<h2>66. Payments Link</h2>
+
+<p>
+The Payments link redirects to:
+</p>
+
+<p class="code">
+/admin/payments
+</p>
+
+<p>
+This page allows the administrator to view recorded payments.
+</p>
+
+
+<h2>67. Sales Link</h2>
+
+<p>
+The Sales link redirects to:
+</p>
+
+<p class="code">
+/admin/sales
+</p>
+
+<p>
+This page is intended for sales statistics.
+</p>
+
+
+<h2>68. Settings Link</h2>
+
+<p>
+The Settings link redirects to:
+</p>
+
+<p class="code">
+/admin/settings
+</p>
+
+<p>
+This page allows the administrator to modify the store settings.
+</p>
+
+
+<h2>69. Customers Link</h2>
+
+<p>
+The Customers link redirects to:
+</p>
+
+<p class="code">
+/admin/customers
+</p>
+
+<p>
+This page corresponds to the <strong>AdminCustomers</strong> component.
+It allows the administrator to view customers.
+</p>
+
+
+<h2>70. Logout Button</h2>
+
+<p>
+The Logout button calls the <strong>handleLogout</strong> function.
+</p>
+
+<p>
+The function removes the authentication data and redirects the user
+to the authentication page.
+</p>
+
+
+<h2>71. Navigation Organization</h2>
+
+<p>
+The navigation therefore allows the administrator to move between the main
+functionalities of the administration panel.
+</p>
+
+<p class="code">
+Dashboard
+Products
+Orders
+Payments
+Sales
+Settings
+Customers
+Logout
+</p>
+
+
+<h2>72. Communication Between AdminDashboard and the Backend</h2>
+
+<p>
+The dashboard retrieves several categories of data from the backend.
+Each category corresponds to a different API.
+</p>
+
+<p class="code">
+Products  → GET /api/products
+
+Orders    → GET /api/orders
+
+Payments  → GET /api/payments/admin
+
+Sales     → GET /api/sales/overview
+
+Settings  → GET /api/settings
+</p>
+
+
+<h2>73. Communication Between AdminCustomers and the Backend</h2>
+
+<p>
+The Customers page mainly uses two operations.
+</p>
+
+<p class="code">
+GET
+/api/users/customers
+
+DELETE
+/api/users/customers/:id
+</p>
+
+<p>
+The first retrieves the customers and the second deletes a customer.
+</p>
+
+
+<h2>74. Backend Correspondence</h2>
+
+<p>
+The React routes correspond directly to the Express routes defined
+in the backend.
+</p>
+
+<p>
+For example, the Axios frontend route
+<strong>GET /api/orders</strong> corresponds to the Express route
+protected by <strong>auth</strong> and <strong>isAdmin</strong>.
+</p>
+
+<p>
+This means that the backend verifies the JWT token before authorizing
+access to administrative orders.
+</p>
+
+
+<h2>75. JWT Security</h2>
+
+<p>
+The JWT token is essential for administrative functionalities.
+It is retrieved from localStorage and sent in the Authorization header.
+</p>
+
+<p>
+The backend <strong>auth</strong> middleware verifies the token.
+Then, <strong>isAdmin</strong> verifies that the user's role
+is indeed <strong>admin</strong>.
+</p>
+
+<p class="success">
+The security principle is therefore: authenticated user → valid token →
+admin role verification → dashboard access.
+</p>
+
+
+<h2>76. Important Point Regarding AdminCustomers</h2>
+
+<p>
+In your frontend, the Customers page directly calls:
+</p>
+
+<p class="code">
+GET /api/users/customers
+</p>
+
+<p>
+and:
+</p>
+
+<p class="code">
+DELETE /api/users/customers/:id
+</p>
+
+<p>
+In the backend routes you previously showed, these two routes
+currently use neither <strong>auth</strong> nor <strong>isAdmin</strong>.
+</p>
+
+<p class="important">
+For a real application, it is preferable to protect these routes so that
+a normal user cannot view or delete other customers' accounts.
+</p>
+
+
+<h2>77. Recommended Protection for Customer Routes</h2>
+
+<p>
+The customer administration routes should ideally work using the same principle
+as the other dashboard routes:
+</p>
+
+<p class="code">
+router.get(
+    "/customers",
+    auth,
+    isAdmin,
+    getCustomers
+);
+
+router.get(
+    "/customers/:id",
+    auth,
+    isAdmin,
+    getCustomerById
+);
+
+router.delete(
+    "/customers/:id",
+    auth,
+    isAdmin,
+    deleteCustomer
+);
+</p>
+
+<p>
+In this way, only an authenticated administrator will be able to view
+and delete customers.
+</p>
+
+
+<h2>78. Complete Administration Flow</h2>
+
+<p>
+When the administrator opens the dashboard, React loads the
+<strong>AdminDashboard</strong> component.
+</p>
+
+<p>
+The component retrieves the JWT token from localStorage.
+</p>
+
+<p>
+Then, several Axios requests are sent to the backend to retrieve
+products, orders, payments, statistics, and settings.
+</p>
+
+<p>
+The backend checks permissions when necessary and retrieves the data
+from MongoDB.
+</p>
+
+<p>
+The results are returned to React.
+React stores the results in its states and then displays them as cards
+and statistics.
+</p>
+
+
+<h2>79. Complete Customer Flow</h2>
+
+<p>
+When the administrator opens the Customers page, the
+<strong>AdminCustomers</strong> component is loaded.
+</p>
+
+<p>
+The <strong>useEffect</strong> hook automatically calls
+<strong>fetchCustomers()</strong>.
+</p>
+
+<p>
+Axios sends a GET request to the backend.
+The backend retrieves users with the <strong>user</strong> role.
+</p>
+
+<p>
+React receives the list and displays it in a table.
+</p>
+
+<p>
+When the administrator clicks Delete, Axios sends a DELETE request.
+After confirmation from the backend, the customer is immediately removed
+from the interface.
+</p>
+
+
+<h2>80. General Architecture</h2>
+
+<p>
+The architecture of this part of the application can be summarized as follows:
+</p>
+
+<p class="code">
+                    ADMIN
+                      ↓
+              React Admin Panel
+                      ↓
+              React Router
+                      ↓
+                 Axios
+                      ↓
+              Express API
+                      ↓
+              JWT Middleware
+                      ↓
+              Admin Middleware
+                      ↓
+                Controllers
+                      ↓
+                 Mongoose
+                      ↓
+                  MongoDB
+</p>
+
+
+<h2>81. Conclusion</h2>
+
+<p>
+This part of the project constitutes the administration panel of the
+Pharma platform.
+</p>
+
+<p>
+<strong>AdminNavbar</strong> allows navigation between the different pages.
+</p>
+
+<p>
+<strong>AdminDashboard</strong> provides an overview of the store with
+products, orders, payments, sales, and settings.
+</p>
+
+<p>
+<strong>AdminCustomers</strong> allows the administrator to view and delete
+customers.
+</p>
+
+<p>
+<strong>Axios</strong> handles communication between React and the backend API.
+</p>
+
+<p>
+<strong>JWT</strong> provides authentication and allows the backend to verify
+the user's identity.
+</p>
+
+<p>
+<strong>isAdmin</strong> ensures that sensitive operations are restricted
+to administrators.
+</p>
+
+<p>
+Together, these components provide a complete administration interface
+for managing an online pharmaceutical store.
+</p>
+
+</div>
+
+</body>
+</html>

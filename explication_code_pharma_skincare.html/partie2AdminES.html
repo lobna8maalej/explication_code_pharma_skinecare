@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Documentación - Administración de la Tienda</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: #222;
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #1f2937;
+            font-size: 25px;
+            margin-top: 45px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        h3 {
+            color: #374151;
+            font-size: 20px;
+            margin-top: 30px;
+        }
+
+        p {
+            color: #4b5563;
+            font-size: 16px;
+            margin: 12px 0;
+        }
+
+        code {
+            background: #f1f5f9;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: Consolas, monospace;
+        }
+
+        pre {
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+        }
+
+        .intro {
+            background: #f8fafc;
+            padding: 20px;
+            border-left: 5px solid #2563eb;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .important {
+            background: #fff7ed;
+            padding: 20px;
+            border-left: 5px solid #f97316;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #f0fdf4;
+            padding: 20px;
+            border-left: 5px solid #22c55e;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .danger {
+            background: #fef2f2;
+            padding: 20px;
+            border-left: 5px solid #ef4444;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        ul {
+            line-height: 1.8;
+            color: #4b5563;
+        }
+
+        .flow {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #777;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Documentación de Administración de la Tienda</h1>
+
+    <div class="intro">
+
+        <p>
+            Esta documentación explica detalladamente cómo funcionan los componentes
+            de React utilizados en el área de administración de la tienda.
+        </p>
+
+        <p>
+            Los componentes cubiertos son
+            <code>AdminOrders</code>,
+            <code>AdminProducts</code> y
+            <code>AdminPayments</code>.
+        </p>
+
+        <p>
+            Estos componentes permiten al administrador gestionar los pedidos,
+            productos, inventario y pagos realizados con Stripe.
+        </p>
+
+    </div>
+
+    <h2>1. Arquitectura General</h2>
+
+    <p>
+        La aplicación utiliza React para construir la interfaz de usuario
+        de administración. React se comunica con el backend mediante la biblioteca Axios.
+    </p>
+
+    <p>
+        El frontend envía solicitudes HTTP a la API backend disponible en:
+        <code>http://localhost:3000/api</code>.
+    </p>
+
+    <p>
+        El backend recibe las solicitudes, realiza las operaciones necesarias,
+        se comunica con MongoDB y devuelve los resultados al frontend.
+    </p>
+
+    <div class="flow">
+        React Admin → Axios → API Express/Node.js → MongoDB
+    </div>
+
+    <p>
+        Para determinadas operaciones administrativas, se recupera un token JWT
+        de <code>localStorage</code> y luego se envía en el encabezado HTTP
+        <code>Authorization</code>.
+    </p>
+
+    <h2>2. Componente AdminOrders</h2>
+
+    <p>
+        El componente <code>AdminOrders</code> representa la página de administración
+        dedicada a la gestión de los pedidos de los clientes.
+    </p>
+
+    <p>
+        El administrador puede consultar los pedidos, ver la información del cliente,
+        consultar los productos solicitados, comprobar el importe total, consultar el pago,
+        modificar el estado del pedido y eliminar un pedido.
+    </p>
+
+    <h2>3. Importación de Dependencias en AdminOrders</h2>
+
+    <p>
+        El componente comienza importando los hooks de React
+        <code>useEffect</code> y <code>useState</code>.
+    </p>
+
+    <p>
+        <code>useState</code> se utiliza para gestionar los datos dinámicos de la página,
+        mientras que <code>useEffect</code> se utiliza para ejecutar código cuando
+        el componente se carga.
+    </p>
+
+    <p>
+        Axios se utiliza para comunicarse con el backend.
+    </p>
+
+    <p>
+        El componente también importa <code>AdminNavbar</code> para mostrar
+        la barra de navegación de administración.
+    </p>
+
+    <p>
+        El archivo <code>AdminOrders.css</code> contiene los estilos específicos
+        de la página de pedidos.
+    </p>
+
+    <h2>4. API Utilizada por AdminOrders</h2>
+
+    <p>
+        La constante <code>API</code> contiene la dirección principal del backend.
+    </p>
+
+    <pre>const API = "http://localhost:3000/api";</pre>
+
+    <p>
+        Todas las solicitudes relacionadas con los pedidos se construyen a partir de esta dirección.
+    </p>
+
+    <h2>5. Estado de los Pedidos</h2>
+
+    <p>
+        El componente utiliza tres estados principales:
+        <code>orders</code>, <code>loading</code> y <code>error</code>.
+    </p>
+
+    <p>
+        <code>orders</code> contiene la lista de pedidos recuperados del backend.
+    </p>
+
+    <p>
+        <code>loading</code> indica si los pedidos se están cargando actualmente.
+    </p>
+
+    <p>
+        <code>error</code> puede contener el mensaje de error que se mostrará
+        cuando falle la recuperación de los pedidos.
+    </p>
+
+    <h2>6. Recuperación de los Pedidos</h2>
+
+    <p>
+        La función <code>fetchOrders</code> recupera todos los pedidos desde la API.
+    </p>
+
+    <p>
+        Antes de realizar la solicitud, el componente recupera el token del administrador
+        almacenado en <code>localStorage</code>.
+    </p>
+
+    <pre>const token = localStorage.getItem("token");</pre>
+
+    <p>
+        El token se envía al backend mediante el siguiente encabezado:
+        <code>Authorization: Bearer token</code>.
+    </p>
+
+    <p>
+        Este método permite al backend verificar que la solicitud procede
+        de un usuario autenticado.
+    </p>
+
+    <h2>7. Solicitud GET de los Pedidos</h2>
+
+    <p>
+        La siguiente solicitud se utiliza para recuperar todos los pedidos:
+    </p>
+
+    <pre>axios.get(`${API}/orders`, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});</pre>
+
+    <p>
+        El backend debe devolver los pedidos en la propiedad
+        <code>orders</code> o posiblemente en <code>data</code>.
+    </p>
+
+    <p>
+        El frontend verifica entonces que el resultado sea realmente un array
+        antes de almacenarlo en <code>orders</code>.
+    </p>
+
+    <h2>8. useEffect en AdminOrders</h2>
+
+    <p>
+        El hook <code>useEffect</code> se utiliza con un array de dependencias vacío.
+    </p>
+
+    <pre>useEffect(() => {
+  fetchOrders();
+}, []);</pre>
+
+    <p>
+        Esto significa que <code>fetchOrders</code> se ejecuta una sola vez
+        cuando se carga la página.
+    </p>
+
+    <h2>9. Cambio del Estado de un Pedido</h2>
+
+    <p>
+        La función <code>updateStatus</code> permite al administrador cambiar
+        el estado de un pedido.
+    </p>
+
+    <p>
+        El ID del pedido y el nuevo estado se envían al backend.
+    </p>
+
+    <pre>axios.put(
+  `${API}/orders/${orderId}/status`,
+  {
+    orderStatus: newStatus,
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);</pre>
+
+    <p>
+        El nuevo estado puede ser, por ejemplo:
+        <code>En attente</code>,
+        <code>En préparation</code>,
+        <code>Expédiée</code>,
+        <code>Livrée</code> o
+        <code>Annulée</code>.
+    </p>
+
+    <h2>10. Actualización Inmediata de la Interfaz</h2>
+
+    <p>
+        Después de modificar correctamente el estado, el frontend no necesariamente
+        vuelve a cargar toda la lista desde el servidor.
+    </p>
+
+    <p>
+        Actualiza directamente el pedido correspondiente en el estado
+        <code>orders</code>.
+    </p>
+
+    <p>
+        Esta técnica proporciona una interfaz más rápida y receptiva.
+    </p>
+
+    <h2>11. Eliminación de un Pedido</h2>
+
+    <p>
+        La función <code>deleteOrder</code> permite eliminar un pedido.
+    </p>
+
+    <p>
+        Antes de eliminarlo, se muestra un cuadro de confirmación mediante
+        <code>window.confirm</code>.
+    </p>
+
+    <p>
+        Si el administrador confirma, se envía una solicitud HTTP DELETE al backend.
+    </p>
+
+    <pre>axios.delete(`${API}/orders/${orderId}`, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});</pre>
+
+    <p>
+        Después de la eliminación, el pedido también se elimina del estado
+        <code>orders</code>.
+    </p>
+
+    <h2>12. Recuperación del Nombre del Cliente</h2>
+
+    <p>
+        La función <code>getCustomerName</code> determina el nombre
+        del cliente asociado al pedido.
+    </p>
+
+    <p>
+        El componente comprueba primero la información disponible en
+        <code>order.customer</code>.
+    </p>
+
+    <p>
+        Si existe el nombre o apellido, ambos se combinan para formar
+        el nombre completo.
+    </p>
+
+    <p>
+        Si esta información no está disponible, el componente utiliza
+        <code>order.user.username</code>.
+    </p>
+
+    <p>
+        Si no hay ninguna información disponible, se muestra el texto
+        <code>Client inconnu</code>.
+    </p>
+
+    <h2>13. Recuperación del Correo Electrónico del Cliente</h2>
+
+    <p>
+        La función <code>getCustomerEmail</code> busca el correo electrónico en
+        <code>order.customer.email</code>.
+    </p>
+
+    <p>
+        Si este valor no existe, utiliza <code>order.user.email</code>.
+    </p>
+
+    <p>
+        Si no hay ninguna dirección disponible, se muestra el texto
+        <code>Email inconnu</code>.
+    </p>
+
+    <h2>14. Recuperación de los Productos de un Pedido</h2>
+
+    <p>
+        La función <code>getItems</code> comprueba si el pedido contiene
+        un array <code>items</code>.
+    </p>
+
+    <p>
+        Si este array no existe, también comprueba la propiedad
+        <code>products</code>.
+    </p>
+
+    <p>
+        Esta lógica hace que el componente sea más flexible cuando el backend
+        devuelve una estructura diferente.
+    </p>
+
+    <h2>15. Cálculo del Importe Total</h2>
+
+    <p>
+        La función <code>getTotal</code> recupera el importe total del pedido.
+    </p>
+
+    <p>
+        Primero utiliza <code>totalAmount</code>.
+    </p>
+
+    <p>
+        Si esta propiedad no existe, utiliza <code>totalPrice</code>.
+    </p>
+
+    <p>
+        Si no hay ningún valor disponible, el importe predeterminado es
+        <code>0</code>.
+    </p>
+
+    <h2>16. Estado del Pago</h2>
+
+    <p>
+        La función <code>getPaymentStatus</code> recupera el estado del pago.
+    </p>
+
+    <p>
+        Si no existe ningún estado, el valor predeterminado es
+        <code>En attente</code>.
+    </p>
+
+    <p>
+        Esto evita que se muestre un valor vacío en la interfaz.
+    </p>
+
+    <h2>17. Estado del Pedido</h2>
+
+    <p>
+        La función <code>getOrderStatus</code> recupera el estado actual
+        del pedido.
+    </p>
+
+    <p>
+        Si el backend no proporciona ningún estado, se utiliza el valor
+        <code>En attente</code>.
+    </p>
+
+    <h2>18. Formato de las Fechas</h2>
+
+    <p>
+        La función <code>formatDate</code> transforma una fecha procedente
+        de MongoDB en una fecha legible para el usuario.
+    </p>
+
+    <p>
+        El formato utilizado es el francés gracias a
+        <code>toLocaleDateString("fr-FR")</code>.
+    </p>
+
+    <p>
+        Por lo tanto, una fecha puede mostrarse en el formato
+        <code>07/09/2026</code>.
+    </p>
+
+    <h2>19. Gestión de la Carga</h2>
+
+    <p>
+        Cuando <code>loading</code> es <code>true</code>, el componente
+        muestra un mensaje indicando que los pedidos se están cargando.
+    </p>
+
+    <p>
+        La barra de navegación <code>AdminNavbar</code> también permanece visible.
+    </p>
+
+    <h2>20. Gestión de Errores</h2>
+
+    <p>
+        Si se produce un error al recuperar los pedidos,
+        el mensaje se almacena en <code>error</code>.
+    </p>
+
+    <p>
+        El usuario verá entonces un mensaje de error junto con un botón
+        <code>Réessayer</code>.
+    </p>
+
+    <p>
+        El botón permite ejecutar nuevamente la función <code>fetchOrders</code>
+        sin tener que recargar manualmente la página.
+    </p>
+
+    <h2>21. Visualización de un Pedido</h2>
+
+    <p>
+        Cada pedido se muestra como una tarjeta utilizando la clase
+        <code>order-card</code>.
+    </p>
+
+    <p>
+        La tarjeta contiene varios datos: número del pedido, fecha,
+        cliente, correo electrónico, número de teléfono, dirección,
+        productos, importe, pago y estado.
+    </p>
+
+    <h2>22. Visualización de los Productos</h2>
+
+    <p>
+        Para cada producto solicitado, el componente recupera el nombre,
+        el precio y la cantidad.
+    </p>
+
+    <p>
+        El subtotal se calcula utilizando la siguiente fórmula:
+    </p>
+
+    <pre>Subtotal = Price × Quantity</pre>
+
+    <p>
+        El resultado se muestra con dos decimales.
+    </p>
+
+    <h2>23. Cambio del Estado mediante un Select</h2>
+
+    <p>
+        El administrador dispone de un elemento HTML <code>select</code>
+        que permite elegir el nuevo estado.
+    </p>
+
+    <p>
+        Cuando cambia el valor, la función <code>updateStatus</code>
+        se ejecuta automáticamente.
+    </p>
+
+    <p>
+        Esto permite cambiar rápidamente el estado de un pedido
+        directamente desde la tabla de administración.
+    </p>
+
+    <h2>24. Componente AdminProducts</h2>
+
+    <p>
+        El componente <code>AdminProducts</code> permite al administrador
+        gestionar los productos de la tienda.
+    </p>
+
+    <p>
+        Permite consultar productos, modificar su información,
+        aumentar o disminuir el stock y eliminar un producto.
+    </p>
+
+    <h2>25. Estado de los Productos</h2>
+
+    <p>
+        El estado <code>products</code> contiene la lista de productos.
+    </p>
+
+    <p>
+        El estado <code>loading</code> indica si los productos todavía
+        se están recuperando.
+    </p>
+
+    <p>
+        El estado <code>editingProduct</code> contiene el producto
+        seleccionado actualmente para editarlo.
+    </p>
+
+    <h2>26. Estados del Formulario de Edición</h2>
+
+    <p>
+        Se utilizan varios estados para gestionar los campos del formulario:
+        <code>name</code>, <code>price</code>, <code>stock</code> y
+        <code>category</code>.
+    </p>
+
+    <p>
+        Cada campo está controlado por React. Cuando el usuario escribe
+        en un campo, su estado correspondiente se actualiza automáticamente.
+    </p>
+
+    <h2>27. Recuperación de los Productos</h2>
+
+    <p>
+        La función <code>fetchProducts</code> envía una solicitud GET
+        a <code>/products</code>.
+    </p>
+
+    <pre>axios.get(`${API}/products`);</pre>
+
+    <p>
+        El componente acepta varios formatos posibles de respuesta:
+        un array directamente, <code>products</code> o <code>data</code>.
+    </p>
+
+    <h2>28. Actualización Rápida del Stock</h2>
+
+    <p>
+        La función <code>updateStock</code> permite modificar el stock
+        de un producto directamente desde la lista.
+    </p>
+
+    <p>
+        Antes de enviar la solicitud, el componente comprueba que el nuevo
+        stock no sea negativo.
+    </p>
+
+    <p>
+        El nuevo stock se envía al backend mediante una solicitud PUT.
+    </p>
+
+    <pre>axios.put(
+  `${API}/products/${productId}`,
+  {
+    stock: Number(newStock)
+  }
+);</pre>
+
+    <h2>29. Protección contra un Stock Negativo</h2>
+
+    <p>
+        El código evita deliberadamente la creación de un stock inferior a cero.
+    </p>
+
+    <p>
+        Cuando el stock es igual a cero, el botón utilizado para disminuir
+        el stock se desactiva.
+    </p>
+
+    <p>
+        Esta comprobación es importante para garantizar la coherencia
+        de los datos comerciales.
+    </p>
+
+    <h2>30. Botones Más y Menos del Stock</h2>
+
+    <p>
+        La función <code>decreaseStock</code> disminuye el stock en una unidad.
+    </p>
+
+    <p>
+        La función <code>increaseStock</code> aumenta el stock en una unidad.
+    </p>
+
+    <p>
+        Ambas funciones llaman posteriormente a <code>updateStock</code>
+        para enviar el nuevo valor al backend.
+    </p>
+
+    <h2>31. Indicador del Nivel de Stock</h2>
+
+    <p>
+        El componente utiliza tres niveles de stock.
+    </p>
+
+    <p>
+        Cuando el stock es igual a cero, la interfaz muestra
+        <code>Rupture</code>.
+    </p>
+
+    <p>
+        Cuando el stock es mayor que cero pero menor o igual a cinco,
+        la interfaz muestra <code>Stock faible</code>.
+    </p>
+
+    <p>
+        Cuando el stock es mayor que cinco, la interfaz muestra
+        <code>En stock</code>.
+    </p>
+
+    <h2>32. Apertura del Formulario de Edición</h2>
+
+    <p>
+        La función <code>handleEdit</code> se ejecuta cuando el administrador
+        hace clic en el botón <code>Modifier</code>.
+    </p>
+
+    <p>
+        Almacena el producto seleccionado en <code>editingProduct</code>
+        y copia sus valores en los diferentes campos del formulario.
+    </p>
+
+    <h2>33. Cancelación de la Edición</h2>
+
+    <p>
+        La función <code>handleCancelEdit</code> cierra el formulario de edición.
+    </p>
+
+    <p>
+        También restablece los campos <code>name</code>, <code>price</code>,
+        <code>stock</code> y <code>category</code> a sus valores iniciales.
+    </p>
+
+    <h2>34. Validación del Formulario del Producto</h2>
+
+    <p>
+        Antes de modificar un producto, el código comprueba que todos
+        los campos obligatorios hayan sido completados.
+   
